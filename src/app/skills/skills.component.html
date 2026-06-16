@@ -1,0 +1,59 @@
+<section id="skills" class="skills">
+  <div class="skills__header">
+    <p class="skills__eyebrow">Technical Stack</p>
+    <h2>Skills</h2>
+  </div>
+
+  <div class="skills__desktop" aria-label="Skill categories">
+    @for (category of categories; track category.title; let index = $index) {
+      <article class="skills__card" [@cardSlide]="cardState(index)">
+        <ng-container
+          [ngTemplateOutlet]="categoryContent"
+          [ngTemplateOutletContext]="{ $implicit: category }"
+        />
+      </article>
+    }
+  </div>
+
+  <mat-tab-group class="skills__mobile" mat-stretch-tabs="false" mat-align-tabs="start">
+    @for (category of categories; track category.title; let index = $index) {
+      <mat-tab [label]="category.title">
+        <article class="skills__card skills__card--tab" [@cardSlide]="cardState(index)">
+          <ng-container
+            [ngTemplateOutlet]="categoryContent"
+            [ngTemplateOutletContext]="{ $implicit: category }"
+          />
+        </article>
+      </mat-tab>
+    }
+  </mat-tab-group>
+
+  <ng-template #categoryContent let-category>
+    <div class="skills__card-heading">
+      <h3>{{ category.title }}</h3>
+      <p>{{ category.summary }}</p>
+    </div>
+
+    <div class="skills__list">
+      @for (skill of category.skills; track skill.label) {
+        <div class="skills__tile">
+          <div class="skills__tile-top">
+            <span class="skills__icon">
+              <mat-icon aria-hidden="true">{{ skill.icon }}</mat-icon>
+            </span>
+            <span>{{ skill.label }}</span>
+            <strong>{{ skill.level }}%</strong>
+          </div>
+          <div class="skills__bar" aria-hidden="true">
+            <span
+              [@skillBar]="{
+                value: isVisible ? 'visible' : 'hidden',
+                params: { level: skill.level }
+              }"
+            ></span>
+          </div>
+        </div>
+      }
+    </div>
+  </ng-template>
+</section>

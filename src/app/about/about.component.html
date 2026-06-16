@@ -1,0 +1,36 @@
+<section id="about" class="about" [@fadeSlideIn]="isVisible ? 'visible' : 'hidden'">
+  <div class="about__card">
+    <div class="about__portrait" aria-label="Profile image placeholder">
+      <span class="about__portrait-initials">KD</span>
+    </div>
+
+    <div class="about__content">
+      <p class="about__eyebrow">About Me</p>
+      <h2>Building reliable web products from idea to deployment.</h2>
+      <p class="about__bio">
+        I am a full-stack developer focused on clean Angular interfaces, practical backend
+        architecture, and maintainable systems that solve real product problems.
+      </p>
+
+      <mat-chip-listbox class="about__facts" aria-label="Key facts" multiple>
+        @for (fact of facts; track fact) {
+          <mat-chip-option selected>{{ fact }}</mat-chip-option>
+        }
+      </mat-chip-listbox>
+
+      <div class="about__stats" aria-label="Portfolio statistics">
+        @for (stat of stats; track stat.label) {
+          <div class="about__stat">
+            <strong>{{ stat.value }}{{ stat.suffix }}</strong>
+            <span>{{ stat.label }}</span>
+          </div>
+        }
+      </div>
+
+      <a mat-stroked-button class="about__cv" href="/Kenan-CV.pdf" download>
+        <mat-icon aria-hidden="true">download</mat-icon>
+        Download CV
+      </a>
+    </div>
+  </div>
+</section>

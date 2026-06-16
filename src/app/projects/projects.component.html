@@ -1,0 +1,12 @@
+<section id="projects" class="projects">
+  <div class="projects__header">
+    <p class="projects__eyebrow">Selected Work</p>
+    <h2>My Projects</h2>
+  </div>
+
+  <div class="projects__grid" [@projectsStagger]="isVisible ? 'visible' : 'hidden'">
+    @for (project of projects; track project.title) {
+      <app-project-card class="projects__item" [project]="project" />
+    }
+  </div>
+</section>

@@ -1,0 +1,75 @@
+<section id="contact" class="contact" [@fadeIn]="isVisible ? 'visible' : 'hidden'">
+  <div class="contact__header">
+    <p class="contact__eyebrow">Contact</p>
+    <h2>Get In Touch</h2>
+    <p class="contact__subtitle">
+      Have a project, role, or idea in mind? Send a note and I will get back to you soon.
+    </p>
+  </div>
+
+  <div class="contact__layout">
+    <div class="contact__info" aria-label="Contact links">
+      @for (link of contactLinks; track link.label) {
+        <a
+          class="contact__tile"
+          [href]="link.href"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span class="contact__icon" aria-hidden="true">
+            <mat-icon>{{ link.icon }}</mat-icon>
+          </span>
+          <span>
+            <strong>{{ link.label }}</strong>
+            <span>{{ link.value }}</span>
+          </span>
+        </a>
+      }
+    </div>
+
+    <form class="contact__form" [formGroup]="contactForm" (ngSubmit)="submit()" novalidate>
+      <mat-form-field appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" autocomplete="name" />
+        @if (name.hasError('required') && name.touched) {
+          <mat-error>Name is required.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email" autocomplete="email" />
+        @if (email.hasError('required') && email.touched) {
+          <mat-error>Email is required.</mat-error>
+        } @else if (email.hasError('email') && email.touched) {
+          <mat-error>Enter a valid email address.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Subject</mat-label>
+        <input matInput formControlName="subject" autocomplete="off" />
+        @if (subject.hasError('required') && subject.touched) {
+          <mat-error>Subject is required.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Message</mat-label>
+        <textarea matInput formControlName="message" rows="6"></textarea>
+        @if (message.hasError('required') && message.touched) {
+          <mat-error>Message is required.</mat-error>
+        }
+      </mat-form-field>
+
+      <button mat-flat-button color="accent" class="contact__submit" type="submit" [disabled]="isSending">
+        @if (isSending) {
+          <mat-progress-spinner diameter="22" mode="indeterminate" />
+          Sending...
+        } @else {
+          Send Message
+        }
+      </button>
+    </form>
+  </div>
+</section>
