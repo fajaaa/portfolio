@@ -62,13 +62,9 @@
         }
       </mat-form-field>
 
-      <button mat-flat-button color="accent" class="contact__submit" type="submit" [disabled]="isSending">
-        @if (isSending) {
-          <mat-progress-spinner diameter="22" mode="indeterminate" />
-          Sending...
-        } @else {
-          Send Message
-        }
+      <button mat-flat-button color="accent" class="contact__submit" type="submit">
+        <mat-icon aria-hidden="true">mail</mat-icon>
+        Open Email
       </button>
     </form>
   </div>

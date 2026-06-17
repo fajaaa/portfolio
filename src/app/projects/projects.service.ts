@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, of, shareReplay } from 'rxjs';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { catchError, EMPTY, expand, map, Observable, of, reduce, shareReplay } from 'rxjs';
 
 export interface Project {
   title: string;
@@ -27,6 +27,7 @@ interface GitHubRepository {
 export class ProjectsService {
   private readonly http = inject(HttpClient);
   private readonly githubReposUrl = 'https://api.github.com/users/fajaaa/repos';
+  private readonly excludedRepositoryNames = new Set(['portfolio']);
   private readonly fallbackProjects: Project[] = [
     {
       title: 'AquaControl',
@@ -47,20 +48,22 @@ export class ProjectsService {
     },
   ];
 
-  private readonly projects$ = this.http
-    .get<GitHubRepository[]>(this.githubReposUrl, {
-      params: {
-        sort: 'updated',
-        direction: 'desc',
-        per_page: 6,
-      },
-      headers: {
-        Accept: 'application/vnd.github+json',
-      },
-    })
+  private readonly projects$ = this.getRepositoryPage()
     .pipe(
+      expand((response) => {
+        const nextPage = this.getNextPage(response.headers.get('Link'));
+
+        return nextPage ? this.getRepositoryPage(nextPage) : EMPTY;
+      }),
+      map((response) => response.body ?? []),
+      reduce(
+        (repositories, pageRepositories) => [...repositories, ...pageRepositories],
+        [] as GitHubRepository[],
+      ),
       map((repositories) =>
-        repositories.filter((repository) => !repository.fork).map((repository) => this.toProject(repository)),
+        repositories
+          .filter((repository) => this.shouldShowRepository(repository))
+          .map((repository) => this.toProject(repository)),
       ),
       catchError(() => of(this.fallbackProjects)),
       shareReplay({ bufferSize: 1, refCount: true }),
@@ -68,6 +71,39 @@ export class ProjectsService {
 
   getProjects(): Observable<Project[]> {
     return this.projects$;
+  }
+
+  private getRepositoryPage(page = 1): Observable<HttpResponse<GitHubRepository[]>> {
+    return this.http.get<GitHubRepository[]>(this.githubReposUrl, {
+      observe: 'response',
+      params: {
+        sort: 'updated',
+        direction: 'desc',
+        per_page: 100,
+        page,
+      },
+      headers: {
+        Accept: 'application/vnd.github+json',
+      },
+    });
+  }
+
+  private shouldShowRepository(repository: GitHubRepository): boolean {
+    return !repository.fork && !this.excludedRepositoryNames.has(repository.name.toLowerCase());
+  }
+
+  private getNextPage(linkHeader: string | null): number | null {
+    if (!linkHeader) {
+      return null;
+    }
+
+    const nextLink = linkHeader
+      .split(',')
+      .map((link) => link.trim())
+      .find((link) => link.endsWith('rel="next"'));
+    const page = nextLink?.match(/[?&]page=(\d+)/)?.[1];
+
+    return page ? Number(page) : null;
   }
 
   private toProject(repository: GitHubRepository): Project {

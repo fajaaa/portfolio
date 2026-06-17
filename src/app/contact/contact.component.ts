@@ -1,11 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgZone, OnDestroy, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { ScrollRevealDirective } from '../shared/scroll-reveal.directive';
@@ -27,25 +26,22 @@ interface ContactLink {
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatProgressSpinnerModule,
     MatSnackBarModule,
     ScrollRevealDirective,
   ],
   templateUrl: './contact.component.html',
   styleUrl: './contact.component.scss',
 })
-export class ContactComponent implements OnDestroy {
+export class ContactComponent {
+  private readonly contactEmail = 'kenanfajic25@gmail.com';
   private readonly formBuilder = inject(FormBuilder);
-  private readonly ngZone = inject(NgZone);
   private readonly snackBar = inject(MatSnackBar);
-  private sendTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
-  protected isSending = false;
   protected readonly contactLinks: ContactLink[] = [
     {
       label: 'Email',
-      value: 'kenanfajic25@gmail.com',
-      href: 'mailto:kenanfajic25@gmail.com',
+      value: this.contactEmail,
+      href: `mailto:${this.contactEmail}`,
       icon: 'mail',
     },
     {
@@ -69,12 +65,6 @@ export class ContactComponent implements OnDestroy {
     message: ['', Validators.required],
   });
 
-  ngOnDestroy(): void {
-    if (this.sendTimeoutId) {
-      clearTimeout(this.sendTimeoutId);
-    }
-  }
-
   protected get name() {
     return this.contactForm.controls.name;
   }
@@ -92,22 +82,19 @@ export class ContactComponent implements OnDestroy {
   }
 
   protected submit(): void {
-    if (this.contactForm.invalid || this.isSending) {
+    if (this.contactForm.invalid) {
       this.contactForm.markAllAsTouched();
       return;
     }
 
-    this.isSending = true;
+    const { name, email, subject, message } = this.contactForm.getRawValue();
+    const body = [`Name: ${name}`, `Email: ${email}`, '', message].join('\n');
+    const mailtoUrl = `mailto:${this.contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-    this.sendTimeoutId = setTimeout(() => {
-      this.ngZone.run(() => {
-        this.isSending = false;
-        this.contactForm.reset();
-        this.snackBar.open('Message sent successfully! 🚀', 'Close', {
-          duration: 3500,
-          panelClass: 'contact__snackbar',
-        });
-      });
-    }, 2000);
+    window.location.href = mailtoUrl;
+    this.snackBar.open('Email draft opened. Send it from your email app.', 'Close', {
+      duration: 4500,
+      panelClass: 'contact__snackbar',
+    });
   }
 }
