@@ -3,3 +3,15 @@
 <main class="app-shell">
   <router-outlet />
 </main>
+
+<button
+  class="back-to-top"
+  type="button"
+  [class.back-to-top--visible]="showBackToTop"
+  [attr.aria-hidden]="showBackToTop ? null : true"
+  [attr.tabindex]="showBackToTop ? 0 : -1"
+  aria-label="Back to top"
+  (click)="scrollToTop()"
+>
+  <span class="back-to-top__icon" aria-hidden="true">↑</span>
+</button>
