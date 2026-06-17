@@ -53,3 +53,12 @@
     transition-duration: 1ms;
   }
 }
+
+@media (max-width: 560px) {
+  .back-to-top {
+    right: var(--space-4);
+    bottom: var(--space-4);
+    width: 3rem;
+    height: 3rem;
+  }
+}

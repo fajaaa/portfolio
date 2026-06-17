@@ -68,6 +68,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-2);
+  max-width: 100%;
 }
 
 .about__facts mat-chip {
@@ -83,6 +84,22 @@
 .about__facts mat-chip:hover {
   --mdc-chip-elevated-container-color: var(--color-card-border);
   --mdc-chip-label-text-color: var(--color-text-primary);
+}
+
+:host ::ng-deep .about__facts .mdc-evolution-chip {
+  max-width: 100%;
+  height: auto;
+  min-height: 2rem;
+}
+
+:host ::ng-deep .about__facts .mdc-evolution-chip__action--primary {
+  height: auto;
+  min-height: 2rem;
+}
+
+:host ::ng-deep .about__facts .mdc-evolution-chip__text-label {
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .about__stats {
@@ -131,5 +148,39 @@
 
   .about__card {
     text-align: left;
+  }
+}
+
+@media (max-width: 560px) {
+  .about {
+    padding: var(--space-10) var(--space-4);
+  }
+
+  .about__card {
+    gap: var(--space-6);
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+  }
+
+  .about__portrait {
+    width: min(14rem, 68vw);
+  }
+
+  .about__content {
+    gap: var(--space-4);
+  }
+
+  .about__bio {
+    font-size: var(--font-size-base);
+  }
+
+  .about__stat {
+    min-height: 5.25rem;
+    padding: var(--space-3);
+  }
+
+  .about__cv {
+    width: 100%;
+    justify-content: center;
   }
 }
