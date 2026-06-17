@@ -1,0 +1,49 @@
+<nav class="navbar" aria-label="Primary navigation">
+  <a class="navbar__brand" [href]="hrefFor('home')" (click)="navigateTo('home', $event)">
+    Kenan
+  </a>
+
+  <div class="navbar__links navbar__links--desktop">
+    @for (item of navItems; track item.fragment) {
+      <a
+        class="navbar__link"
+        [class.navbar__link--active]="activeSection === item.fragment"
+        [attr.aria-current]="activeSection === item.fragment ? 'page' : null"
+        [href]="hrefFor(item.fragment)"
+        (click)="navigateTo(item.fragment, $event)"
+      >
+        {{ item.label }}
+      </a>
+    }
+  </div>
+
+  <button
+    class="navbar__toggle"
+    type="button"
+    [class.navbar__toggle--open]="isMenuOpen"
+    [attr.aria-expanded]="isMenuOpen"
+    aria-controls="mobile-navigation"
+    aria-label="Toggle navigation"
+    (click)="toggleMenu()"
+  >
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+</nav>
+
+@if (isMenuOpen) {
+  <div id="mobile-navigation" class="navbar__mobile" @mobileMenu>
+    @for (item of navItems; track item.fragment) {
+      <a
+        class="navbar__mobile-link"
+        [class.navbar__mobile-link--active]="activeSection === item.fragment"
+        [attr.aria-current]="activeSection === item.fragment ? 'page' : null"
+        [href]="hrefFor(item.fragment)"
+        (click)="navigateTo(item.fragment, $event)"
+      >
+        {{ item.label }}
+      </a>
+    }
+  </div>
+}

@@ -163,6 +163,10 @@ html {
   font-size: 100%;
 }
 
+section[id] {
+  scroll-margin-top: 5.5rem;
+}
+
 body {
   min-height: 100%;
   margin: 0;
