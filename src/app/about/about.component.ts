@@ -25,14 +25,14 @@ export class AboutComponent implements OnDestroy {
   private hasAnimatedStats = false;
 
   protected readonly facts = [
-    'Location: Sarajevo, Bosnia and Herzegovina',
-    'Availability: Freelance',
+    'Location: Lukavac, Bosnia and Herzegovina',
+    'Education: FIT Mostar - Software Engineering',
     'Languages: English, Bosnian',
   ];
   protected readonly stats: AboutStat[] = [
-    { label: 'Years Experience', target: 3, suffix: '+', value: 0 },
-    { label: 'Projects', target: 20, suffix: '+', value: 0 },
-    { label: 'Technologies', target: 10, suffix: '+', value: 0 },
+    { label: 'Self-Initiated Projects', target: 2, suffix: '', value: 0 },
+    { label: 'Mentorship Months', target: 4, suffix: '', value: 0 },
+    { label: 'Technical Areas', target: 6, suffix: '+', value: 0 },
   ];
 
   ngOnDestroy(): void {
