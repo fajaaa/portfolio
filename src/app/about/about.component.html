@@ -25,11 +25,11 @@
         applications, learning new technologies, and improving my skills through practical projects.
       </p>
 
-      <mat-chip-listbox class="about__facts" aria-label="Key facts" multiple>
+      <mat-chip-set class="about__facts" aria-label="Key facts">
         @for (fact of facts; track fact) {
-          <mat-chip-option selected>{{ fact }}</mat-chip-option>
+          <mat-chip>{{ fact }}</mat-chip>
         }
-      </mat-chip-listbox>
+      </mat-chip-set>
 
       <div class="about__stats" aria-label="Portfolio statistics">
         @for (stat of stats; track stat.label) {
