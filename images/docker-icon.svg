@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Docker">
+  <path fill="#38bdf8" d="M9 34h46c-2 12-10 18-22 18H20C11 52 5 46 5 38c0-2 2-4 4-4Z"/>
+  <path fill="#0f172a" d="M52 29c2-4 5-5 9-4-1 4-4 6-8 6l-1-2Z"/>
+  <path fill="#e0f2fe" d="M17 18h7v7h-7v-7Zm9 0h7v7h-7v-7Zm9 0h7v7h-7v-7ZM17 27h7v7h-7v-7Zm9 0h7v7h-7v-7Zm9 0h7v7h-7v-7Zm9 0h7v7h-7v-7Z"/>
+  <path fill="#0284c7" d="M17 36h34c-2 7-8 11-18 11H21c-6 0-10-3-12-8 2 1 5 2 8 2h16c7 0 13-2 18-5H17Z"/>
+</svg>
