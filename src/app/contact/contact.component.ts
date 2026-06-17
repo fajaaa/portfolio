@@ -1,13 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  NgZone,
-  OnDestroy,
-  inject,
-} from '@angular/core';
-import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Component, NgZone, OnDestroy, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,6 +7,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
+import { ScrollRevealDirective } from '../shared/scroll-reveal.directive';
 
 interface ContactLink {
   label: string;
@@ -35,44 +29,35 @@ interface ContactLink {
     MatInputModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    ScrollRevealDirective,
   ],
   templateUrl: './contact.component.html',
   styleUrl: './contact.component.scss',
-  animations: [
-    trigger('fadeIn', [
-      state('hidden', style({ opacity: 0, transform: 'translateY(2rem)' })),
-      state('visible', style({ opacity: 1, transform: 'translateY(0)' })),
-      transition('hidden => visible', animate('650ms cubic-bezier(0.22, 1, 0.36, 1)')),
-    ]),
-  ],
 })
-export class ContactComponent implements AfterViewInit, OnDestroy {
-  private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+export class ContactComponent implements OnDestroy {
   private readonly formBuilder = inject(FormBuilder);
   private readonly ngZone = inject(NgZone);
   private readonly snackBar = inject(MatSnackBar);
-  private observer: IntersectionObserver | undefined;
   private sendTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
   protected isSending = false;
-  protected isVisible = false;
   protected readonly contactLinks: ContactLink[] = [
     {
       label: 'Email',
-      value: 'kenan@example.com',
-      href: 'mailto:kenan@example.com',
+      value: 'kenanfajic25@gmail.com',
+      href: 'mailto:kenanfajic25@gmail.com',
       icon: 'mail',
     },
     {
       label: 'LinkedIn',
-      value: 'linkedin.com/in/kenan',
-      href: 'https://www.linkedin.com/in/kenan',
+      value: 'linkedin.com/in/kenan-fajic',
+      href: 'https://www.linkedin.com/in/kenan-fajic?utm_source=share_via&utm_content=profile&utm_medium=member_android',
       icon: 'work',
     },
     {
       label: 'GitHub',
-      value: 'github.com/kenan',
-      href: 'https://github.com/kenan',
+      value: 'github.com/fajaaa',
+      href: 'https://github.com/fajaaa',
       icon: 'code',
     },
   ];
@@ -84,29 +69,7 @@ export class ContactComponent implements AfterViewInit, OnDestroy {
     message: ['', Validators.required],
   });
 
-  ngAfterViewInit(): void {
-    this.ngZone.runOutsideAngular(() => {
-      this.observer = new IntersectionObserver(
-        ([entry]) => {
-          if (!entry.isIntersecting) {
-            return;
-          }
-
-          this.ngZone.run(() => {
-            this.isVisible = true;
-          });
-          this.observer?.disconnect();
-        },
-        { threshold: 0.2 },
-      );
-
-      this.observer.observe(this.elementRef.nativeElement);
-    });
-  }
-
   ngOnDestroy(): void {
-    this.observer?.disconnect();
-
     if (this.sendTimeoutId) {
       clearTimeout(this.sendTimeoutId);
     }

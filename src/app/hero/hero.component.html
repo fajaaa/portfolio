@@ -12,25 +12,15 @@
       <button class="hero__cta" type="button" (click)="scrollToProjects()">View My Work</button>
     </div>
 
-    <div class="hero__visual" aria-hidden="true">
-      <div class="hero__orb"></div>
-      <svg class="hero__code-mark" viewBox="0 0 420 420" role="img">
-        <defs>
-          <linearGradient id="heroGradient" x1="72" x2="348" y1="72" y2="348" gradientUnits="userSpaceOnUse">
-            <stop stop-color="var(--color-primary)" />
-            <stop offset="1" stop-color="var(--color-accent)" />
-          </linearGradient>
-        </defs>
-        <path class="hero__ring" d="M210 36 361 123v174L210 384 59 297V123L210 36Z" />
-        <path class="hero__shape hero__shape--left" d="M169 143 99 210l70 67" />
-        <path class="hero__shape hero__shape--right" d="M251 143 321 210l-70 67" />
-        <path class="hero__shape hero__shape--slash" d="m229 124-38 172" />
-        <path class="hero__line hero__line--one" d="M152 91h116" />
-        <path class="hero__line hero__line--two" d="M130 329h160" />
-        <circle class="hero__node hero__node--one" cx="210" cy="36" r="8" />
-        <circle class="hero__node hero__node--two" cx="361" cy="123" r="8" />
-        <circle class="hero__node hero__node--three" cx="59" cy="297" r="8" />
-      </svg>
-    </div>
+    <figure class="hero__visual">
+      <img
+        class="hero__photo"
+        src="/images/kenan-hero.jpg"
+        alt="Kenan Fajic"
+        width="1066"
+        height="1600"
+        fetchpriority="high"
+      />
+    </figure>
   </div>
 </section>

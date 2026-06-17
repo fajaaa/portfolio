@@ -1,16 +1,10 @@
 import { CommonModule } from '@angular/common';
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  NgZone,
-  OnDestroy,
-  inject,
-} from '@angular/core';
-import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Component, OnDestroy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
+
+import { ScrollRevealDirective } from '../shared/scroll-reveal.directive';
 
 interface AboutStat {
   label: string;
@@ -22,25 +16,14 @@ interface AboutStat {
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatChipsModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatChipsModule, MatIconModule, ScrollRevealDirective],
   templateUrl: './about.component.html',
   styleUrl: './about.component.scss',
-  animations: [
-    trigger('fadeSlideIn', [
-      state('hidden', style({ opacity: 0, transform: 'translateY(28px)' })),
-      state('visible', style({ opacity: 1, transform: 'translateY(0)' })),
-      transition('hidden => visible', animate('650ms cubic-bezier(0.22, 1, 0.36, 1)')),
-    ]),
-  ],
 })
-export class AboutComponent implements AfterViewInit, OnDestroy {
-  private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
-  private readonly ngZone = inject(NgZone);
-  private observer: IntersectionObserver | undefined;
+export class AboutComponent implements OnDestroy {
   private frameId: number | undefined;
   private hasAnimatedStats = false;
 
-  protected isVisible = false;
   protected readonly facts = [
     'Location: Sarajevo, Bosnia and Herzegovina',
     'Availability: Freelance',
@@ -52,36 +35,13 @@ export class AboutComponent implements AfterViewInit, OnDestroy {
     { label: 'Technologies', target: 10, suffix: '+', value: 0 },
   ];
 
-  ngAfterViewInit(): void {
-    this.ngZone.runOutsideAngular(() => {
-      this.observer = new IntersectionObserver(
-        ([entry]) => {
-          if (!entry.isIntersecting) {
-            return;
-          }
-
-          this.ngZone.run(() => {
-            this.isVisible = true;
-            this.startCounters();
-          });
-          this.observer?.disconnect();
-        },
-        { threshold: 0.32 },
-      );
-
-      this.observer.observe(this.elementRef.nativeElement);
-    });
-  }
-
   ngOnDestroy(): void {
-    this.observer?.disconnect();
-
     if (this.frameId) {
       cancelAnimationFrame(this.frameId);
     }
   }
 
-  private startCounters(): void {
+  protected startCounters(): void {
     if (this.hasAnimatedStats) {
       return;
     }

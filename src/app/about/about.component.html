@@ -1,7 +1,14 @@
-<section id="about" class="about" [@fadeSlideIn]="isVisible ? 'visible' : 'hidden'">
+<section
+  id="about"
+  class="about"
+  scrollReveal
+  animationType="fade-up"
+  [threshold]="0.32"
+  (revealed)="startCounters()"
+>
   <div class="about__card">
-    <div class="about__portrait" aria-label="Profile image placeholder">
-      <span class="about__portrait-initials">KD</span>
+    <div class="about__portrait">
+      <img src="/images/kenan-avatar.jfif" alt="Kenan Fajic" width="460" height="460" loading="lazy" />
     </div>
 
     <div class="about__content">

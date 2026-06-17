@@ -1,15 +1,10 @@
 import { CommonModule } from '@angular/common';
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  NgZone,
-  OnDestroy,
-  inject,
-} from '@angular/core';
+import { Component } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
+
+import { ScrollRevealDirective } from '../shared/scroll-reveal.directive';
 
 interface Skill {
   label: string;
@@ -26,16 +21,10 @@ interface SkillCategory {
 @Component({
   selector: 'app-skills',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatTabsModule],
+  imports: [CommonModule, MatIconModule, MatTabsModule, ScrollRevealDirective],
   templateUrl: './skills.component.html',
   styleUrl: './skills.component.scss',
   animations: [
-    trigger('cardSlide', [
-      state('hiddenLeft', style({ opacity: 0, transform: 'translateX(-2.5rem)' })),
-      state('hiddenRight', style({ opacity: 0, transform: 'translateX(2.5rem)' })),
-      state('visible', style({ opacity: 1, transform: 'translateX(0)' })),
-      transition('* => visible', animate('620ms cubic-bezier(0.22, 1, 0.36, 1)')),
-    ]),
     trigger('skillBar', [
       state('hidden', style({ width: '0%' })),
       state('visible', style({ width: '{{ level }}%' }), { params: { level: 0 } }),
@@ -43,11 +32,7 @@ interface SkillCategory {
     ]),
   ],
 })
-export class SkillsComponent implements AfterViewInit, OnDestroy {
-  private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
-  private readonly ngZone = inject(NgZone);
-  private observer: IntersectionObserver | undefined;
-
+export class SkillsComponent {
   protected isVisible = false;
   protected readonly categories: SkillCategory[] = [
     {
@@ -82,35 +67,7 @@ export class SkillsComponent implements AfterViewInit, OnDestroy {
     },
   ];
 
-  ngAfterViewInit(): void {
-    this.ngZone.runOutsideAngular(() => {
-      this.observer = new IntersectionObserver(
-        ([entry]) => {
-          if (!entry.isIntersecting) {
-            return;
-          }
-
-          this.ngZone.run(() => {
-            this.isVisible = true;
-          });
-          this.observer?.disconnect();
-        },
-        { threshold: 0.22 },
-      );
-
-      this.observer.observe(this.elementRef.nativeElement);
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.observer?.disconnect();
-  }
-
-  protected cardState(index: number): string {
-    if (this.isVisible) {
-      return 'visible';
-    }
-
-    return index % 2 === 0 ? 'hiddenLeft' : 'hiddenRight';
+  protected revealSkills(): void {
+    this.isVisible = true;
   }
 }

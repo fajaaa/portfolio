@@ -4,9 +4,24 @@
     <h2>My Projects</h2>
   </div>
 
-  <div class="projects__grid" [@projectsStagger]="isVisible ? 'visible' : 'hidden'">
-    @for (project of projects; track project.title) {
-      <app-project-card class="projects__item" [project]="project" />
+  @if (projects$ | async; as projects) {
+    @if (projects.length > 0) {
+      <div class="projects__grid">
+        @for (project of projects; track project.githubUrl; let index = $index) {
+          <app-project-card
+            class="projects__item"
+            scrollReveal
+            animationType="fade-up"
+            [delay]="index * 120"
+            [threshold]="0.18"
+            [project]="project"
+          />
+        }
+      </div>
+    } @else {
+      <p class="projects__state">No public GitHub repositories found.</p>
     }
-  </div>
+  } @else {
+    <p class="projects__state">Loading GitHub projects...</p>
+  }
 </section>

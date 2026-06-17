@@ -25,8 +25,7 @@
   width: min(18rem, 72vw);
   aspect-ratio: 1;
   justify-self: center;
-  display: grid;
-  place-items: center;
+  overflow: hidden;
   border: 2px solid var(--color-accent);
   border-radius: 50%;
   background:
@@ -37,10 +36,10 @@
     0 0 3rem rgba(var(--color-accent-rgb), 0.35);
 }
 
-.about__portrait-initials {
-  color: var(--color-text-primary);
-  font-size: clamp(var(--font-size-3xl), 7vw, var(--font-size-4xl));
-  font-weight: 800;
+.about__portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .about__content {

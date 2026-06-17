@@ -271,3 +271,103 @@ li {
   background-color: var(--color-card);
   border: 1px solid var(--color-card-border);
 }
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translate3d(0, 1.75rem, 0);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal--fade-left {
+  transform: translate3d(-2rem, 0, 0);
+}
+
+.scroll-reveal--fade-right {
+  transform: translate3d(2rem, 0, 0);
+}
+
+.scroll-reveal--zoom-in {
+  transform: scale(0.94);
+}
+
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  animation-duration: 650ms;
+  animation-delay: var(--scroll-reveal-delay, 0ms);
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.scroll-reveal--fade-up.is-visible {
+  animation-name: scroll-reveal-fade-up;
+}
+
+.scroll-reveal--fade-left.is-visible {
+  animation-name: scroll-reveal-fade-left;
+}
+
+.scroll-reveal--fade-right.is-visible {
+  animation-name: scroll-reveal-fade-right;
+}
+
+.scroll-reveal--zoom-in.is-visible {
+  animation-name: scroll-reveal-zoom-in;
+}
+
+@keyframes scroll-reveal-fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1.75rem, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes scroll-reveal-fade-left {
+  from {
+    opacity: 0;
+    transform: translate3d(-2rem, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes scroll-reveal-fade-right {
+  from {
+    opacity: 0;
+    transform: translate3d(2rem, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes scroll-reveal-zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal,
+  .scroll-reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}

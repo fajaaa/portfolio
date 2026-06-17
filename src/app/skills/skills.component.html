@@ -1,12 +1,24 @@
 <section id="skills" class="skills">
-  <div class="skills__header">
+  <div
+    class="skills__header"
+    scrollReveal
+    animationType="fade-up"
+    [threshold]="0.22"
+    (revealed)="revealSkills()"
+  >
     <p class="skills__eyebrow">Technical Stack</p>
     <h2>Skills</h2>
   </div>
 
   <div class="skills__desktop" aria-label="Skill categories">
     @for (category of categories; track category.title; let index = $index) {
-      <article class="skills__card" [@cardSlide]="cardState(index)">
+      <article
+        class="skills__card"
+        scrollReveal
+        [animationType]="index % 2 === 0 ? 'fade-left' : 'fade-right'"
+        [delay]="index * 120"
+        [threshold]="0.18"
+      >
         <ng-container
           [ngTemplateOutlet]="categoryContent"
           [ngTemplateOutletContext]="{ $implicit: category }"
@@ -18,7 +30,13 @@
   <mat-tab-group class="skills__mobile" mat-stretch-tabs="false" mat-align-tabs="start">
     @for (category of categories; track category.title; let index = $index) {
       <mat-tab [label]="category.title">
-        <article class="skills__card skills__card--tab" [@cardSlide]="cardState(index)">
+        <article
+          class="skills__card skills__card--tab"
+          scrollReveal
+          animationType="fade-up"
+          [delay]="index * 120"
+          [threshold]="0.18"
+        >
           <ng-container
             [ngTemplateOutlet]="categoryContent"
             [ngTemplateOutletContext]="{ $implicit: category }"

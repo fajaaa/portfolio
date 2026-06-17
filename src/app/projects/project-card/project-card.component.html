@@ -19,9 +19,11 @@
       <a mat-icon-button [href]="project.githubUrl" target="_blank" rel="noopener" [attr.aria-label]="project.title + ' GitHub repository'">
         <mat-icon>code</mat-icon>
       </a>
-      <a mat-icon-button [href]="project.demoUrl" target="_blank" rel="noopener" [attr.aria-label]="project.title + ' live demo'">
-        <mat-icon>open_in_new</mat-icon>
-      </a>
+      @if (project.demoUrl !== project.githubUrl) {
+        <a mat-icon-button [href]="project.demoUrl" target="_blank" rel="noopener" [attr.aria-label]="project.title + ' live demo'">
+          <mat-icon>open_in_new</mat-icon>
+        </a>
+      }
     </div>
   </div>
 
