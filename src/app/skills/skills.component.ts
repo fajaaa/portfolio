@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 
@@ -9,7 +8,7 @@ import { ScrollRevealDirective } from '../shared/scroll-reveal.directive';
 interface Skill {
   label: string;
   icon: string;
-  level: number;
+  iconType?: 'material' | 'image';
 }
 
 interface SkillCategory {
@@ -24,50 +23,42 @@ interface SkillCategory {
   imports: [CommonModule, MatIconModule, MatTabsModule, ScrollRevealDirective],
   templateUrl: './skills.component.html',
   styleUrl: './skills.component.scss',
-  animations: [
-    trigger('skillBar', [
-      state('hidden', style({ width: '0%' })),
-      state('visible', style({ width: '{{ level }}%' }), { params: { level: 0 } }),
-      transition('hidden => visible', animate('850ms 180ms cubic-bezier(0.22, 1, 0.36, 1)')),
-    ]),
-  ],
 })
 export class SkillsComponent {
-  protected isVisible = false;
   protected readonly categories: SkillCategory[] = [
     {
-      title: 'Frontend',
-      summary: 'Interfaces, state, responsive layouts, and component systems.',
+      title: 'Programming & Frontend',
+      summary: 'Languages and frontend technologies for web, desktop, and mobile development.',
       skills: [
-        { label: 'Angular', icon: 'view_quilt', level: 92 },
-        { label: 'TypeScript', icon: 'data_object', level: 90 },
-        { label: 'HTML/CSS', icon: 'web', level: 95 },
-        { label: 'SCSS', icon: 'palette', level: 88 },
+        { label: 'C++', icon: 'code' },
+        { label: 'C#', icon: 'data_object' },
+        { label: 'HTML5', icon: 'html' },
+        { label: 'CSS3', icon: 'css' },
+        { label: 'JavaScript', icon: 'javascript' },
+        { label: 'TypeScript', icon: 'integration_instructions' },
+        { label: 'Angular', icon: 'view_quilt' },
+        { label: 'Dart', icon: 'flutter_dash' },
+        { label: 'Flutter', icon: 'phone_iphone' },
       ],
     },
     {
-      title: 'Backend',
-      summary: 'APIs, persistence, authentication, and service architecture.',
+      title: 'Databases',
+      summary: 'Database and backend data platforms used in projects.',
       skills: [
-        { label: 'Node.js', icon: 'hub', level: 86 },
-        { label: 'Express', icon: 'route', level: 84 },
-        { label: 'REST APIs', icon: 'api', level: 90 },
-        { label: 'SQL', icon: 'storage', level: 82 },
+        { label: 'MySQL', icon: 'storage' },
+        { label: 'Firebase', icon: 'local_fire_department' },
       ],
     },
     {
-      title: 'Tools & DevOps',
-      summary: 'Developer workflow, containers, collaboration, and delivery.',
+      title: 'Development Tools',
+      summary: 'Tools for source control, containers, and daily development.',
       skills: [
-        { label: 'Git', icon: 'account_tree', level: 90 },
-        { label: 'Docker', icon: 'deployed_code', level: 78 },
-        { label: 'VS Code', icon: 'terminal', level: 94 },
-        { label: 'Figma', icon: 'design_services', level: 74 },
+        { label: 'Git', icon: 'account_tree' },
+        { label: 'Docker', icon: 'images/docker-icon.svg', iconType: 'image' },
+        { label: 'Visual Studio', icon: 'terminal' },
+        { label: 'VS Code', icon: 'code_blocks' },
+        { label: 'WebStorm', icon: 'web_asset' },
       ],
     },
   ];
-
-  protected revealSkills(): void {
-    this.isVisible = true;
-  }
 }

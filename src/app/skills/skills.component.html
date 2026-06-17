@@ -4,7 +4,6 @@
     scrollReveal
     animationType="fade-up"
     [threshold]="0.22"
-    (revealed)="revealSkills()"
   >
     <p class="skills__eyebrow">Technical Stack</p>
     <h2>Skills</h2>
@@ -57,18 +56,13 @@
         <div class="skills__tile">
           <div class="skills__tile-top">
             <span class="skills__icon">
-              <mat-icon aria-hidden="true">{{ skill.icon }}</mat-icon>
+              @if (skill.iconType === 'image') {
+                <img class="skills__icon-image" [src]="skill.icon" alt="" aria-hidden="true" />
+              } @else {
+                <mat-icon aria-hidden="true">{{ skill.icon }}</mat-icon>
+              }
             </span>
             <span>{{ skill.label }}</span>
-            <strong>{{ skill.level }}%</strong>
-          </div>
-          <div class="skills__bar" aria-hidden="true">
-            <span
-              [@skillBar]="{
-                value: isVisible ? 'visible' : 'hidden',
-                params: { level: skill.level }
-              }"
-            ></span>
           </div>
         </div>
       }

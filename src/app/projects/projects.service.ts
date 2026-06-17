@@ -28,11 +28,21 @@ export class ProjectsService {
   private readonly http = inject(HttpClient);
   private readonly githubReposUrl = 'https://api.github.com/users/fajaaa/repos';
   private readonly excludedRepositoryNames = new Set(['portfolio']);
+  private readonly projectDescriptionOverrides = new Map<string, string>([
+    [
+      'AquaControl',
+      'A desktop application for water consumption and billing records, including customer management, monthly usage entry, automatic bill calculation, payments, debts, and reports.',
+    ],
+    [
+      'IOT-project-smart-safe',
+      'An IoT smart safe simulation with remote control, security code generation, and real-time device status monitoring.',
+    ],
+  ]);
   private readonly fallbackProjects: Project[] = [
     {
       title: 'AquaControl',
       description:
-        'Desktop aplikacija za evidenciju potrosnje i naplate vode, korisnike, racune, uplate i dugovanja.',
+        'A desktop application for water consumption and billing records, including customer management, monthly usage entry, automatic bill calculation, payments, debts, and reports.',
       techStack: ['C#'],
       githubUrl: 'https://github.com/fajaaa/AquaControl',
       demoUrl: 'https://github.com/fajaaa/AquaControl',
@@ -40,7 +50,8 @@ export class ProjectsService {
     },
     {
       title: 'IOT-project-smart-safe',
-      description: 'Jednostavna simulacija pametnog sefa razvijena kao dio fakultetskih obaveza.',
+      description:
+        'An IoT smart safe simulation with remote control, security code generation, and real-time device status monitoring.',
       techStack: ['JavaScript'],
       githubUrl: 'https://github.com/fajaaa/IOT-project-smart-safe',
       demoUrl: 'https://github.com/fajaaa/IOT-project-smart-safe',
@@ -111,7 +122,10 @@ export class ProjectsService {
 
     return {
       title: repository.name,
-      description: repository.description ?? 'Public GitHub repository from the fajaaa profile.',
+      description:
+        this.projectDescriptionOverrides.get(repository.name) ??
+        repository.description ??
+        'Public GitHub repository from the fajaaa profile.',
       techStack: this.toTechStack(repository),
       githubUrl: repository.html_url,
       demoUrl: homepage || repository.html_url,
