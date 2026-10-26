@@ -1,6 +1,7 @@
-import { Component, HostListener, signal } from '@angular/core';
+import { Component, HostListener, afterNextRender, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
+import { SmoothScrollService } from './core/smooth-scroll.service';
 import { NavbarComponent } from './navbar/navbar.component';
 
 @Component({
@@ -10,8 +11,14 @@ import { NavbarComponent } from './navbar/navbar.component';
   styleUrl: './app.scss',
 })
 export class App {
+  private readonly smoothScroll = inject(SmoothScrollService);
+
   protected readonly title = signal('portfolio');
   protected showBackToTop = false;
+
+  constructor() {
+    afterNextRender(() => this.smoothScroll.init());
+  }
 
   @HostListener('window:scroll')
   protected onWindowScroll(): void {
@@ -19,6 +26,6 @@ export class App {
   }
 
   protected scrollToTop(): void {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.smoothScroll.scrollTo(0);
   }
 }

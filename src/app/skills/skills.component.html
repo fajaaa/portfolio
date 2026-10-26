@@ -1,71 +1,23 @@
 <section id="skills" class="skills">
-  <div
-    class="skills__header"
-    scrollReveal
-    animationType="fade-up"
-    [threshold]="0.22"
-  >
+  <div class="skills__header" reveal="up">
     <p class="skills__eyebrow">Technical Stack</p>
     <h2>Skills</h2>
   </div>
 
-  <div class="skills__desktop" aria-label="Skill categories">
-    @for (category of categories; track category.title; let index = $index) {
-      <article
-        class="skills__card"
-        scrollReveal
-        [animationType]="index % 2 === 0 ? 'fade-left' : 'fade-right'"
-        [delay]="index * 120"
-        [threshold]="0.18"
-      >
-        <ng-container
-          [ngTemplateOutlet]="categoryContent"
-          [ngTemplateOutletContext]="{ $implicit: category }"
-        />
+  <div class="skills__grid" aria-label="Skill categories" reveal="up" [stagger]="120">
+    @for (category of categories; track category.title) {
+      <article class="skills__card">
+        <div class="skills__card-heading">
+          <h3>{{ category.title }}</h3>
+          <p>{{ category.summary }}</p>
+        </div>
+
+        <ul class="skills__list">
+          @for (skill of category.skills; track skill) {
+            <li class="skills__tile">{{ skill }}</li>
+          }
+        </ul>
       </article>
     }
   </div>
-
-  <mat-tab-group class="skills__mobile" mat-stretch-tabs="false" mat-align-tabs="start">
-    @for (category of categories; track category.title; let index = $index) {
-      <mat-tab [label]="category.title">
-        <article
-          class="skills__card skills__card--tab"
-          scrollReveal
-          animationType="fade-up"
-          [delay]="index * 120"
-          [threshold]="0.18"
-        >
-          <ng-container
-            [ngTemplateOutlet]="categoryContent"
-            [ngTemplateOutletContext]="{ $implicit: category }"
-          />
-        </article>
-      </mat-tab>
-    }
-  </mat-tab-group>
-
-  <ng-template #categoryContent let-category>
-    <div class="skills__card-heading">
-      <h3>{{ category.title }}</h3>
-      <p>{{ category.summary }}</p>
-    </div>
-
-    <div class="skills__list">
-      @for (skill of category.skills; track skill.label) {
-        <div class="skills__tile">
-          <div class="skills__tile-top">
-            <span class="skills__icon">
-              @if (skill.iconType === 'image') {
-                <img class="skills__icon-image" [src]="skill.icon" alt="" aria-hidden="true" />
-              } @else {
-                <mat-icon aria-hidden="true">{{ skill.icon }}</mat-icon>
-              }
-            </span>
-            <span>{{ skill.label }}</span>
-          </div>
-        </div>
-      }
-    </div>
-  </ng-template>
 </section>

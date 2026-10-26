@@ -1,20 +1,21 @@
+import { ViewportScroller } from '@angular/common';
 import {
   ApplicationConfig,
-  importProvidersFrom,
+  inject,
+  provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
 } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 
 import { routes } from './app.routes';
+import { HUD_OFFSET } from './core/smooth-scroll.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(),
-    importProvidersFrom(BrowserAnimationsModule),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
       routes,
@@ -23,5 +24,7 @@ export const appConfig: ApplicationConfig = {
         scrollPositionRestoration: 'enabled',
       }),
     ),
+    // Keeps router anchor jumps (deep links, links from other routes) clear of the fixed HUD.
+    provideAppInitializer(() => inject(ViewportScroller).setOffset([0, HUD_OFFSET])),
   ],
 };

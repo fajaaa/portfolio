@@ -1,10 +1,9 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnDestroy } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
+import { Component, OnDestroy, inject } from '@angular/core';
 
-import { ScrollRevealDirective } from '../shared/scroll-reveal.directive';
+import { MotionService } from '../core/motion.service';
+import { RevealDirective } from '../shared/reveal.directive';
+import { PixelButtonComponent } from '../ui/pixel-button/pixel-button.component';
+import { PixelTagComponent } from '../ui/pixel-tag/pixel-tag.component';
 
 interface AboutStat {
   label: string;
@@ -16,11 +15,12 @@ interface AboutStat {
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatChipsModule, MatIconModule, ScrollRevealDirective],
+  imports: [PixelButtonComponent, PixelTagComponent, RevealDirective],
   templateUrl: './about.component.html',
   styleUrl: './about.component.scss',
 })
 export class AboutComponent implements OnDestroy {
+  private readonly motion = inject(MotionService);
   private frameId: number | undefined;
   private hasAnimatedStats = false;
 
@@ -47,6 +47,14 @@ export class AboutComponent implements OnDestroy {
     }
 
     this.hasAnimatedStats = true;
+
+    if (this.motion.reducedMotion()) {
+      for (const stat of this.stats) {
+        stat.value = stat.target;
+      }
+      return;
+    }
+
     const duration = 1200;
     const startedAt = performance.now();
 

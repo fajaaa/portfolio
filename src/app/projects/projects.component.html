@@ -6,16 +6,9 @@
 
   @if (projects$ | async; as projects) {
     @if (projects.length > 0) {
-      <div class="projects__grid">
-        @for (project of projects; track project.githubUrl; let index = $index) {
-          <app-project-card
-            class="projects__item"
-            scrollReveal
-            animationType="fade-up"
-            [delay]="index * 120"
-            [threshold]="0.18"
-            [project]="project"
-          />
+      <div class="projects__grid" reveal="up" [stagger]="120">
+        @for (project of projects; track project.githubUrl) {
+          <app-project-card class="projects__item" [project]="project" />
         }
       </div>
     } @else {

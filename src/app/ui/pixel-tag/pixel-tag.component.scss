@@ -1,0 +1,32 @@
+@use '../pixel' as *;
+
+:host {
+  --tag-bg: var(--paper);
+  --tag-fg: var(--ink);
+  --tag-border: var(--ink);
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  // Keeps neighbours clear of the outside border.
+  margin: var(--px);
+  padding: var(--space-1) var(--space-2);
+  background: var(--tag-bg);
+  color: var(--tag-fg);
+  font-family: var(--font-display);
+  font-size: 0.625rem;
+  line-height: 1.5;
+  max-width: calc(100% - var(--px) * 2);
+  overflow-wrap: anywhere;
+  box-shadow: pixel-border(var(--tag-border));
+}
+
+:host(.pixel-tag--ink) {
+  --tag-bg: var(--ink);
+  --tag-fg: var(--paper);
+  --tag-border: var(--paper);
+}
+
+:host(.pixel-tag--coin) {
+  --tag-bg: var(--coin);
+}

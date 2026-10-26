@@ -1,62 +1,45 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { ScrollRevealDirective } from '../shared/scroll-reveal.directive';
+import { RevealDirective } from '../shared/reveal.directive';
+import { PixelButtonComponent } from '../ui/pixel-button/pixel-button.component';
 
 interface ContactLink {
   label: string;
   value: string;
   href: string;
-  icon: string;
 }
 
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatSnackBarModule,
-    ScrollRevealDirective,
-  ],
+  imports: [ReactiveFormsModule, PixelButtonComponent, RevealDirective],
   templateUrl: './contact.component.html',
   styleUrl: './contact.component.scss',
 })
 export class ContactComponent {
   private readonly contactEmail = 'kenanfajic25@gmail.com';
   private readonly formBuilder = inject(FormBuilder);
-  private readonly snackBar = inject(MatSnackBar);
 
   protected readonly contactLinks: ContactLink[] = [
     {
       label: 'Email',
       value: this.contactEmail,
       href: `mailto:${this.contactEmail}`,
-      icon: 'mail',
     },
     {
       label: 'LinkedIn',
       value: 'linkedin.com/in/kenan-fajic',
       href: 'https://www.linkedin.com/in/kenan-fajic?utm_source=share_via&utm_content=profile&utm_medium=member_android',
-      icon: 'work',
     },
     {
       label: 'GitHub',
       value: 'github.com/fajaaa',
       href: 'https://github.com/fajaaa',
-      icon: 'code',
     },
   ];
+
+  protected readonly statusMessage = signal('');
 
   protected readonly contactForm = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
@@ -92,9 +75,6 @@ export class ContactComponent {
     const mailtoUrl = `mailto:${this.contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
     window.location.href = mailtoUrl;
-    this.snackBar.open('Email draft opened. Send it from your email app.', 'Close', {
-      duration: 4500,
-      panelClass: 'contact__snackbar',
-    });
+    this.statusMessage.set('Email draft opened. Send it from your email app.');
   }
 }

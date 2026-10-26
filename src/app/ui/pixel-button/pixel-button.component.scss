@@ -1,0 +1,83 @@
+@use '../pixel' as *;
+
+:host {
+  --button-bg: var(--coin);
+  --button-fg: var(--ink);
+  --button-border: var(--ink);
+  --button-drop: 0 calc(var(--px) * 2) 0 0 var(--ink);
+  --button-drop-hover: 0 calc(var(--px) * 3) 0 0 var(--ink);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  margin: var(--px) var(--px) calc(var(--px) * 3);
+  padding: var(--space-2) var(--space-4);
+  border: 0;
+  background: var(--button-bg);
+  color: var(--button-fg);
+  font-family: var(--font-display);
+  font-size: var(--font-size-label);
+  line-height: 1.4;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: pixel-border(var(--button-border)), var(--button-drop);
+  transition:
+    transform var(--duration-fast) steps(2, end),
+    box-shadow var(--duration-fast) steps(2, end),
+    background-color var(--duration-fast) steps(2, end);
+}
+
+:host(.pixel-button--secondary) {
+  --button-bg: var(--paper);
+}
+
+:host(.pixel-button--ghost) {
+  --button-bg: transparent;
+  --button-fg: inherit;
+  --button-border: currentColor;
+  --button-drop: 0 0 0 0 transparent;
+  --button-drop-hover: 0 0 0 0 transparent;
+}
+
+:host(:hover) {
+  color: var(--button-fg);
+  transform: translateY(calc(var(--px) * -1));
+  box-shadow: pixel-border(var(--button-border)), var(--button-drop-hover);
+}
+
+:host(.pixel-button--ghost:hover) {
+  background: color-mix(in srgb, currentColor 15%, transparent);
+}
+
+:host(:active) {
+  transform: translateY(var(--px));
+  box-shadow: pixel-border(var(--button-border));
+}
+
+:host(:focus-visible) {
+  outline-offset: calc(var(--px) * 2);
+}
+
+:host([disabled]),
+:host([aria-disabled='true']) {
+  cursor: not-allowed;
+  opacity: 0.55;
+  filter: grayscale(1);
+  transform: none;
+  box-shadow: pixel-border(var(--button-border));
+}
+
+:host([aria-disabled='true']) {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    transition: none;
+  }
+}

@@ -1,0 +1,100 @@
+<div class="styleguide">
+  <app-pixel-panel variant="dark" raised>
+    <h1>Styleguide</h1>
+    <p class="styleguide__note">
+      Dev only. Reduced motion: {{ reducedMotion() ? 'ON' : 'OFF' }} · Typewriters finished:
+      {{ typedCount() }}
+    </p>
+
+    <div class="styleguide__fonts">
+      <p class="styleguide__font styleguide__font--display">Press Start 2P {{ diacritics }}</p>
+      <p class="styleguide__font styleguide__font--body">Pixelify Sans {{ diacritics }}</p>
+      <p class="styleguide__font styleguide__font--mono">VT323 {{ diacritics }} 0123456789</p>
+    </div>
+
+    <h2>Heading 2 · Vještine</h2>
+    <h3>Heading 3 · Preuzmi CV</h3>
+    <h4>Heading 4 · Kontakt</h4>
+
+    <div class="styleguide__row">
+      <button pixelButton type="button" (click)="replay.set(replay() + 1)">Replay text</button>
+      <button pixelButton="secondary" type="button" (click)="randomizeBars()">Random bars</button>
+    </div>
+  </app-pixel-panel>
+
+  @for (world of worlds; track world.id) {
+    <section class="styleguide__world" [style.background]="world.background">
+      <app-pixel-tag variant="coin">WORLD {{ world.id }} · {{ world.name }}</app-pixel-tag>
+
+      <div class="styleguide__grid">
+        <app-pixel-panel>Paper panel</app-pixel-panel>
+        <app-pixel-panel raised>Paper raised</app-pixel-panel>
+        <app-pixel-panel variant="dark">Dark panel</app-pixel-panel>
+        <app-pixel-panel variant="dark" raised>Dark raised</app-pixel-panel>
+      </div>
+
+      <div class="styleguide__row">
+        <button pixelButton type="button">Primary</button>
+        <button pixelButton="secondary" type="button">Secondary</button>
+        <button pixelButton="ghost" type="button">Ghost</button>
+        <button pixelButton type="button" disabled>Disabled</button>
+        <a pixelButton href="#" (click)="$event.preventDefault()">Link</a>
+        <a pixelButton="secondary" href="#" disabled>Link disabled</a>
+      </div>
+
+      <app-pixel-panel>
+        <div class="styleguide__row">
+          <button pixelButton="ghost" type="button">Ghost on paper</button>
+          <app-pixel-tag>Paper tag</app-pixel-tag>
+          <app-pixel-tag variant="ink">Ink tag</app-pixel-tag>
+          <app-pixel-tag variant="coin">Coin tag</app-pixel-tag>
+        </div>
+      </app-pixel-panel>
+
+      <div class="styleguide__row">
+        <app-pixel-tag>Paper</app-pixel-tag>
+        <app-pixel-tag variant="ink">Ink</app-pixel-tag>
+        <app-pixel-tag variant="coin">Coin</app-pixel-tag>
+      </div>
+
+      <div class="styleguide__bars">
+        <app-pixel-progress [value]="bars()[0]" label="XP" />
+        <app-pixel-progress [value]="bars()[1]" color="var(--hp)" [segments]="5" label="HP" />
+        <app-pixel-progress [value]="bars()[2]" color="var(--coin)" [segments]="16" label="Coins" />
+      </div>
+
+      @for (run of [replay()]; track run) {
+        <div class="styleguide__grid">
+          <app-dialog-box
+            speaker="Kenan"
+            [text]="dialogText"
+            typewriter
+            startWhenVisible
+            (done)="typedCount.set(typedCount() + 1)"
+          />
+          <app-dialog-box text="Plain dialog box without a speaker or typewriter.">
+            <div class="styleguide__row">
+              <button pixelButton type="button">Yes</button>
+              <button pixelButton="secondary" type="button">No</button>
+            </div>
+          </app-dialog-box>
+        </div>
+      }
+    </section>
+  }
+
+  <section class="styleguide__world" [style.background]="'var(--w15-bg)'">
+    <app-pixel-tag variant="coin">Reveal</app-pixel-tag>
+    <div class="styleguide__grid">
+      <app-pixel-panel reveal="up">reveal="up"</app-pixel-panel>
+      <app-pixel-panel reveal="pop" [delay]="150">reveal="pop"</app-pixel-panel>
+      <app-pixel-panel reveal="pixel" [delay]="300">reveal="pixel"</app-pixel-panel>
+    </div>
+    <div class="styleguide__row" reveal="pop" [stagger]="100">
+      <app-pixel-tag>Stagger</app-pixel-tag>
+      <app-pixel-tag variant="ink">children</app-pixel-tag>
+      <app-pixel-tag variant="coin">one</app-pixel-tag>
+      <app-pixel-tag>by one</app-pixel-tag>
+    </div>
+  </section>
+</div>

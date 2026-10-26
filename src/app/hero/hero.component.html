@@ -5,11 +5,13 @@
     <div class="hero__copy">
       <p class="hero__greeting">Hello, I am</p>
       <h1 class="hero__name">Kenan Fajic</h1>
-      <p class="hero__subtitle" [@subtitleType]="displayedSubtitle">
+      <p class="hero__subtitle">
         <span>{{ displayedSubtitle }}</span>
         <span class="hero__cursor" aria-hidden="true"></span>
       </p>
-      <button class="hero__cta" type="button" (click)="scrollToProjects()">View My Work</button>
+      <button pixelButton class="hero__cta" type="button" (click)="scrollToProjects()">
+        View My Work
+      </button>
     </div>
 
     <figure class="hero__visual">

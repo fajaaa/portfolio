@@ -7,10 +7,18 @@
   height: 100%;
   overflow: hidden;
   border: 1px solid var(--color-card-border);
-  border-radius: var(--radius-lg);
   background: var(--color-card);
   box-shadow: var(--shadow-card);
   transform-origin: center;
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.project-card:hover,
+.project-card:focus-within {
+  transform: translateY(calc(var(--px) * -1));
+  box-shadow: calc(var(--px) * 3) calc(var(--px) * 3) 0 0 var(--ink);
 }
 
 .project-card__thumbnail {
@@ -34,13 +42,9 @@
     linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.24), rgba(var(--color-accent-rgb), 0.18)),
     radial-gradient(circle at 70% 25%, rgba(var(--color-accent-rgb), 0.28), transparent 40%),
     var(--color-background-elevated);
-}
-
-.project-card__placeholder mat-icon {
-  width: 4rem;
-  height: 4rem;
   color: var(--color-text-primary);
-  font-size: 4rem;
+  font-family: var(--font-display);
+  font-size: 2rem;
 }
 
 .project-card__overlay {
@@ -51,11 +55,19 @@
   justify-content: center;
   gap: var(--space-3);
   background: var(--color-overlay);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(var(--space-3));
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
 }
 
-.project-card__overlay a {
-  color: var(--color-text-primary);
-  background: rgba(var(--color-primary-rgb), 0.28);
+.project-card:hover .project-card__overlay,
+.project-card:focus-within .project-card__overlay {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
 }
 
 .project-card__body {
@@ -75,12 +87,17 @@
 .project-card__stack {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.project-card__stack mat-chip {
-  --mdc-chip-elevated-container-color: var(--color-background-elevated);
-  --mdc-chip-label-text-color: var(--color-text-primary);
+@media (prefers-reduced-motion: reduce) {
+  .project-card,
+  .project-card__overlay {
+    transition: none;
+  }
 }
 
 @media (hover: none) {
@@ -89,9 +106,9 @@
     justify-content: flex-end;
     padding: var(--space-3);
     background: linear-gradient(180deg, transparent 35%, var(--color-overlay));
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    transform: none !important;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
   }
 }
 
@@ -107,11 +124,5 @@
 
   .project-card__body p {
     min-height: 0;
-  }
-
-  .project-card__placeholder mat-icon {
-    width: 3rem;
-    height: 3rem;
-    font-size: 3rem;
   }
 }

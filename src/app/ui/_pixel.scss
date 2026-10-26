@@ -1,0 +1,13 @@
+// Shared pixel-art helpers for the UI primitives.
+
+// Four offset copies of the box draw a border just outside it with notched (stepped) corners.
+// Leave `$width` of free space around the element (padding on a wrapper or margin).
+// Extra shadows (drop shadows) go after it so the border stays on top.
+@function pixel-border($color: var(--ink), $width: var(--px)) {
+  @return (
+    0 calc(#{$width} * -1) 0 0 $color,
+    0 $width 0 0 $color,
+    calc(#{$width} * -1) 0 0 0 $color,
+    $width 0 0 0 $color
+  );
+}

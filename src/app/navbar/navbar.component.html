@@ -33,7 +33,12 @@
 </nav>
 
 @if (isMenuOpen) {
-  <div id="mobile-navigation" class="navbar__mobile" @mobileMenu>
+  <div
+    id="mobile-navigation"
+    class="navbar__mobile"
+    animate.enter="navbar__mobile--enter"
+    animate.leave="navbar__mobile--leave"
+  >
     @for (item of navItems; track item.fragment) {
       <a
         class="navbar__mobile-link"

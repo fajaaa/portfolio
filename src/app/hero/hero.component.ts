@@ -1,23 +1,17 @@
-import { CommonModule } from '@angular/common';
-import { Component, HostBinding, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { animate, style, transition, trigger } from '@angular/animations';
+import { Component, HostBinding, HostListener, OnDestroy, OnInit, inject } from '@angular/core';
+
+import { HUD_OFFSET, SmoothScrollService } from '../core/smooth-scroll.service';
+import { PixelButtonComponent } from '../ui/pixel-button/pixel-button.component';
 
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule],
+  imports: [PixelButtonComponent],
   templateUrl: './hero.component.html',
   styleUrl: './hero.component.scss',
-  animations: [
-    trigger('subtitleType', [
-      transition('* => *', [
-        style({ opacity: 0.55 }),
-        animate('120ms ease-out', style({ opacity: 1 })),
-      ]),
-    ]),
-  ],
 })
 export class HeroComponent implements OnInit, OnDestroy {
+  private readonly smoothScroll = inject(SmoothScrollService);
   private readonly subtitles = ['Full-Stack Developer', 'Angular Enthusiast', 'Problem Solver'];
   private readonly typingSpeed = 70;
   private readonly deletingSpeed = 38;
@@ -63,7 +57,7 @@ export class HeroComponent implements OnInit, OnDestroy {
   }
 
   protected scrollToProjects(): void {
-    document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    this.smoothScroll.scrollTo('#projects', { offset: -HUD_OFFSET });
   }
 
   private typeNextCharacter(): void {

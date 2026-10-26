@@ -1,4 +1,4 @@
-import { ViewportScroller } from '@angular/common';
+import { Location } from '@angular/common';
 import {
   Component,
   DestroyRef,
@@ -9,9 +9,10 @@ import {
   inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { animate, style, transition, trigger } from '@angular/animations';
 import { filter } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
+
+import { HUD_OFFSET, SmoothScrollService } from '../core/smooth-scroll.service';
 
 type SectionId = 'home' | 'about' | 'projects' | 'skills' | 'contact';
 
@@ -25,29 +26,13 @@ interface NavItem {
   standalone: true,
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
-  animations: [
-    trigger('mobileMenu', [
-      transition(':enter', [
-        style({ height: 0, opacity: 0, transform: 'translateY(-0.5rem)' }),
-        animate(
-          '190ms cubic-bezier(0.22, 1, 0.36, 1)',
-          style({ height: '*', opacity: 1, transform: 'translateY(0)' }),
-        ),
-      ]),
-      transition(':leave', [
-        animate(
-          '150ms ease-in',
-          style({ height: 0, opacity: 0, transform: 'translateY(-0.5rem)' }),
-        ),
-      ]),
-    ]),
-  ],
 })
 export class NavbarComponent implements OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
   private readonly ngZone = inject(NgZone);
   private readonly router = inject(Router);
-  private readonly viewportScroller = inject(ViewportScroller);
+  private readonly location = inject(Location);
+  private readonly smoothScroll = inject(SmoothScrollService);
   private readonly hideAfter = 96;
   private lastScrollY = 0;
   private observer: IntersectionObserver | undefined;
@@ -69,8 +54,6 @@ export class NavbarComponent implements OnDestroy {
   protected isHidden = false;
 
   constructor() {
-    this.viewportScroller.setOffset([0, 84]);
-
     this.router.events
       .pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -125,9 +108,14 @@ export class NavbarComponent implements OnDestroy {
     this.isHidden = false;
     this.activeSection = fragment;
 
-    this.router.navigate(['/'], { fragment }).then(() => {
-      requestAnimationFrame(() => this.viewportScroller.scrollToAnchor(fragment));
-    });
+    // Coming from another route (e.g. 404): let the router load the page and jump to the anchor.
+    if (this.router.url.split('#')[0] !== '/') {
+      this.router.navigate(['/'], { fragment });
+      return;
+    }
+
+    this.smoothScroll.scrollTo(`#${fragment}`, { offset: -HUD_OFFSET });
+    this.location.replaceState(this.hrefFor(fragment));
   }
 
   protected hrefFor(fragment: SectionId): string {

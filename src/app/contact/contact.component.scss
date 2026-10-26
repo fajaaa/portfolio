@@ -50,12 +50,10 @@
 .contact__tile {
   min-height: 5.5rem;
   display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: var(--space-4);
+  align-content: center;
+  gap: var(--space-1);
   padding: var(--space-5);
   border: 1px solid var(--color-card-border);
-  border-radius: var(--radius-lg);
   background: var(--color-card);
   color: var(--color-text-primary);
   text-decoration: none;
@@ -72,27 +70,11 @@
   background: var(--color-background-elevated);
 }
 
-.contact__icon {
-  width: 3rem;
-  height: 3rem;
-  display: grid;
-  place-items: center;
-  border-radius: var(--radius-md);
-  background: rgba(var(--color-primary-rgb), 0.16);
-  color: var(--color-accent);
-}
-
-.contact__tile strong,
-.contact__tile span span {
-  display: block;
-}
-
 .contact__tile strong {
-  margin-bottom: var(--space-1);
   font-size: var(--font-size-md);
 }
 
-.contact__tile span span {
+.contact__tile span {
   overflow-wrap: anywhere;
   color: var(--color-text-secondary);
   font-size: var(--font-size-sm);
@@ -101,30 +83,53 @@
 .contact__form {
   padding: var(--space-6);
   border: 1px solid var(--color-card-border);
-  border-radius: var(--radius-lg);
   background: var(--color-card);
   box-shadow: var(--shadow-card);
 }
 
-.contact__form mat-form-field {
-  width: 100%;
+.contact__field {
+  display: grid;
+  gap: var(--space-1);
 }
 
-.contact__form textarea {
+.contact__field label {
+  color: var(--color-text-primary);
+  font-family: var(--font-display);
+  font-size: var(--font-size-label);
+}
+
+.contact__field input,
+.contact__field textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  border: var(--px) solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.contact__field textarea {
   resize: vertical;
 }
 
-.contact__submit {
-  width: 100%;
-  min-height: 3.25rem;
-  border-radius: var(--radius-md);
-  font-weight: var(--font-weight-bold);
+.contact__field [aria-invalid='true'] {
+  border-color: var(--hp);
 }
 
-.contact__submit mat-icon {
-  display: inline-block;
-  margin-right: var(--space-2);
-  vertical-align: middle;
+.contact__error {
+  min-height: 1.5em;
+  color: var(--coin);
+  font-size: var(--font-size-sm);
+}
+
+.contact__submit {
+  // Leaves room for the button's outside pixel border.
+  width: calc(100% - var(--px) * 2);
+}
+
+.contact__status {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
 }
 
 @media (max-width: 900px) {
@@ -149,11 +154,5 @@
 
   .contact__tile {
     min-height: 4.75rem;
-    gap: var(--space-3);
-  }
-
-  .contact__icon {
-    width: 2.5rem;
-    height: 2.5rem;
   }
 }

@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 
-import { ScrollRevealDirective } from '../shared/scroll-reveal.directive';
+import { RevealDirective } from '../shared/reveal.directive';
 import { ProjectCardComponent } from './project-card/project-card.component';
 import { Project, ProjectsService } from './projects.service';
 
 @Component({
   selector: 'app-projects',
   standalone: true,
-  imports: [CommonModule, ProjectCardComponent, ScrollRevealDirective],
+  imports: [CommonModule, ProjectCardComponent, RevealDirective],
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.scss',
 })

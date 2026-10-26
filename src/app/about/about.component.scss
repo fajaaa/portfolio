@@ -16,7 +16,6 @@
   gap: clamp(var(--space-8), 7vw, var(--space-16));
   padding: clamp(var(--space-6), 5vw, var(--space-12));
   border: 1px solid var(--color-card-border);
-  border-radius: 16px;
   background: var(--color-card);
   box-shadow: var(--shadow-card);
 }
@@ -27,7 +26,6 @@
   justify-self: center;
   overflow: hidden;
   border: 2px solid var(--color-accent);
-  border-radius: 50%;
   background:
     radial-gradient(circle at 35% 25%, rgba(var(--color-accent-rgb), 0.22), transparent 42%),
     linear-gradient(135deg, var(--color-background-elevated), var(--color-card));
@@ -60,46 +58,13 @@
 }
 
 .about__facts {
-  display: block;
-}
-
-:host ::ng-deep .about__facts .mdc-evolution-chip-set__chips {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--space-2);
-  max-width: 100%;
-}
-
-.about__facts mat-chip {
-  --mdc-chip-elevated-container-color: var(--color-background-elevated);
-  --mdc-chip-label-text-color: var(--color-text-primary);
-  cursor: default;
-  transition:
-    border-color 180ms ease,
-    background-color 180ms ease,
-    color 180ms ease;
-}
-
-.about__facts mat-chip:hover {
-  --mdc-chip-elevated-container-color: var(--color-card-border);
-  --mdc-chip-label-text-color: var(--color-text-primary);
-}
-
-:host ::ng-deep .about__facts .mdc-evolution-chip {
-  max-width: 100%;
-  height: auto;
-  min-height: 2rem;
-}
-
-:host ::ng-deep .about__facts .mdc-evolution-chip__action--primary {
-  height: auto;
-  min-height: 2rem;
-}
-
-:host ::ng-deep .about__facts .mdc-evolution-chip__text-label {
-  white-space: normal;
-  overflow-wrap: anywhere;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .about__stats {
@@ -115,7 +80,6 @@
   gap: var(--space-1);
   padding: var(--space-4);
   border: 1px solid var(--color-card-border);
-  border-radius: var(--radius-lg);
   background: var(--color-background-elevated);
 }
 
@@ -131,13 +95,6 @@
 
 .about__cv {
   justify-self: start;
-  min-height: 3rem;
-  border-color: var(--color-accent);
-  color: var(--color-text-primary);
-}
-
-.about__cv mat-icon {
-  margin-right: var(--space-2);
 }
 
 @media (max-width: 820px) {
@@ -159,7 +116,6 @@
   .about__card {
     gap: var(--space-6);
     padding: var(--space-5);
-    border-radius: var(--radius-lg);
   }
 
   .about__portrait {
@@ -180,7 +136,7 @@
   }
 
   .about__cv {
-    width: 100%;
-    justify-content: center;
+    // Leaves room for the button's outside pixel border.
+    width: calc(100% - var(--px) * 2);
   }
 }
