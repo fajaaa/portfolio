@@ -3,7 +3,7 @@
     <div class="about__portrait">
       <img
         src="images/kenan-avatar.jfif"
-        alt="Kenan Fajic"
+        [alt]="'about.portraitAlt' | t"
         width="460"
         height="460"
         loading="lazy"
@@ -11,29 +11,28 @@
     </div>
 
     <div class="about__content">
-      <p class="about__eyebrow">About Me</p>
-      <h2>Software Engineering student learning by building real projects.</h2>
-      <p class="about__bio">
-        I am a final-year Software Engineering student at FIT Mostar. I enjoy building useful
-        applications, learning new technologies, and improving my skills through practical projects.
-      </p>
+      <p class="about__eyebrow">{{ 'about.eyebrow' | t }}</p>
+      <h2>{{ 'about.heading' | t }}</h2>
+      <p class="about__bio">{{ 'about.bio' | t }}</p>
 
-      <ul class="about__facts" aria-label="Key facts">
+      <ul class="about__facts" [attr.aria-label]="'about.factsLabel' | t">
         @for (fact of facts; track fact) {
-          <li><app-pixel-tag>{{ fact }}</app-pixel-tag></li>
+          <li><app-pixel-tag>{{ fact | t }}</app-pixel-tag></li>
         }
       </ul>
 
-      <div class="about__stats" aria-label="Portfolio statistics">
-        @for (stat of stats; track stat.label) {
+      <div class="about__stats" [attr.aria-label]="'about.statsLabel' | t">
+        @for (stat of stats; track stat.labelKey) {
           <div class="about__stat">
             <strong>{{ stat.value }}{{ stat.suffix }}</strong>
-            <span>{{ stat.label }}</span>
+            <span>{{ stat.labelKey | t }}</span>
           </div>
         }
       </div>
 
-      <a pixelButton="secondary" class="about__cv" href="Kenan-CV.pdf" download>Download CV</a>
+      <a pixelButton="secondary" class="about__cv" href="Kenan-CV.pdf" download>
+        {{ 'about.cv' | t }}
+      </a>
     </div>
   </div>
 </section>

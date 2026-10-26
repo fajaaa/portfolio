@@ -22,13 +22,13 @@
   min-height: 4.5rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: var(--space-6);
   margin-inline: auto;
   padding: 0 var(--space-6);
 }
 
 .navbar__brand {
+  margin-right: auto;
   color: var(--color-text-primary);
   font-size: var(--font-size-lg);
   font-weight: 800;
@@ -80,6 +80,33 @@
 .navbar__mobile-link:hover::after,
 .navbar__mobile-link--active::after {
   transform: scaleX(1);
+}
+
+.navbar__lang {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-display);
+  font-size: var(--font-size-label);
+}
+
+.navbar__lang-button {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text-secondary);
+  font: inherit;
+  cursor: pointer;
+}
+
+.navbar__lang-button:hover,
+.navbar__lang-button--active {
+  color: var(--coin);
+}
+
+.navbar__lang-divider {
+  color: var(--color-text-secondary);
 }
 
 .navbar__toggle {

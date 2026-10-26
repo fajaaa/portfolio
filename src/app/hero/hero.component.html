@@ -3,14 +3,14 @@
 
   <div class="hero__content">
     <div class="hero__copy">
-      <p class="hero__greeting">Hello, I am</p>
+      <p class="hero__greeting">{{ 'hero.greeting' | t }}</p>
       <h1 class="hero__name">Kenan Fajic</h1>
       <p class="hero__subtitle">
-        <span>{{ displayedSubtitle }}</span>
+        <span>{{ displayedSubtitle() }}</span>
         <span class="hero__cursor" aria-hidden="true"></span>
       </p>
       <button pixelButton class="hero__cta" type="button" (click)="scrollToProjects()">
-        View My Work
+        {{ 'hero.cta' | t }}
       </button>
     </div>
 
@@ -18,7 +18,7 @@
       <img
         class="hero__photo"
         src="images/kenan-hero.jpg"
-        alt="Kenan Fajic"
+        [alt]="'hero.photoAlt' | t"
         width="1066"
         height="1600"
         fetchpriority="high"

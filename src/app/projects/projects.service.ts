@@ -2,8 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { catchError, EMPTY, expand, map, Observable, of, reduce, shareReplay } from 'rxjs';
 
+import { I18nKey } from '../i18n/i18n.types';
+
 export interface Project {
   title: string;
+  /** Translated description that replaces the GitHub one. */
+  descriptionKey?: I18nKey;
+  /** GitHub description, untranslated; empty when the repository has none. */
   description: string;
   techStack: string[];
   githubUrl: string;
@@ -28,21 +33,15 @@ export class ProjectsService {
   private readonly http = inject(HttpClient);
   private readonly githubReposUrl = 'https://api.github.com/users/fajaaa/repos';
   private readonly excludedRepositoryNames = new Set(['portfolio']);
-  private readonly projectDescriptionOverrides = new Map<string, string>([
-    [
-      'AquaControl',
-      'A desktop application for water consumption and billing records, including customer management, monthly usage entry, automatic bill calculation, payments, debts, and reports.',
-    ],
-    [
-      'IOT-project-smart-safe',
-      'An IoT smart safe simulation with remote control, security code generation, and real-time device status monitoring.',
-    ],
+  private readonly projectDescriptionOverrides = new Map<string, I18nKey>([
+    ['AquaControl', 'projects.descriptions.aquaControl'],
+    ['IOT-project-smart-safe', 'projects.descriptions.smartSafe'],
   ]);
   private readonly fallbackProjects: Project[] = [
     {
       title: 'AquaControl',
-      description:
-        'A desktop application for water consumption and billing records, including customer management, monthly usage entry, automatic bill calculation, payments, debts, and reports.',
+      descriptionKey: 'projects.descriptions.aquaControl',
+      description: '',
       techStack: ['C#'],
       githubUrl: 'https://github.com/fajaaa/AquaControl',
       demoUrl: 'https://github.com/fajaaa/AquaControl',
@@ -50,8 +49,8 @@ export class ProjectsService {
     },
     {
       title: 'IOT-project-smart-safe',
-      description:
-        'An IoT smart safe simulation with remote control, security code generation, and real-time device status monitoring.',
+      descriptionKey: 'projects.descriptions.smartSafe',
+      description: '',
       techStack: ['JavaScript'],
       githubUrl: 'https://github.com/fajaaa/IOT-project-smart-safe',
       demoUrl: 'https://github.com/fajaaa/IOT-project-smart-safe',
@@ -122,10 +121,8 @@ export class ProjectsService {
 
     return {
       title: repository.name,
-      description:
-        this.projectDescriptionOverrides.get(repository.name) ??
-        repository.description ??
-        'Public GitHub repository from the fajaaa profile.',
+      descriptionKey: this.projectDescriptionOverrides.get(repository.name),
+      description: repository.description?.trim() ?? '',
       techStack: this.toTechStack(repository),
       githubUrl: repository.html_url,
       demoUrl: homepage || repository.html_url,

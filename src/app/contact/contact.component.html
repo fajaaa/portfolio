@@ -1,17 +1,15 @@
 <section id="contact" class="contact" reveal="up">
   <div class="contact__header">
-    <p class="contact__eyebrow">Contact</p>
-    <h2>Get In Touch</h2>
-    <p class="contact__subtitle">
-      Have a project, role, or idea in mind? Send a note and I will get back to you soon.
-    </p>
+    <p class="contact__eyebrow">{{ 'contact.eyebrow' | t }}</p>
+    <h2>{{ 'contact.heading' | t }}</h2>
+    <p class="contact__subtitle">{{ 'contact.subtitle' | t }}</p>
   </div>
 
   <div class="contact__layout">
-    <div class="contact__info" aria-label="Contact links">
-      @for (link of contactLinks; track link.label) {
+    <div class="contact__info" [attr.aria-label]="'contact.linksLabel' | t">
+      @for (link of contactLinks; track link.labelKey) {
         <a class="contact__tile" [href]="link.href" target="_blank" rel="noopener noreferrer">
-          <strong>{{ link.label }}</strong>
+          <strong>{{ link.labelKey | t }}</strong>
           <span>{{ link.value }}</span>
         </a>
       }
@@ -19,7 +17,7 @@
 
     <form class="contact__form" [formGroup]="contactForm" (ngSubmit)="submit()" novalidate>
       <div class="contact__field">
-        <label for="contact-name">Name</label>
+        <label for="contact-name">{{ 'contact.fields.name' | t }}</label>
         <input
           id="contact-name"
           formControlName="name"
@@ -29,13 +27,13 @@
         />
         <p id="contact-name-error" class="contact__error">
           @if (name.hasError('required') && name.touched) {
-            Name is required.
+            {{ 'contact.errors.nameRequired' | t }}
           }
         </p>
       </div>
 
       <div class="contact__field">
-        <label for="contact-email">Email</label>
+        <label for="contact-email">{{ 'contact.fields.email' | t }}</label>
         <input
           id="contact-email"
           formControlName="email"
@@ -46,15 +44,15 @@
         />
         <p id="contact-email-error" class="contact__error">
           @if (email.hasError('required') && email.touched) {
-            Email is required.
+            {{ 'contact.errors.emailRequired' | t }}
           } @else if (email.hasError('email') && email.touched) {
-            Enter a valid email address.
+            {{ 'contact.errors.emailInvalid' | t }}
           }
         </p>
       </div>
 
       <div class="contact__field">
-        <label for="contact-subject">Subject</label>
+        <label for="contact-subject">{{ 'contact.fields.subject' | t }}</label>
         <input
           id="contact-subject"
           formControlName="subject"
@@ -64,13 +62,13 @@
         />
         <p id="contact-subject-error" class="contact__error">
           @if (subject.hasError('required') && subject.touched) {
-            Subject is required.
+            {{ 'contact.errors.subjectRequired' | t }}
           }
         </p>
       </div>
 
       <div class="contact__field">
-        <label for="contact-message">Message</label>
+        <label for="contact-message">{{ 'contact.fields.message' | t }}</label>
         <textarea
           id="contact-message"
           formControlName="message"
@@ -80,14 +78,18 @@
         ></textarea>
         <p id="contact-message-error" class="contact__error">
           @if (message.hasError('required') && message.touched) {
-            Message is required.
+            {{ 'contact.errors.messageRequired' | t }}
           }
         </p>
       </div>
 
-      <button pixelButton class="contact__submit" type="submit">Open Email</button>
+      <button pixelButton class="contact__submit" type="submit">{{ 'contact.submit' | t }}</button>
 
-      <p class="contact__status" role="status">{{ statusMessage() }}</p>
+      <p class="contact__status" role="status">
+        @if (statusKey(); as key) {
+          {{ key | t }}
+        }
+      </p>
     </form>
   </div>
 </section>

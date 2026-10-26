@@ -1,12 +1,14 @@
 import { Component, OnDestroy, inject } from '@angular/core';
 
 import { MotionService } from '../core/motion.service';
+import { I18nKey } from '../i18n/i18n.types';
+import { TranslatePipe } from '../i18n/translate.pipe';
 import { RevealDirective } from '../shared/reveal.directive';
 import { PixelButtonComponent } from '../ui/pixel-button/pixel-button.component';
 import { PixelTagComponent } from '../ui/pixel-tag/pixel-tag.component';
 
 interface AboutStat {
-  label: string;
+  labelKey: I18nKey;
   target: number;
   suffix: string;
   value: number;
@@ -15,7 +17,7 @@ interface AboutStat {
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [PixelButtonComponent, PixelTagComponent, RevealDirective],
+  imports: [PixelButtonComponent, PixelTagComponent, RevealDirective, TranslatePipe],
   templateUrl: './about.component.html',
   styleUrl: './about.component.scss',
 })
@@ -24,15 +26,15 @@ export class AboutComponent implements OnDestroy {
   private frameId: number | undefined;
   private hasAnimatedStats = false;
 
-  protected readonly facts = [
-    'Location: Lukavac, Bosnia and Herzegovina',
-    'Education: FIT Mostar - Software Engineering',
-    'Languages: English, Bosnian',
+  protected readonly facts: I18nKey[] = [
+    'about.facts.location',
+    'about.facts.education',
+    'about.facts.languages',
   ];
   protected readonly stats: AboutStat[] = [
-    { label: 'Self-Initiated Projects', target: 2, suffix: '', value: 0 },
-    { label: 'Mentorship Months', target: 4, suffix: '', value: 0 },
-    { label: 'Technical Areas', target: 6, suffix: '+', value: 0 },
+    { labelKey: 'about.stats.projects', target: 2, suffix: '', value: 0 },
+    { labelKey: 'about.stats.mentorship', target: 4, suffix: '', value: 0 },
+    { labelKey: 'about.stats.areas', target: 6, suffix: '+', value: 0 },
   ];
 
   ngOnDestroy(): void {

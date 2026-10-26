@@ -10,7 +10,7 @@
   [class.back-to-top--visible]="showBackToTop"
   [attr.aria-hidden]="showBackToTop ? null : true"
   [attr.tabindex]="showBackToTop ? 0 : -1"
-  aria-label="Back to top"
+  [attr.aria-label]="'backToTop' | t"
   (click)="scrollToTop()"
 >
   <span class="back-to-top__icon" aria-hidden="true">↑</span>

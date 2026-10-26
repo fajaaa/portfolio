@@ -2,11 +2,12 @@ import { Component, HostListener, afterNextRender, inject, signal } from '@angul
 import { RouterOutlet } from '@angular/router';
 
 import { SmoothScrollService } from './core/smooth-scroll.service';
+import { TranslatePipe } from './i18n/translate.pipe';
 import { NavbarComponent } from './navbar/navbar.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NavbarComponent],
+  imports: [RouterOutlet, NavbarComponent, TranslatePipe],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

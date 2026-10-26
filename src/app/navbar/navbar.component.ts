@@ -12,18 +12,22 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
 
+import { I18nService } from '../core/i18n.service';
 import { HUD_OFFSET, SmoothScrollService } from '../core/smooth-scroll.service';
+import { I18nKey, LANGS, Lang } from '../i18n/i18n.types';
+import { TranslatePipe } from '../i18n/translate.pipe';
 
 type SectionId = 'home' | 'about' | 'projects' | 'skills' | 'contact';
 
 interface NavItem {
-  label: string;
+  labelKey: I18nKey;
   fragment: SectionId;
 }
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
+  imports: [TranslatePipe],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
@@ -39,12 +43,19 @@ export class NavbarComponent implements OnDestroy {
   private observerFrame: number | undefined;
   private readonly visibleSections = new Map<SectionId, number>();
 
+  protected readonly i18n = inject(I18nService);
+  protected readonly langs = LANGS;
+  protected readonly langLabels: Record<Lang, I18nKey> = {
+    en: 'nav.language.en',
+    bs: 'nav.language.bs',
+  };
+
   protected readonly navItems: NavItem[] = [
-    { label: 'Home', fragment: 'home' },
-    { label: 'About', fragment: 'about' },
-    { label: 'Projects', fragment: 'projects' },
-    { label: 'Skills', fragment: 'skills' },
-    { label: 'Contact', fragment: 'contact' },
+    { labelKey: 'nav.links.home', fragment: 'home' },
+    { labelKey: 'nav.links.about', fragment: 'about' },
+    { labelKey: 'nav.links.projects', fragment: 'projects' },
+    { labelKey: 'nav.links.skills', fragment: 'skills' },
+    { labelKey: 'nav.links.contact', fragment: 'contact' },
   ];
 
   protected activeSection: SectionId = 'home';

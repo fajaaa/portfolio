@@ -1,35 +1,37 @@
 import { Component } from '@angular/core';
 
+import { I18nKey } from '../i18n/i18n.types';
+import { TranslatePipe } from '../i18n/translate.pipe';
 import { RevealDirective } from '../shared/reveal.directive';
 
 interface SkillCategory {
-  title: string;
-  summary: string;
+  titleKey: I18nKey;
+  summaryKey: I18nKey;
   skills: string[];
 }
 
 @Component({
   selector: 'app-skills',
   standalone: true,
-  imports: [RevealDirective],
+  imports: [RevealDirective, TranslatePipe],
   templateUrl: './skills.component.html',
   styleUrl: './skills.component.scss',
 })
 export class SkillsComponent {
   protected readonly categories: SkillCategory[] = [
     {
-      title: 'Programming & Frontend',
-      summary: 'Languages and frontend technologies for web, desktop, and mobile development.',
+      titleKey: 'skills.categories.programming.title',
+      summaryKey: 'skills.categories.programming.summary',
       skills: ['C++', 'C#', 'HTML5', 'CSS3', 'JavaScript', 'TypeScript', 'Angular', 'Dart', 'Flutter'],
     },
     {
-      title: 'Databases',
-      summary: 'Database and backend data platforms used in projects.',
+      titleKey: 'skills.categories.databases.title',
+      summaryKey: 'skills.categories.databases.summary',
       skills: ['MySQL', 'Firebase'],
     },
     {
-      title: 'Development Tools',
-      summary: 'Tools for source control, containers, and daily development.',
+      titleKey: 'skills.categories.tools.title',
+      summaryKey: 'skills.categories.tools.summary',
       skills: ['Git', 'Docker', 'Visual Studio', 'VS Code', 'WebStorm'],
     },
   ];

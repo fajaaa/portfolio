@@ -1,4 +1,4 @@
-<nav class="navbar" aria-label="Primary navigation">
+<nav class="navbar" [attr.aria-label]="'nav.ariaLabel' | t">
   <a class="navbar__brand" [href]="hrefFor('home')" (click)="navigateTo('home', $event)">
     Kenan Fajic
   </a>
@@ -12,8 +12,28 @@
         [href]="hrefFor(item.fragment)"
         (click)="navigateTo(item.fragment, $event)"
       >
-        {{ item.label }}
+        {{ item.labelKey | t }}
       </a>
+    }
+  </div>
+
+  <!-- Temporary language toggle; restyled with the HUD in Phase 3. -->
+  <div class="navbar__lang" role="group" [attr.aria-label]="'nav.language.label' | t">
+    @for (lang of langs; track lang; let last = $last) {
+      <button
+        class="navbar__lang-button"
+        type="button"
+        [class.navbar__lang-button--active]="i18n.lang() === lang"
+        [attr.aria-pressed]="i18n.lang() === lang"
+        [attr.aria-label]="langLabels[lang] | t"
+        [attr.lang]="lang"
+        (click)="i18n.setLang(lang)"
+      >
+        {{ lang.toUpperCase() }}
+      </button>
+      @if (!last) {
+        <span class="navbar__lang-divider" aria-hidden="true">|</span>
+      }
     }
   </div>
 
@@ -23,7 +43,7 @@
     [class.navbar__toggle--open]="isMenuOpen"
     [attr.aria-expanded]="isMenuOpen"
     aria-controls="mobile-navigation"
-    aria-label="Toggle navigation"
+    [attr.aria-label]="'nav.toggleMenu' | t"
     (click)="toggleMenu()"
   >
     <span></span>
@@ -47,7 +67,7 @@
         [href]="hrefFor(item.fragment)"
         (click)="navigateTo(item.fragment, $event)"
       >
-        {{ item.label }}
+        {{ item.labelKey | t }}
       </a>
     }
   </div>

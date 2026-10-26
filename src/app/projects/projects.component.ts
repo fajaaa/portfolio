@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 
+import { TranslatePipe } from '../i18n/translate.pipe';
 import { RevealDirective } from '../shared/reveal.directive';
 import { ProjectCardComponent } from './project-card/project-card.component';
 import { Project, ProjectsService } from './projects.service';
@@ -8,7 +9,7 @@ import { Project, ProjectsService } from './projects.service';
 @Component({
   selector: 'app-projects',
   standalone: true,
-  imports: [CommonModule, ProjectCardComponent, RevealDirective],
+  imports: [CommonModule, ProjectCardComponent, RevealDirective, TranslatePipe],
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.scss',
 })

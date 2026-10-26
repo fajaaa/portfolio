@@ -1,15 +1,20 @@
 <section id="skills" class="skills">
   <div class="skills__header" reveal="up">
-    <p class="skills__eyebrow">Technical Stack</p>
-    <h2>Skills</h2>
+    <p class="skills__eyebrow">{{ 'skills.eyebrow' | t }}</p>
+    <h2>{{ 'skills.heading' | t }}</h2>
   </div>
 
-  <div class="skills__grid" aria-label="Skill categories" reveal="up" [stagger]="120">
-    @for (category of categories; track category.title) {
+  <div
+    class="skills__grid"
+    [attr.aria-label]="'skills.categoriesLabel' | t"
+    reveal="up"
+    [stagger]="120"
+  >
+    @for (category of categories; track category.titleKey) {
       <article class="skills__card">
         <div class="skills__card-heading">
-          <h3>{{ category.title }}</h3>
-          <p>{{ category.summary }}</p>
+          <h3>{{ category.titleKey | t }}</h3>
+          <p>{{ category.summaryKey | t }}</p>
         </div>
 
         <ul class="skills__list">

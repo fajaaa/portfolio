@@ -12,9 +12,9 @@
         [href]="project.githubUrl"
         target="_blank"
         rel="noopener"
-        [attr.aria-label]="project.title + ' GitHub repository'"
+        [attr.aria-label]="'projects.card.codeLabel' | t: { title: project.title }"
       >
-        Code
+        {{ 'projects.card.code' | t }}
       </a>
       @if (project.demoUrl !== project.githubUrl) {
         <a
@@ -22,9 +22,9 @@
           [href]="project.demoUrl"
           target="_blank"
           rel="noopener"
-          [attr.aria-label]="project.title + ' live demo'"
+          [attr.aria-label]="'projects.card.demoLabel' | t: { title: project.title }"
         >
-          Demo
+          {{ 'projects.card.demo' | t }}
         </a>
       }
     </div>
@@ -32,9 +32,9 @@
 
   <div class="project-card__body">
     <h3>{{ project.title }}</h3>
-    <p>{{ project.description }}</p>
+    <p>{{ description() }}</p>
 
-    <ul class="project-card__stack" aria-label="Technology stack">
+    <ul class="project-card__stack" [attr.aria-label]="'projects.card.stackLabel' | t">
       @for (tech of project.techStack; track tech) {
         <li><app-pixel-tag>{{ tech }}</app-pixel-tag></li>
       }
