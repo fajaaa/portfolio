@@ -11,7 +11,7 @@
 }
 
 :host(.dialog-box--typing) {
-  cursor: pointer;
+  cursor: var(--cursor-pointer);
 }
 
 .dialog-box__speaker {

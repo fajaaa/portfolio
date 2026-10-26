@@ -1,0 +1,104 @@
+// WORLD 1-3: underground brick wall with glowing crystals.
+@use '../../../ui/pixel' as *;
+@use 'base';
+
+$bricks: (
+  'hhhhhhh.hhhhhhh.',
+  'RRRRRRR.RRRRRRR.',
+  'RRRRRRR.RRRRRRR.',
+  '................',
+  'hhh.hhhhhhh.hhhh',
+  'RRR.RRRRRRR.RRRR',
+  'RRR.RRRRRRR.RRRR',
+  '................'
+);
+
+$crystal: (
+  '...A...',
+  '..AAB..',
+  '..ABB..',
+  '.AABBC.',
+  '.ABBBC.',
+  'AABBBCC',
+  'ABBBBBC',
+  'ABBBBCC',
+  '.ABBCC.',
+  '..ACC..'
+);
+
+$brick-palette: (R: #4a2f5e, h: #573870);
+$pink: (A: #ffb3e6, B: #ff5ac8, C: #b8338a);
+$cyan: (A: #d2fcff, B: #5af0ff, C: #2aa9c0);
+
+:host {
+  background: var(--w13-bg);
+}
+
+.layer--bricks {
+  inset: -4% 0;
+  background: pixel-svg($bricks, $brick-palette) 0 0 / px-size(16, 8);
+}
+
+.layer--crystals {
+  inset: -6% 0;
+}
+
+.crystal {
+  position: absolute;
+  width: calc(var(--px) * 7);
+  height: calc(var(--px) * 10);
+  color: var(--w13-crystal-pink);
+}
+
+.crystal--cyan {
+  color: var(--w13-crystal-cyan);
+}
+
+// Halo (stepped octagon) under the sprite.
+.crystal::before {
+  content: '';
+  position: absolute;
+  inset: calc(var(--px) * -4);
+  background: currentColor;
+  opacity: 0.1;
+  clip-path: polygon(
+    25% 0,
+    75% 0,
+    75% 12%,
+    88% 12%,
+    88% 25%,
+    100% 25%,
+    100% 75%,
+    88% 75%,
+    88% 88%,
+    75% 88%,
+    75% 100%,
+    25% 100%,
+    25% 88%,
+    12% 88%,
+    12% 75%,
+    0 75%,
+    0 25%,
+    12% 25%,
+    12% 12%,
+    25% 12%
+  );
+  animation: crystal-glow 3s steps(3, end) var(--glow-delay, 0s) infinite alternate;
+}
+
+.crystal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: pixel-svg($crystal, $pink) 0 0 / 100% 100%;
+}
+
+.crystal--cyan::after {
+  background-image: pixel-svg($crystal, $cyan);
+}
+
+@keyframes crystal-glow {
+  to {
+    opacity: 0.4;
+  }
+}

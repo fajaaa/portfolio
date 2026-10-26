@@ -1,0 +1,106 @@
+@use '../../ui/pixel' as *;
+
+// Stepped edges at the top of each world, continuing the floor of the world above.
+$edge-dirt: (
+  'BBBBBBBBBBBBBBBB',
+  'BBbBBBBBBBBBBbBB',
+  'BBBB..BBBBBBBB..',
+  'BBB....BBBBBB...',
+  '.B......BBBB....',
+  '.........BB.....'
+);
+
+$edge-roots: (
+  'MMMMMMMMMMMMMMMM',
+  'MMMMMMMMMMMMMMMM',
+  'MM.MMMM.MMM.MMMM',
+  'M...MM...M...MM.',
+  'M....M...M....M.',
+  '.....M........M.'
+);
+
+$edge-bricks: (
+  'hhhhhhhhhhhhhhhh',
+  'RRRRRRRRRRRRRRRR',
+  'RRR.RRRRRRR.RRRR',
+  'RRR.RRRR....RRRR',
+  '....RRRR.....RR.',
+  '.....RR.........'
+);
+
+$edge-sand: (
+  'SSSSSSSSSSSSSSSS',
+  'SSsSSSSSSSSSsSSS',
+  'SSSS.SSSSSS..SSS',
+  '.SS...SSSS....S.',
+  '......SS........',
+  '................'
+);
+
+:host {
+  --world-gutter: clamp(var(--space-6), 7vw, var(--space-16));
+
+  position: relative;
+  display: block;
+}
+
+.world__inner {
+  position: relative;
+  padding-bottom: calc(var(--px) * 12);
+}
+
+.world__plate-row {
+  width: min(100% - var(--world-gutter) * 2, 72rem);
+  margin-inline: auto;
+  padding-top: calc(var(--px) * 12);
+}
+
+:host([data-world='1-1']) .world__plate-row {
+  padding-top: calc(var(--hud-height) + var(--space-6));
+}
+
+.world__plate {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--px);
+  padding: var(--space-2) var(--space-3);
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 0.625rem;
+  line-height: 1.4;
+  text-transform: uppercase;
+  box-shadow: pixel-border(var(--paper)), calc(var(--px) * 2) calc(var(--px) * 2) 0 var(--px) var(--ink);
+}
+
+.world__plate-id {
+  color: var(--coin);
+}
+
+.world__edge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: calc(var(--px) * 6);
+  background-size: px-size(16, 6);
+  background-repeat: repeat-x;
+}
+
+:host([data-world='1-2']) .world__edge {
+  background-image: pixel-svg($edge-dirt, (B: #8b5a2b, b: #6b4320));
+}
+
+:host([data-world='1-3']) .world__edge {
+  background-image: pixel-svg($edge-roots, (M: #2f6b3a));
+}
+
+:host([data-world='1-4']) .world__edge {
+  background-image: pixel-svg($edge-bricks, (R: #4a2f5e, h: #573870));
+}
+
+:host([data-world='1-5']) .world__edge {
+  background-image: pixel-svg($edge-sand, (S: #e8c872, s: #c9a24f));
+}

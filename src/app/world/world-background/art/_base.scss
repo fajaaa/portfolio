@@ -1,0 +1,32 @@
+// Shared by the per-world art components.
+
+:host {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+[data-parallax] {
+  will-change: transform;
+}
+
+// Ambient loops stop while the world is off-screen (set by WorldBackgroundComponent)
+// and under reduced motion.
+:host-context(.is-idle) *,
+:host-context(.is-idle) *::before,
+:host-context(.is-idle) *::after {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-play-state: paused !important;
+  }
+}

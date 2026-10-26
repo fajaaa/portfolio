@@ -1,3 +1,5 @@
+@use './app/ui/pixel' as *;
+
 /* =========================================================================
    Design tokens
    ========================================================================= */
@@ -60,6 +62,12 @@
   /* Pixel drop shadow (stepped, no blur) */
   --shadow-pixel: calc(var(--px) * 2) calc(var(--px) * 2) 0 0 var(--ink);
 
+  /* Stepped ink outline for short text that sits directly on world art */
+  --text-outline:
+    2px 0 0 var(--ink), -2px 0 0 var(--ink), 0 2px 0 var(--ink), 0 -2px 0 var(--ink),
+    2px 2px 0 var(--ink), -2px 2px 0 var(--ink), 2px -2px 0 var(--ink), -2px -2px 0 var(--ink),
+    0 4px 0 var(--ink);
+
   /* Typography */
   --font-display: 'Press Start 2P', 'Courier New', monospace;
   --font-body: 'Pixelify Sans', system-ui, sans-serif;
@@ -88,6 +96,16 @@
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
+
+  /* Fixed HUD: menu bar + XP bar. Keep in sync with HUD_OFFSET (smooth-scroll.service.ts). */
+  --hud-bar-height: 56px;
+  --hud-xp-height: 28px;
+  --hud-height: calc(var(--hud-bar-height) + var(--hud-xp-height));
+
+  /* Cursors (pixel art on fine pointers, see "Pixel cursor" below) */
+  --cursor-default: auto;
+  --cursor-pointer: pointer;
+  --cursor-text: text;
 
   /* Layering */
   --z-base: 0;
@@ -132,6 +150,100 @@
   :root {
     --px: 3px;
   }
+}
+
+/* =========================================================================
+   Pixel cursor (mouse / trackpad only; touch keeps the system behaviour)
+   ========================================================================= */
+
+$cursor-palette: (
+  X: #0b0b14,
+  W: #fff8e7,
+);
+
+$cursor-arrow: (
+  'X...............',
+  'XX..............',
+  'XWX.............',
+  'XWWX............',
+  'XWWWX...........',
+  'XWWWWX..........',
+  'XWWWWWX.........',
+  'XWWWWWWX........',
+  'XWWWWWWWX.......',
+  'XWWWWWXXX.......',
+  'XWWXWWX.........',
+  'XWX.XWWX........',
+  'XX..XWWX........',
+  'X....XWWX.......',
+  '.....XWWX.......',
+  '......XX........'
+);
+
+$cursor-hand: (
+  '....XX..........',
+  '...XWWX.........',
+  '...XWWX.........',
+  '...XWWX.........',
+  '...XWWXXX.......',
+  '...XWWXWWXXX....',
+  '.XXXWWXWWXWWXX..',
+  'XWWXWWWWWWWWWWX.',
+  'XWWXWWWWWWWWWWX.',
+  'XWWWWWWWWWWWWWX.',
+  '.XWWWWWWWWWWWWX.',
+  '.XWWWWWWWWWWWX..',
+  '..XWWWWWWWWWWX..',
+  '..XWWWWWWWWWX...',
+  '...XWWWWWWWWX...',
+  '...XXXXXXXXXX...'
+);
+
+$cursor-caret: (
+  '....XXX.XXX.....',
+  '....XWWXWWX.....',
+  '....XXXWXXX.....',
+  '......XWX.......',
+  '......XWX.......',
+  '......XWX.......',
+  '......XWX.......',
+  '......XWX.......',
+  '......XWX.......',
+  '......XWX.......',
+  '......XWX.......',
+  '......XWX.......',
+  '......XWX.......',
+  '....XXXWXXX.....',
+  '....XWWXWWX.....',
+  '....XXX.XXX.....'
+);
+
+// 16x16 grids drawn at 32x32; hotspots are in those 32px coordinates.
+@media (pointer: fine) {
+  :root {
+    --cursor-default: #{pixel-svg($cursor-arrow, $cursor-palette, $scale: 2)} 1 1, auto;
+    --cursor-pointer: #{pixel-svg($cursor-hand, $cursor-palette, $scale: 2)} 10 1, pointer;
+    --cursor-text: #{pixel-svg($cursor-caret, $cursor-palette, $scale: 2)} 15 16, text;
+  }
+}
+
+html {
+  cursor: var(--cursor-default);
+}
+
+a[href],
+button:not(:disabled),
+[role='button'],
+label[for],
+select,
+summary {
+  cursor: var(--cursor-pointer);
+}
+
+input:not([type='checkbox'], [type='radio'], [type='range'], [type='button'], [type='submit']),
+textarea,
+[contenteditable='true'] {
+  cursor: var(--cursor-text);
 }
 
 /* =========================================================================

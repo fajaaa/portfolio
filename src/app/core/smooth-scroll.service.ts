@@ -10,6 +10,18 @@ export const HUD_OFFSET = 84;
 
 export type ScrollTarget = number | string | HTMLElement;
 
+export interface ScrollState {
+  /** Current scroll position in px. */
+  y: number;
+  /** 1 = down, -1 = up, 0 = unchanged. */
+  direction: 1 | -1 | 0;
+}
+
+export type ScrollListener = (state: ScrollState) => void;
+
+/** A programmatic scroll counts as finished once no scroll event arrived for this long. */
+const AUTO_SCROLL_IDLE_MS = 200;
+
 export interface ScrollToOptions {
   /** Pixels added to the target position (negative = stop above the target). */
   offset?: number;
@@ -29,8 +41,19 @@ export class SmoothScrollService {
   private initialized = false;
   private resizeObserver: ResizeObserver | undefined;
   private refreshTimer: ReturnType<typeof setTimeout> | undefined;
+  private autoScrollTimer: ReturnType<typeof setTimeout> | undefined;
+  private autoScrolling = false;
+  private lastY = 0;
+  private readonly listeners = new Set<ScrollListener>();
 
   private readonly onTick = (time: number) => this.lenis?.raf(time * 1000);
+  private readonly onLenisScroll = (lenis: Lenis) => this.emit(lenis.scroll);
+  // Native scroll events only drive listeners while Lenis is off (reduced motion).
+  private readonly onNativeScroll = () => {
+    if (!this.lenis) {
+      this.emit(window.scrollY);
+    }
+  };
 
   constructor() {
     gsap.registerPlugin(ScrollTrigger);
@@ -59,13 +82,16 @@ export class SmoothScrollService {
     }
 
     this.initialized = true;
+    this.lastY = window.scrollY;
 
     if (!this.motion.reducedMotion()) {
       this.createLenis();
     }
 
-    // Async content (e.g. GitHub projects) changes the page height; keep trigger positions fresh.
     this.zone.runOutsideAngular(() => {
+      window.addEventListener('scroll', this.onNativeScroll, { passive: true });
+
+      // Async content (e.g. GitHub projects) changes the page height; keep trigger positions fresh.
       this.resizeObserver = new ResizeObserver(() => {
         clearTimeout(this.refreshTimer);
         this.refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 200);
@@ -74,7 +100,24 @@ export class SmoothScrollService {
     });
   }
 
+  /**
+   * Calls `listener` on every scroll frame (Lenis scroll events, or native ones under reduced
+   * motion), outside the Angular zone. Returns a function that removes the listener.
+   */
+  onScroll(listener: ScrollListener): () => void {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  }
+
+  /** True while a `scrollTo()` is still moving the page (e.g. after a nav link click). */
+  get isAutoScrolling(): boolean {
+    return this.autoScrolling;
+  }
+
   scrollTo(target: ScrollTarget, { offset = 0, immediate = false }: ScrollToOptions = {}): void {
+    this.autoScrolling = true;
+    this.armAutoScrollTimer();
+
     if (this.lenis) {
       this.lenis.scrollTo(target, { offset, immediate });
       return;
@@ -110,6 +153,7 @@ export class SmoothScrollService {
     this.zone.runOutsideAngular(() => {
       this.lenis = new Lenis({ autoRaf: false });
       this.lenis.on('scroll', ScrollTrigger.update);
+      this.lenis.on('scroll', this.onLenisScroll);
       gsap.ticker.add(this.onTick);
       gsap.ticker.lagSmoothing(0);
     });
@@ -124,6 +168,25 @@ export class SmoothScrollService {
     gsap.ticker.lagSmoothing(500, 33);
     this.lenis.destroy();
     this.lenis = null;
+  }
+
+  private emit(y: number): void {
+    const direction = y > this.lastY ? 1 : y < this.lastY ? -1 : 0;
+    this.lastY = y;
+
+    // Each frame of a running scrollTo() pushes its end further out.
+    if (this.autoScrolling) {
+      this.armAutoScrollTimer();
+    }
+
+    this.listeners.forEach((listener) => listener({ y, direction }));
+  }
+
+  private armAutoScrollTimer(): void {
+    clearTimeout(this.autoScrollTimer);
+    this.zone.runOutsideAngular(() => {
+      this.autoScrollTimer = setTimeout(() => (this.autoScrolling = false), AUTO_SCROLL_IDLE_MS);
+    });
   }
 
   private resolveTop(target: ScrollTarget): number | null {

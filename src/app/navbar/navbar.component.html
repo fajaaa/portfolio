@@ -1,74 +1,73 @@
-<nav class="navbar" [attr.aria-label]="'nav.ariaLabel' | t">
-  <a class="navbar__brand" [href]="hrefFor('home')" (click)="navigateTo('home', $event)">
-    Kenan Fajic
-  </a>
+<div class="hud__bar">
+  <nav class="hud" [attr.aria-label]="'nav.ariaLabel' | t">
+    <a class="hud__brand" [href]="hrefFor('home')" (click)="navigateTo('home', $event)">
+      <app-pixel-art class="hud__logo" [sprite]="logo" />
+      <span class="hud__name">Kenan Fajic</span>
+    </a>
 
-  <div class="navbar__links navbar__links--desktop">
-    @for (item of navItems; track item.fragment) {
-      <a
-        class="navbar__link"
-        [class.navbar__link--active]="activeSection === item.fragment"
-        [attr.aria-current]="activeSection === item.fragment ? 'page' : null"
-        [href]="hrefFor(item.fragment)"
-        (click)="navigateTo(item.fragment, $event)"
-      >
-        {{ item.labelKey | t }}
-      </a>
-    }
-  </div>
-
-  <!-- Temporary language toggle; restyled with the HUD in Phase 3. -->
-  <div class="navbar__lang" role="group" [attr.aria-label]="'nav.language.label' | t">
-    @for (lang of langs; track lang; let last = $last) {
-      <button
-        class="navbar__lang-button"
-        type="button"
-        [class.navbar__lang-button--active]="i18n.lang() === lang"
-        [attr.aria-pressed]="i18n.lang() === lang"
-        [attr.aria-label]="langLabels[lang] | t"
-        [attr.lang]="lang"
-        (click)="i18n.setLang(lang)"
-      >
-        {{ lang.toUpperCase() }}
-      </button>
-      @if (!last) {
-        <span class="navbar__lang-divider" aria-hidden="true">|</span>
+    <ul class="hud__menu">
+      @for (item of navItems; track item.section) {
+        <li>
+          <a
+            class="hud__link"
+            [class.hud__link--active]="activeSection() === item.section"
+            [attr.aria-current]="activeSection() === item.section ? 'location' : null"
+            [href]="hrefFor(item.section)"
+            (click)="navigateTo(item.section, $event)"
+          >
+            <app-pixel-art class="hud__marker" [sprite]="marker" />
+            <span>{{ item.labelKey | t }}</span>
+          </a>
+        </li>
       }
-    }
-  </div>
+    </ul>
 
-  <button
-    class="navbar__toggle"
-    type="button"
-    [class.navbar__toggle--open]="isMenuOpen"
-    [attr.aria-expanded]="isMenuOpen"
-    aria-controls="mobile-navigation"
-    [attr.aria-label]="'nav.toggleMenu' | t"
-    (click)="toggleMenu()"
-  >
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
-</nav>
+    <app-lang-toggle class="hud__lang" />
 
-@if (isMenuOpen) {
-  <div
-    id="mobile-navigation"
-    class="navbar__mobile"
-    animate.enter="navbar__mobile--enter"
-    animate.leave="navbar__mobile--leave"
-  >
-    @for (item of navItems; track item.fragment) {
-      <a
-        class="navbar__mobile-link"
-        [class.navbar__mobile-link--active]="activeSection === item.fragment"
-        [attr.aria-current]="activeSection === item.fragment ? 'page' : null"
-        [href]="hrefFor(item.fragment)"
-        (click)="navigateTo(item.fragment, $event)"
-      >
-        {{ item.labelKey | t }}
-      </a>
-    }
+    <button
+      #menuToggle
+      class="hud__toggle"
+      type="button"
+      aria-haspopup="dialog"
+      aria-controls="pause-menu"
+      [attr.aria-expanded]="isMenuOpen()"
+      [attr.aria-label]="'nav.toggleMenu' | t"
+      (click)="openMenu()"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+</div>
+
+@if (worlds.hasWorlds()) {
+  <div class="hud__xp">
+    <p class="hud__level">
+      <span class="hud__level-number">{{
+        'hud.level' | t: { level: worlds.level(), total: totalLevels }
+      }}</span>
+      <span aria-hidden="true">·</span>
+      <span class="hud__level-name">{{ worlds.world().labelKey | t }}</span>
+    </p>
+    <app-pixel-progress
+      class="hud__xp-bar"
+      [value]="worlds.progress()"
+      [segments]="xpSegments()"
+      [groups]="totalLevels"
+      [label]="'hud.xpLabel' | t"
+    />
   </div>
+}
+
+@if (isMenuOpen()) {
+  <app-pause-menu
+    id="pause-menu"
+    animate.enter="pause-menu--enter"
+    animate.leave="pause-menu--leave"
+    [items]="navItems"
+    [active]="activeSection()"
+    (selected)="onMenuSelect($event)"
+    (closed)="closeMenu()"
+  />
 }

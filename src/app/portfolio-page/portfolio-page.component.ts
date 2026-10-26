@@ -5,11 +5,19 @@ import { ContactComponent } from '../contact/contact.component';
 import { HeroComponent } from '../hero/hero.component';
 import { ProjectsComponent } from '../projects/projects.component';
 import { SkillsComponent } from '../skills/skills.component';
+import { WorldSectionComponent } from '../world/world-section/world-section.component';
 
 @Component({
   selector: 'app-portfolio-page',
   standalone: true,
-  imports: [HeroComponent, AboutComponent, ProjectsComponent, SkillsComponent, ContactComponent],
+  imports: [
+    WorldSectionComponent,
+    HeroComponent,
+    AboutComponent,
+    ProjectsComponent,
+    SkillsComponent,
+    ContactComponent,
+  ],
   templateUrl: './portfolio-page.component.html',
 })
 export class PortfolioPageComponent {}

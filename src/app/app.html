@@ -4,14 +4,17 @@
   <router-outlet />
 </main>
 
+<app-toast-outlet />
+
 <button
+  pixelButton
   class="back-to-top"
   type="button"
-  [class.back-to-top--visible]="showBackToTop"
-  [attr.aria-hidden]="showBackToTop ? null : true"
-  [attr.tabindex]="showBackToTop ? 0 : -1"
+  [class.back-to-top--visible]="showBackToTop()"
+  [attr.inert]="showBackToTop() ? null : ''"
   [attr.aria-label]="'backToTop' | t"
+  [attr.data-tooltip]="'backToTop' | t"
   (click)="scrollToTop()"
 >
-  <span class="back-to-top__icon" aria-hidden="true">↑</span>
+  <app-pixel-art class="back-to-top__icon" [sprite]="arrowUp" />
 </button>

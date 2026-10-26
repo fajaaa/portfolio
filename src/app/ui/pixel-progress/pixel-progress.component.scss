@@ -18,6 +18,10 @@
   transition: background-color 1ms steps(1, end);
 }
 
+.pixel-progress__segment--group-start {
+  margin-left: var(--px);
+}
+
 .pixel-progress__segment--filled {
   background: var(--progress-color);
   // Top highlight for a bit of 16-bit depth.

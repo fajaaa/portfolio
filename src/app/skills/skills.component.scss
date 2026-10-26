@@ -4,7 +4,6 @@
 
 .skills {
   padding: clamp(var(--space-12), 8vw, var(--space-16)) clamp(var(--space-6), 7vw, var(--space-16));
-  background: var(--color-background-elevated);
 }
 
 .skills__header,
@@ -14,6 +13,7 @@
 }
 
 .skills__header {
+  text-shadow: var(--text-outline);
   margin-bottom: var(--space-8);
 }
 

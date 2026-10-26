@@ -1,0 +1,99 @@
+// WORLD 1-1: sky with drifting clouds, grass tiles at the bottom.
+@use '../../../ui/pixel' as *;
+@use 'base';
+
+$cloud-big: (
+  '.......WWWW.........',
+  '.....WWWWWWWW.......',
+  '....WWWWWWWWWW.WWW..',
+  '.WWWWWWWWWWWWWWWWWW.',
+  'WWWWWWWWWWWWWWWWWWWW',
+  'WWWWWWWWWWWWWWWWWWWW',
+  '.WWWWWWWWWWWWWWWWWW.',
+  '..SSSSSSSSSSSSSSSS..'
+);
+
+$cloud-small: (
+  '....WWWW....',
+  '..WWWWWWWW..',
+  '.WWWWWWWWWW.',
+  'WWWWWWWWWWWW',
+  '.SSSSSSSSSS.'
+);
+
+$cloud-near: (W: #ffffff, S: #c4d8ff);
+$cloud-far: (W: #d4e3ff, S: #a6c2fb);
+
+$grass: (
+  '..G.....G...G...',
+  '.GG..G.GG..GG.G.',
+  'GGGGGGGGGGGGGGGG',
+  'GGLGGGGGGLGGGGGG',
+  'DDDDDDDDDDDDDDDD',
+  'BBBBBBBBBBBBBBBB',
+  'BBbBBBBBBBBBbBBB',
+  'BBBBBBbBBBBBBBBB',
+  'BBBBBBBBBBBBBBBB',
+  'BbBBBBBBBbBBBBBB',
+  'BBBBBbBBBBBBBBbB',
+  'BBBBBBBBBBBBBBBB'
+);
+
+$grass-palette: (G: #3fa34d, L: #6fcf5f, D: #2e7d32, B: #8b5a2b, b: #6b4320);
+
+// Cloud band: 160x120 grid cells, repeated horizontally only, drifting one cell per step.
+$tile-w: 160;
+$tile-h: 120;
+
+:host {
+  background: var(--w11-sky);
+}
+
+.layer--clouds-far,
+.layer--clouds-near {
+  inset: -6% 0;
+}
+
+.drift {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: calc(100% + var(--px) * #{$tile-w});
+  background-position: 0 calc(var(--hud-height) + var(--space-8));
+  background-repeat: repeat-x;
+  background-size: px-size($tile-w, $tile-h);
+  animation: drift 96s steps($tile-w, end) infinite;
+}
+
+.drift--slow {
+  animation-duration: 192s;
+}
+
+.layer--clouds-near .drift {
+  background-image: pixel-scene(
+    (($cloud-big, 8 4), ($cloud-small, 70 30), ($cloud-big, 118 58), ($cloud-small, 40 88)),
+    $cloud-near,
+    $tile-w $tile-h
+  );
+}
+
+.layer--clouds-far .drift {
+  background-image: pixel-scene(
+    (($cloud-small, 36 14), ($cloud-small, 100 44), ($cloud-small, 140 76), ($cloud-small, 8 104)),
+    $cloud-far,
+    $tile-w $tile-h
+  );
+}
+
+.layer--grass {
+  inset: auto 0 0;
+  height: calc(var(--px) * 12);
+  background: pixel-svg($grass, $grass-palette) 0 0 / px-size(16, 12) repeat-x;
+}
+
+@keyframes drift {
+  to {
+    transform: translateX(calc(var(--px) * -#{$tile-w}));
+  }
+}

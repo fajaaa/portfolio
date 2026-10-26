@@ -1,13 +1,4 @@
-import {
-  Component,
-  HostBinding,
-  HostListener,
-  OnDestroy,
-  OnInit,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 
 import { I18nService } from '../core/i18n.service';
 import { HUD_OFFSET, SmoothScrollService } from '../core/smooth-scroll.service';
@@ -44,12 +35,6 @@ export class HeroComponent implements OnInit, OnDestroy {
     this.currentSubtitle().slice(0, this.characterIndex()),
   );
 
-  @HostBinding('style.--hero-shift-x.px')
-  protected shiftX = 0;
-
-  @HostBinding('style.--hero-shift-y.px')
-  protected shiftY = 0;
-
   ngOnInit(): void {
     this.typeNextCharacter();
   }
@@ -58,23 +43,6 @@ export class HeroComponent implements OnInit, OnDestroy {
     if (this.typingTimer) {
       window.clearTimeout(this.typingTimer);
     }
-  }
-
-  @HostListener('mousemove', ['$event'])
-  protected onMouseMove(event: MouseEvent): void {
-    const target = event.currentTarget as HTMLElement;
-    const rect = target.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / rect.width - 0.5;
-    const y = (event.clientY - rect.top) / rect.height - 0.5;
-
-    this.shiftX = Number((x * 18).toFixed(2));
-    this.shiftY = Number((y * 18).toFixed(2));
-  }
-
-  @HostListener('mouseleave')
-  protected onMouseLeave(): void {
-    this.shiftX = 0;
-    this.shiftY = 0;
   }
 
   protected scrollToProjects(): void {

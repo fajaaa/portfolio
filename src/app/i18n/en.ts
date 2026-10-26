@@ -8,7 +8,7 @@ export const en = {
   },
   nav: {
     ariaLabel: 'Primary navigation',
-    toggleMenu: 'Toggle navigation',
+    toggleMenu: 'Open menu',
     links: {
       home: 'Home',
       about: 'About',
@@ -22,7 +22,18 @@ export const en = {
       bs: 'Bosanski',
     },
   },
-  backToTop: 'Back to top',
+  backToTop: 'Back to start',
+  hud: {
+    world: 'WORLD {world}',
+    level: 'LV {level}/{total}',
+    xpLabel: 'Page progress',
+    levelUp: 'LEVEL UP!',
+    pause: {
+      title: 'PAUSE MENU',
+      close: 'Close menu',
+      hint: '↑ ↓ select · Enter confirm · Esc close',
+    },
+  },
   hero: {
     greeting: 'Hello, I am',
     subtitles: ['Full-Stack Developer', 'Angular Enthusiast', 'Problem Solver'],

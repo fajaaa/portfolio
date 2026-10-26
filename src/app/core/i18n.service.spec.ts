@@ -55,13 +55,13 @@ describe('I18nService', () => {
     fixture.detectChanges();
     const host = fixture.nativeElement as HTMLElement;
     const [enButton, bsButton] = Array.from(
-      host.querySelectorAll<HTMLButtonElement>('.navbar__lang-button'),
+      host.querySelectorAll<HTMLButtonElement>('.lang-toggle__button'),
     );
 
     bsButton.click();
     fixture.detectChanges();
 
-    expect(host.querySelector('.navbar__link')?.textContent?.trim()).toBe('Početna');
+    expect(host.querySelector('.hud__link')?.textContent?.trim()).toBe('Početna');
     expect(bsButton.getAttribute('aria-pressed')).toBe('true');
     expect(enButton.getAttribute('aria-pressed')).toBe('false');
   });

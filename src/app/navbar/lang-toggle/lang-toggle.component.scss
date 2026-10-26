@@ -1,0 +1,60 @@
+@use '../../ui/pixel' as *;
+
+:host {
+  --lang-height: 36px;
+  --lang-font: 0.625rem;
+
+  display: inline-flex;
+  flex: none;
+  gap: var(--px);
+  margin: var(--px);
+  background: var(--paper);
+  box-shadow: pixel-border(var(--paper));
+}
+
+:host(.lang-toggle--large) {
+  --lang-height: 52px;
+  --lang-font: 0.875rem;
+}
+
+.lang-toggle__button {
+  min-width: 44px;
+  min-height: var(--lang-height);
+  padding: 0 var(--space-2);
+  border: 0;
+  background: var(--ink);
+  color: var(--paper-muted);
+  font-family: var(--font-display);
+  font-size: var(--lang-font);
+  line-height: 1;
+  transition:
+    background-color var(--duration-fast) steps(2, end),
+    color var(--duration-fast) steps(2, end);
+}
+
+.lang-toggle__button:hover {
+  color: var(--coin);
+}
+
+.lang-toggle__button--active,
+.lang-toggle__button--active:hover {
+  background: var(--coin);
+  color: var(--ink);
+}
+
+.lang-toggle__button:focus-visible {
+  position: relative;
+  z-index: 1;
+}
+
+@media (pointer: coarse) {
+  :host {
+    --lang-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lang-toggle__button {
+    transition: none;
+  }
+}

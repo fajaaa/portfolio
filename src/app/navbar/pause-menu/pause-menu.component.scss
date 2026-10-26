@@ -1,0 +1,159 @@
+@use '../../ui/pixel' as *;
+
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: var(--space-6) var(--space-4);
+  // Faint pixel grid, like a paused game screen.
+  background:
+    linear-gradient(rgba(255, 248, 231, 0.04) 2px, transparent 2px) 0 0 / 16px 16px,
+    linear-gradient(90deg, rgba(255, 248, 231, 0.04) 2px, transparent 2px) 0 0 / 16px 16px,
+    rgba(var(--ink-rgb), 0.97);
+  overscroll-behavior: contain;
+}
+
+:host(.pause-menu--enter) {
+  animation: pause-in 240ms steps(4, end);
+}
+
+:host(.pause-menu--leave) {
+  animation: pause-in 160ms steps(2, end) reverse forwards;
+}
+
+.pause {
+  width: min(100%, 24rem);
+  display: grid;
+  justify-items: center;
+  gap: var(--space-6);
+}
+
+.pause__header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.pause__title {
+  color: var(--coin);
+  font-size: 1rem;
+  text-shadow: calc(var(--px) * 0.5) calc(var(--px) * 0.5) 0 var(--hp);
+}
+
+.pause__close {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  margin: var(--px);
+  padding: 0;
+  border: 0;
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: pixel-border(var(--paper));
+}
+
+.pause__close:hover {
+  color: var(--coin);
+}
+
+.pause__close-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.pause__menu {
+  width: 100%;
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-4);
+  list-style: none;
+  background: var(--ink);
+  box-shadow: pixel-border(var(--paper)), calc(var(--px) * 2) calc(var(--px) * 2) 0 var(--px) var(--w15-stone);
+}
+
+.pause__link {
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-3);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.pause__link:hover,
+.pause__link:focus {
+  background: color-mix(in srgb, var(--coin) 14%, var(--ink));
+  color: var(--coin);
+}
+
+.pause__link:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.pause__link--active {
+  color: var(--coin);
+}
+
+.pause__marker {
+  width: 8px;
+  height: 14px;
+  visibility: hidden;
+}
+
+.pause__link:hover .pause__marker,
+.pause__link:focus .pause__marker {
+  visibility: visible;
+  animation: marker-blink 800ms steps(1, end) infinite;
+}
+
+.pause__world {
+  color: var(--paper-muted);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-lg);
+}
+
+.pause__hint {
+  color: var(--paper-muted);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-md);
+  line-height: 1.2;
+  text-align: center;
+}
+
+@keyframes pause-in {
+  from {
+    opacity: 0;
+    clip-path: inset(50% 0);
+  }
+
+  to {
+    opacity: 1;
+    clip-path: inset(0 0);
+  }
+}
+
+@keyframes marker-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host(.pause-menu--enter),
+  :host(.pause-menu--leave),
+  .pause__link .pause__marker {
+    animation: none !important;
+  }
+}

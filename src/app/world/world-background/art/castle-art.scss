@@ -1,0 +1,129 @@
+// WORLD 1-5: castle at night, twinkling stars, flickering torches.
+@use '../../../ui/pixel' as *;
+@use 'base';
+
+$castle: (
+  'KK..KK..KK......................',
+  'KK..KK..KK......................',
+  'KKKKKKKKKK......................',
+  'KKKKKKKKKK......................',
+  'KKKKooKKKK......................',
+  'KKKKooKKKK......................',
+  'KKKKKKKKKK......................',
+  'KkKKKKKKkK......................',
+  'KKKKKKKKKKKK..KK..KK..KK..KK..KK',
+  'KKKKKKKKKKKK..KK..KK..KK..KK..KK',
+  'KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK',
+  'KKKKwwKKKKKKKKKKKKKKKKKKKKKKKKKK',
+  'KKKKwwKKKKKKKKkKKKKKKKKKKKkKKKKK',
+  'KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK',
+  'KkKKKKKKkKKKKKKKKKKKKKKKKKKKKkKK',
+  'KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK',
+  'KKKKKKKKKKKKkKKKKKKhKKKKKKKKKKKK',
+  'KKKKKKKKKKKKKKKKKKKhKKKKKKKKKKKK',
+  'KKKKkKKKKKKKKKKKKKKKKKKKkKKKKKKK',
+  'KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK',
+  'KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK',
+  'KKKKKKKKkKKKKKKKKKKKKKKKKKKKKKKK',
+  'KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK',
+  'KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK'
+);
+
+$flame-a: (
+  '..g..',
+  '.gOg.',
+  'gOOOg',
+  'gOYOg',
+  '.gYg.',
+  '..g..'
+);
+
+$flame-b: (
+  '.g...',
+  'gOg..',
+  'gOOg.',
+  'gOYOg',
+  '.gYg.',
+  '..g..'
+);
+
+$star-plus: ('.Y.', 'YYY', '.Y.');
+$star-dot: ('Y');
+
+$castle-palette: (K: #3d3557, k: #2f2846, w: #1a1033, o: #ffb347, h: #241d3a);
+$flame-palette: (O: #ff7a29, Y: #ffd23f, g: rgba(255, 122, 41, 0.35));
+$star-palette: (Y: #ffe066);
+$star-tile: 64 48;
+
+:host {
+  background: var(--w15-bg);
+}
+
+.layer--stars {
+  inset: -6% 0;
+}
+
+.layer--stars::before,
+.layer--stars::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-size: px-size(64, 48);
+  animation: twinkle 3.2s steps(1, end) infinite;
+}
+
+.layer--stars::before {
+  background-image: pixel-scene(
+    (($star-plus, 6 5), ($star-dot, 22 13), ($star-dot, 44 6), ($star-dot, 12 34)),
+    $star-palette,
+    $star-tile
+  );
+}
+
+.layer--stars::after {
+  background-image: pixel-scene(
+    (($star-dot, 33 24), ($star-plus, 52 31), ($star-dot, 58 15), ($star-dot, 27 42)),
+    $star-palette,
+    $star-tile
+  );
+  animation-duration: 2.4s;
+  animation-delay: -1.2s;
+}
+
+.layer--castle {
+  inset: auto 0 0;
+  height: calc(var(--px) * 24);
+  background: pixel-svg($castle, $castle-palette) 0 0 / px-size(32, 24) repeat-x;
+}
+
+// Two flame frames on the same tile as the castle, shown alternately.
+.torches::before,
+.torches::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-size: px-size(32, 24);
+  background-repeat: repeat-x;
+  animation: torch-frame 0.7s steps(1, end) infinite;
+}
+
+.torches::before {
+  background-image: pixel-svg($flame-a, $flame-palette, 32 24, 17 10);
+}
+
+.torches::after {
+  background-image: pixel-svg($flame-b, $flame-palette, 32 24, 17 10);
+  animation-delay: -0.35s;
+}
+
+@keyframes twinkle {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes torch-frame {
+  50% {
+    opacity: 0;
+  }
+}

@@ -1,235 +1,225 @@
+@use '../ui/pixel' as *;
+
 :host {
   position: fixed;
   top: 0;
   right: 0;
   left: 0;
-  z-index: 1000;
+  z-index: var(--z-hud);
   display: block;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(10, 10, 15, 0.76);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.22);
-  transition: transform 220ms ease;
+  transition: transform var(--duration-base) steps(4, end);
 }
 
-:host(.navbar--hidden) {
-  transform: translateY(-110%);
+// Only the menu bar slides away; the XP bar stays pinned to the top.
+:host(.hud--hidden) {
+  transform: translateY(calc(var(--hud-bar-height) * -1));
 }
 
-.navbar {
-  width: min(100%, 76rem);
-  min-height: 4.5rem;
-  display: flex;
-  align-items: center;
-  gap: var(--space-6);
-  margin-inline: auto;
-  padding: 0 var(--space-6);
-}
-
-.navbar__brand {
-  margin-right: auto;
-  color: var(--color-text-primary);
-  font-size: var(--font-size-lg);
-  font-weight: 800;
-  text-decoration: none;
-}
-
-.navbar__links {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-5);
-}
-
-.navbar__link,
-.navbar__mobile-link {
+.hud__bar {
   position: relative;
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  text-decoration: none;
-  transition:
-    color 180ms ease,
-    transform 180ms ease;
+  z-index: 1;
+  height: var(--hud-bar-height);
+  background: var(--ink);
+  // Pixel bottom border: a paper line with a stone step under it.
+  box-shadow:
+    inset 0 calc(var(--px) * -1) 0 var(--paper),
+    0 var(--px) 0 var(--w15-stone);
 }
 
-.navbar__link::after,
-.navbar__mobile-link::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  bottom: -0.45rem;
-  left: 0;
-  height: 0.15rem;
-  background: var(--color-accent);
-  transform: scaleX(0);
-  transform-origin: center;
-  transition: transform 180ms ease;
-}
-
-.navbar__link:hover,
-.navbar__link--active,
-.navbar__mobile-link:hover,
-.navbar__mobile-link--active {
-  color: var(--color-text-primary);
-}
-
-.navbar__link:hover::after,
-.navbar__link--active::after,
-.navbar__mobile-link:hover::after,
-.navbar__mobile-link--active::after {
-  transform: scaleX(1);
-}
-
-.navbar__lang {
+.hud {
+  width: min(100%, 76rem);
+  height: 100%;
   display: flex;
   align-items: center;
+  gap: var(--space-4);
+  margin-inline: auto;
+  padding: 0 var(--space-4) var(--px);
+}
+
+.hud__brand {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-right: auto;
+  color: var(--paper);
   font-family: var(--font-display);
-  font-size: var(--font-size-label);
+  font-size: 0.625rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
-.navbar__lang-button {
-  min-width: 2.75rem;
-  min-height: 2.75rem;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--color-text-secondary);
-  font: inherit;
-  cursor: pointer;
-}
-
-.navbar__lang-button:hover,
-.navbar__lang-button--active {
+.hud__brand:hover {
   color: var(--coin);
 }
 
-.navbar__lang-divider {
-  color: var(--color-text-secondary);
+.hud__logo {
+  width: 39px;
+  height: 27px;
 }
 
-.navbar__toggle {
-  width: 2.75rem;
-  height: 2.75rem;
+.hud__menu {
+  display: flex;
+  align-items: center;
+  gap: var(--px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hud__link {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--px);
+  padding: 0 var(--space-1);
+  color: var(--paper-muted);
+  font-family: var(--font-display);
+  font-size: 0.625rem;
+  line-height: 1;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.hud__link:hover,
+.hud__link:focus-visible,
+.hud__link--active {
+  color: var(--coin);
+}
+
+// ▶ marker: space is always reserved so the menu doesn't shift.
+.hud__marker {
+  width: 6px;
+  height: 10px;
+  visibility: hidden;
+}
+
+.hud__link:hover .hud__marker,
+.hud__link:focus-visible .hud__marker,
+.hud__link--active .hud__marker {
+  visibility: visible;
+}
+
+.hud__link:hover .hud__marker {
+  animation: marker-blink 800ms steps(1, end) infinite;
+}
+
+.hud__toggle {
+  width: 44px;
+  height: 44px;
   display: none;
-  place-items: center;
-  gap: 0.28rem;
-  padding: 0.63rem;
-  border: 1px solid rgba(var(--color-accent-rgb), 0.36);
-  background: rgba(var(--color-primary-rgb), 0.12);
-  color: var(--color-text-primary);
-  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--px);
+  margin: var(--px);
+  padding: 0;
+  border: 0;
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: pixel-border(var(--paper));
 }
 
-.navbar__toggle span {
-  width: 1.2rem;
-  height: 0.12rem;
-  display: block;
+.hud__toggle:hover {
+  color: var(--coin);
+}
+
+.hud__toggle span {
+  width: 20px;
+  height: var(--px);
   background: currentColor;
-  transition:
-    opacity 180ms ease,
-    transform 180ms ease;
 }
 
-.navbar__toggle--open span:nth-child(1) {
-  transform: translateY(0.4rem) rotate(45deg);
+// XP bar: "LV n/5 · WORLD" + segmented scroll progress, one group per world.
+.hud__xp {
+  height: var(--hud-xp-height);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-4);
+  background: color-mix(in srgb, var(--ink) 92%, transparent);
+  box-shadow: 0 var(--px) 0 rgba(var(--ink-rgb), 0.5);
 }
 
-.navbar__toggle--open span:nth-child(2) {
-  opacity: 0;
+.hud__level {
+  flex: none;
+  display: flex;
+  gap: var(--space-2);
+  min-width: 12.5rem;
+  color: var(--paper);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-lg);
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
-.navbar__toggle--open span:nth-child(3) {
-  transform: translateY(-0.4rem) rotate(-45deg);
+.hud__level-number {
+  color: var(--coin);
 }
 
-.navbar__mobile {
-  display: none;
-  overflow: hidden;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+.hud__xp-bar {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-block: 0;
 }
 
-.navbar__mobile--enter {
-  animation: navbar-mobile-in 190ms var(--ease-out);
-}
-
-.navbar__mobile--leave {
-  animation: navbar-mobile-in 150ms ease-in reverse;
-}
-
-@keyframes navbar-mobile-in {
-  from {
+@keyframes marker-blink {
+  50% {
     opacity: 0;
-    transform: translateY(-0.5rem);
+  }
+}
+
+// Short name and condensed menu between tablet and desktop.
+@media (max-width: 1080px) {
+  .hud__name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }
 
 @media (max-width: 760px) {
-  .navbar {
-    min-height: 4rem;
-    padding-inline: var(--space-4);
-  }
-
-  .navbar__links--desktop {
+  .hud__menu,
+  .hud__lang {
     display: none;
   }
 
-  .navbar__toggle {
-    display: grid;
+  .hud__name {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
   }
 
-  .navbar__mobile {
-    display: grid;
-    gap: var(--space-3);
-    padding: var(--space-4);
-    background: rgba(10, 10, 15, 0.9);
-  }
-
-  .navbar__mobile-link {
-    width: 100%;
-    min-height: 2.75rem;
+  .hud__toggle {
     display: flex;
-    align-items: center;
-    padding-inline: var(--space-2);
   }
 
-  .navbar__mobile-link::after {
-    right: auto;
-    bottom: 0.25rem;
-    width: 3rem;
+  .hud__level {
+    min-width: 0;
+    font-size: var(--font-size-md);
   }
 }
 
-@media (max-width: 420px) {
-  .navbar {
-    gap: var(--space-3);
-    padding-inline: var(--space-3);
-  }
-
-  .navbar__brand {
-    font-size: var(--font-size-base);
-  }
-
-  .navbar__toggle {
-    width: 2.5rem;
-    height: 2.5rem;
-    padding: 0.55rem;
+@media (max-width: 359.98px) {
+  .hud__name {
+    display: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :host,
-  .navbar__link,
-  .navbar__link::after,
-  .navbar__mobile-link,
-  .navbar__mobile-link::after,
-  .navbar__toggle span {
-    transition-duration: 1ms;
+  :host {
+    transition: none;
   }
 
-  .navbar__mobile--enter,
-  .navbar__mobile--leave {
+  .hud__link:hover .hud__marker {
     animation: none;
   }
 }

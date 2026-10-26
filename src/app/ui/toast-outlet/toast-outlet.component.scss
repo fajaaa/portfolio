@@ -1,0 +1,70 @@
+@use '../pixel' as *;
+
+:host {
+  position: fixed;
+  top: calc(var(--hud-height) + var(--space-4));
+  left: 50%;
+  z-index: var(--z-toast);
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  width: max-content;
+  max-width: calc(100vw - var(--space-8));
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.toast {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-1);
+  margin: var(--px);
+  padding: var(--space-2) var(--space-4);
+  background: var(--coin);
+  color: var(--ink);
+  text-align: center;
+  box-shadow: pixel-border(var(--ink)), 0 calc(var(--px) * 2) 0 var(--px) var(--ink);
+}
+
+.toast__title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.4;
+}
+
+.toast__detail {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-md);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.toast--enter {
+  animation: toast-in 320ms steps(4, end);
+}
+
+.toast--leave {
+  animation: toast-out 200ms steps(2, end) forwards;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--px) * -4)) scale(0.6);
+  }
+}
+
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    transform: translateY(calc(var(--px) * -2));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast--enter,
+  .toast--leave {
+    animation: none;
+  }
+}

@@ -10,7 +10,7 @@ export const bs: Dictionary = {
   },
   nav: {
     ariaLabel: 'Glavna navigacija',
-    toggleMenu: 'Otvori ili zatvori navigaciju',
+    toggleMenu: 'Otvori meni',
     links: {
       home: 'Početna',
       about: 'O meni',
@@ -24,7 +24,18 @@ export const bs: Dictionary = {
       bs: 'Bosanski',
     },
   },
-  backToTop: 'Nazad na vrh',
+  backToTop: 'Nazad na početak',
+  hud: {
+    world: 'WORLD {world}',
+    level: 'LV {level}/{total}',
+    xpLabel: 'Napredak kroz stranicu',
+    levelUp: 'LEVEL UP!',
+    pause: {
+      title: 'PAUZA',
+      close: 'Zatvori meni',
+      hint: '↑ ↓ odabir · Enter potvrdi · Esc zatvori',
+    },
+  },
   hero: {
     greeting: 'Zdravo, ja sam',
     subtitles: ['Full-stack developer', 'Angular entuzijasta', 'Rješavam probleme'],

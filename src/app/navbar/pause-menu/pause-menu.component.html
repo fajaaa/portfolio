@@ -1,0 +1,36 @@
+<div class="pause">
+  <div class="pause__header">
+    <h2 id="pause-menu-title" class="pause__title">{{ 'hud.pause.title' | t }}</h2>
+    <button
+      class="pause__close"
+      type="button"
+      [attr.aria-label]="'hud.pause.close' | t"
+      (click)="closed.emit()"
+    >
+      <app-pixel-art class="pause__close-icon" [sprite]="closeIcon" />
+    </button>
+  </div>
+
+  <ul class="pause__menu">
+    @for (item of items(); track item.section) {
+      <li>
+        <a
+          class="pause__link"
+          [class.pause__link--active]="active() === item.section"
+          [attr.aria-current]="active() === item.section ? 'location' : null"
+          [attr.data-section]="item.section"
+          [href]="'/#' + item.section"
+          (click)="selected.emit({ section: item.section, event: $event })"
+        >
+          <app-pixel-art class="pause__marker" [sprite]="marker" />
+          <span class="pause__world">{{ item.id }}</span>
+          <span>{{ item.labelKey | t }}</span>
+        </a>
+      </li>
+    }
+  </ul>
+
+  <app-lang-toggle class="lang-toggle--large" />
+
+  <p class="pause__hint">{{ 'hud.pause.hint' | t }}</p>
+</div>

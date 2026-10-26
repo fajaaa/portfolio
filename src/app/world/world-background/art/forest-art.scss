@@ -1,0 +1,110 @@
+// WORLD 1-2: layered forest (far pines, near trees) with fireflies.
+@use '../../../ui/pixel' as *;
+@use 'base';
+
+$pine: (
+  '.....M.....',
+  '....MMM....',
+  '...MMMMM...',
+  '....MMM....',
+  '...MMMMM...',
+  '..MMMMMMM..',
+  '...MMMMM...',
+  '..MMMMMMM..',
+  '.MMMMMMMMM.',
+  '..MMMMMMM..',
+  '.MMMMMMMMM.',
+  'MMMMMMMMMMM',
+  '....MMM....',
+  '....MMM....'
+);
+
+$tree: (
+  '.....LLLLLL.....',
+  '...LLLLLLLLLL...',
+  '..LLLHLLLLLLLL..',
+  '.LLLHHLLLLLLLLL.',
+  '.LLLLLLLLLLLMLL.',
+  'LLLLLLLLLLLMMLLL',
+  'LLLLLLLLLLLLLLLL',
+  'LLMLLLLLLLLLLLLL',
+  '.LMMLLLLLLLLLML.',
+  '.LLLLLLLLLLLMML.',
+  '..LLLLMLLLLLLL..',
+  '...MMLMMMMLMM...',
+  '......TTtT......',
+  '......TTtT......',
+  '......TTtT......',
+  '......TTtT......',
+  '.....TTTttT.....'
+);
+
+$floor: (
+  '.L...L.L....L..L',
+  'LLL.LLLLL..LLLLL',
+  'MMMMMMMMMMMMMMMM',
+  'MMMLMMMMMMMMLMMM',
+  'MMMMMMMMMMMMMMMM',
+  'MMMMMMMMMMMMMMMM'
+);
+
+$pine-palette: (M: #2f6b3a);
+$tree-palette: (L: #4caf50, H: #7fd483, M: #2f6b3a, T: #6d4c41, t: #4e342e);
+$floor-palette: (L: #4caf50, M: #2f6b3a);
+
+:host {
+  background: var(--w12-bg);
+}
+
+// Pines along the top, solid ground below them; extends past the bottom for the parallax.
+.layer--trees-far {
+  inset: auto 0 calc(var(--px) * -12);
+  height: calc(var(--px) * 52);
+  background:
+    pixel-svg($pine, $pine-palette, 16 24, 2 10) 0 0 / px-size(16, 24) repeat-x,
+    linear-gradient(var(--w12-mid), var(--w12-mid)) 0 calc(var(--px) * 24) / 100% 100% no-repeat;
+}
+
+.layer--trees-near {
+  inset: auto 0 0;
+  height: calc(var(--px) * 23);
+  background:
+    pixel-svg($tree, $tree-palette, 28 17, 6 0) 0 0 / px-size(28, 17) repeat-x,
+    pixel-svg($floor, $floor-palette) 0 100% / px-size(16, 6) repeat-x;
+}
+
+.layer--fireflies {
+  inset: -6% 0 20%;
+}
+
+.firefly {
+  position: absolute;
+  width: var(--px);
+  height: var(--px);
+  background: var(--w15-stars);
+  box-shadow: 0 0 0 var(--px) rgba(255, 224, 102, 0.25);
+  animation:
+    firefly-blink 2.4s steps(1, end) infinite,
+    firefly-float 7s steps(7, end) infinite alternate;
+}
+
+@keyframes firefly-blink {
+  0%,
+  70% {
+    opacity: 1;
+  }
+
+  35% {
+    opacity: 0.2;
+  }
+}
+
+@keyframes firefly-float {
+  50% {
+    transform: translate(calc(var(--px) * 3), calc(var(--px) * -4));
+  }
+
+  100% {
+    transform: translate(calc(var(--px) * -2), calc(var(--px) * -8));
+  }
+}

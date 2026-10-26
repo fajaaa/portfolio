@@ -4,10 +4,10 @@
 
 .projects {
   padding: clamp(var(--space-12), 8vw, var(--space-16)) clamp(var(--space-6), 7vw, var(--space-16));
-  background: var(--color-background-deep);
 }
 
 .projects__header {
+  text-shadow: var(--text-outline);
   width: min(100%, 72rem);
   margin-inline: auto;
   margin-bottom: var(--space-8);
