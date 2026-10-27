@@ -1,28 +1,99 @@
-<section class="skills">
-  <div class="skills__header" reveal="up">
-    <p class="skills__eyebrow">{{ 'skills.eyebrow' | t }}</p>
-    <h2>{{ 'skills.heading' | t }}</h2>
-  </div>
+<section class="skills" aria-labelledby="skills-heading">
+  <header class="skills__header">
+    <h2 id="skills-heading" class="skills__heading">{{ 'skills.heading' | t }}</h2>
+  </header>
 
-  <div
-    class="skills__grid"
-    [attr.aria-label]="'skills.categoriesLabel' | t"
-    reveal="up"
-    [stagger]="120"
-  >
-    @for (category of categories; track category.titleKey) {
-      <article class="skills__card">
-        <div class="skills__card-heading">
-          <h3>{{ category.titleKey | t }}</h3>
-          <p>{{ category.summaryKey | t }}</p>
-        </div>
+  <app-pixel-panel class="skills__inventory" variant="dark" raised reveal="up">
+    <app-bag-tabs
+      class="skills__tabs"
+      [bags]="bags"
+      [active]="activeBag()"
+      [sizes]="bagSizes"
+      [capacity]="capacity"
+      panelId="skills-panel"
+      [attr.aria-label]="'skills.bagsLabel' | t"
+      (selectBag)="selectBag($event)"
+    />
 
-        <ul class="skills__list">
-          @for (skill of category.skills; track skill) {
-            <li class="skills__tile">{{ skill }}</li>
+    <div
+      id="skills-panel"
+      class="skills__panel"
+      role="tabpanel"
+      [attr.aria-labelledby]="tabId(activeBag())"
+    >
+      <!-- All bag captions share one cell, so the tallest one sets the height. -->
+      <div class="skills__stack">
+        @for (bag of bags; track bag.id) {
+          <div
+            class="skills__bag-caption"
+            [class.skills__sizer]="bag.id !== activeBag()"
+            [attr.aria-hidden]="bag.id !== activeBag() ? 'true' : null"
+          >
+            <h3 class="skills__bag-title">{{ bag.titleKey | t }}</h3>
+            <p class="skills__bag-summary">{{ bag.summaryKey | t }}</p>
+          </div>
+        }
+      </div>
+
+      <div class="skills__body">
+        <ul
+          #grid
+          class="skills__grid"
+          reveal="pop"
+          [stagger]="40"
+          [delay]="150"
+          (revealed)="onRevealed()"
+          [attr.aria-label]="'skills.slotsLabel' | t: { bag: activeCategory().titleKey | t }"
+          aria-describedby="skills-hint"
+        >
+          @for (item of slots(); track $index; let i = $index) {
+            <li class="skills__cell" [attr.aria-hidden]="item ? null : 'true'">
+              @if (item) {
+                @let isSelected = item.id === selected().id;
+                <button
+                  #slot
+                  type="button"
+                  class="skills__slot"
+                  [class.skills__slot--selected]="isSelected"
+                  [attr.data-rarity]="item.rarity"
+                  [attr.aria-current]="isSelected ? 'true' : null"
+                  [tabindex]="isSelected ? 0 : -1"
+                  (click)="select(item)"
+                  (focus)="select(item)"
+                  (pointerenter)="onSlotPointerEnter($event, item)"
+                  (keydown)="onSlotKeydown($event, i)"
+                >
+                  <app-pixel-art class="skills__slot-icon" [sprite]="icons[item.id]" />
+                  <span class="skills__slot-label">{{ slotLabels[item.id] }}</span>
+                  @if (isSelected) {
+                    <span class="skills__brackets" aria-hidden="true"></span>
+                  }
+                </button>
+              } @else {
+                <span class="skills__slot skills__slot--empty"></span>
+              }
+            </li>
           }
         </ul>
-      </article>
-    }
-  </div>
+        <p id="skills-hint" class="visually-hidden">{{ 'skills.slotsHint' | t }}</p>
+
+        <app-pixel-panel class="skills__info" raised>
+          <h3 class="skills__info-title">{{ 'skills.itemInfo' | t }}</h3>
+
+          <!-- The live card and an invisible copy of every item share one cell: the panel keeps
+               the height of the longest item, so changing the selection never moves the layout. -->
+          <div class="skills__stack">
+            <div class="skills__info-live" aria-live="polite" aria-atomic="true">
+              <app-item-info [skill]="selected()" />
+            </div>
+            @for (skill of skills; track skill.id) {
+              <div class="skills__sizer" aria-hidden="true">
+                <app-item-info [skill]="skill" />
+              </div>
+            }
+          </div>
+        </app-pixel-panel>
+      </div>
+    </div>
+  </app-pixel-panel>
 </section>

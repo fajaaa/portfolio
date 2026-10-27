@@ -45,6 +45,12 @@
   --hp: #e63946;
   --xp: #43d17a;
 
+  /* Item rarity (WORLD 1-4 inventory); ink text on each passes WCAG AA */
+  --rarity-common: #a8a8a8;
+  --rarity-rare: #4c8dff;
+  --rarity-epic: #b072ff;
+  --rarity-legendary: var(--coin);
+
   /* Pixel unit: every border, shadow and spacing step is a multiple of it */
   --px: 4px;
 
@@ -374,6 +380,23 @@ h6 {
 
 .pixelated {
   image-rendering: pixelated;
+}
+
+/* Item rarity: `--rarity` for elements with a `data-rarity` attribute (inventory slots, chips) */
+[data-rarity] {
+  --rarity: var(--rarity-common);
+}
+
+[data-rarity='rare'] {
+  --rarity: var(--rarity-rare);
+}
+
+[data-rarity='epic'] {
+  --rarity: var(--rarity-epic);
+}
+
+[data-rarity='legendary'] {
+  --rarity: var(--rarity-legendary);
 }
 
 .visually-hidden {

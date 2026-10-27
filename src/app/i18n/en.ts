@@ -114,22 +114,64 @@ export const en = {
     },
   },
   skills: {
-    eyebrow: 'Technical Stack',
-    heading: 'Skills',
-    categoriesLabel: 'Skill categories',
+    heading: 'INVENTORY',
+    bagsLabel: 'Skill bags',
+    slotsLabel: '{bag}: items',
+    slotsHint: 'Use the arrow keys to move between items.',
+    itemInfo: 'ITEM INFO',
+    type: 'TYPE',
+    rarity: 'RARITY',
+    usedIn: 'Used in:',
+    usedInNone: 'No listed project yet',
+    types: {
+      language: 'Language',
+      framework: 'Framework',
+      database: 'Database',
+      tool: 'Tool',
+    },
+    rarities: {
+      common: 'Common',
+      rare: 'Rare',
+      epic: 'Epic',
+      legendary: 'Legendary',
+    },
     categories: {
       programming: {
+        bag: 'CODE',
         title: 'Programming & Frontend',
         summary: 'Languages and frontend technologies for web, desktop, and mobile development.',
       },
       databases: {
+        bag: 'DATA',
         title: 'Databases',
         summary: 'Database and backend data platforms used in projects.',
       },
       tools: {
+        bag: 'TOOLS',
         title: 'Development Tools',
         summary: 'Tools for source control, containers, and daily development.',
       },
+    },
+    items: {
+      cpp: 'A fast, low-level language. Great for algorithms, data structures and squeezing out performance.',
+      csharp:
+        'A modern, strongly typed language from Microsoft, used for desktop apps, APIs and backend logic.',
+      html5: 'The structure of every web page: semantic, accessible markup.',
+      css3: 'Layout, colors and motion for the web: Flexbox, Grid and animations.',
+      javascript: 'The language of the browser. Adds interactivity and talks to APIs and devices.',
+      typescript:
+        'JavaScript with types. Catches bugs before runtime and keeps large codebases tidy.',
+      angular:
+        'A complete framework for web apps: components, signals, routing and dependency injection.',
+      dart: "Google's client-optimized language and the engine behind Flutter.",
+      flutter: 'One codebase for Android, iOS, web and desktop apps, with a fast hot reload.',
+      mysql: 'A relational database: tables, relations and SQL queries.',
+      firebase: "Google's backend platform: realtime database, authentication and hosting.",
+      git: 'Version control: branches, commits and a safe history of every change.',
+      docker: 'Packs an app and its dependencies into containers that run the same everywhere.',
+      visualstudio: "Microsoft's full IDE for C# and C++, with a powerful debugger.",
+      vscode: 'A light, extensible code editor, made for web development.',
+      webstorm: "JetBrains' IDE for JavaScript and TypeScript, with smart refactoring.",
     },
   },
   contact: {

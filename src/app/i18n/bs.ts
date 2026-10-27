@@ -115,22 +115,64 @@ export const bs: Dictionary = {
     },
   },
   skills: {
-    eyebrow: 'Tehnologije',
-    heading: 'Vještine',
-    categoriesLabel: 'Kategorije vještina',
+    heading: 'INVENTAR',
+    bagsLabel: 'Torbe s vještinama',
+    slotsLabel: '{bag}: predmeti',
+    slotsHint: 'Strelicama se krećeš između predmeta.',
+    itemInfo: 'INFO O PREDMETU',
+    type: 'TIP',
+    rarity: 'RIJETKOST',
+    usedIn: 'Korišteno u:',
+    usedInNone: 'Još nema projekta na listi',
+    types: {
+      language: 'Jezik',
+      framework: 'Framework',
+      database: 'Baza podataka',
+      tool: 'Alat',
+    },
+    rarities: {
+      common: 'Običan',
+      rare: 'Rijedak',
+      epic: 'Epski',
+      legendary: 'Legendarni',
+    },
     categories: {
       programming: {
+        bag: 'KOD',
         title: 'Programiranje i frontend',
         summary: 'Jezici i frontend tehnologije za razvoj web, desktop i mobilnih aplikacija.',
       },
       databases: {
+        bag: 'PODACI',
         title: 'Baze podataka',
         summary: 'Baze podataka i backend platforme za podatke koje koristim u projektima.',
       },
       tools: {
+        bag: 'ALATI',
         title: 'Razvojni alati',
         summary: 'Alati za verzionisanje koda, kontejnere i svakodnevni rad.',
       },
+    },
+    items: {
+      cpp: 'Brz jezik niskog nivoa. Odličan za algoritme, strukture podataka i izvlačenje maksimalnih performansi.',
+      csharp:
+        'Moderan, strogo tipiziran Microsoftov jezik za desktop aplikacije, API-je i backend logiku.',
+      html5: 'Struktura svake web stranice: semantički i pristupačan markup.',
+      css3: 'Raspored, boje i pokret na webu: Flexbox, Grid i animacije.',
+      javascript: 'Jezik preglednika. Dodaje interaktivnost i komunicira s API-jima i uređajima.',
+      typescript:
+        'JavaScript s tipovima. Hvata greške prije pokretanja i drži velike projekte urednim.',
+      angular:
+        'Kompletan framework za web aplikacije: komponente, signali, rutiranje i dependency injection.',
+      dart: 'Googleov jezik optimizovan za klijentske aplikacije, pokretač Fluttera.',
+      flutter: 'Jedan kod za Android, iOS, web i desktop aplikacije, uz brzi hot reload.',
+      mysql: 'Relaciona baza podataka: tabele, relacije i SQL upiti.',
+      firebase: 'Googleova backend platforma: baza u realnom vremenu, autentifikacija i hosting.',
+      git: 'Kontrola verzija: grane, commitovi i sigurna historija svake promjene.',
+      docker: 'Pakuje aplikaciju i njene zavisnosti u kontejnere koji svugdje rade isto.',
+      visualstudio: 'Microsoftov kompletan IDE za C# i C++, s moćnim debuggerom.',
+      vscode: 'Lagan i proširiv editor koda, napravljen za web razvoj.',
+      webstorm: 'JetBrainsov IDE za JavaScript i TypeScript, s pametnim refaktorisanjem.',
     },
   },
   contact: {
