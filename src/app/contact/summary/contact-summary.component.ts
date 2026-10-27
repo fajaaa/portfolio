@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
 import { CONTACT_FIELDS, ContactField, ContactValues } from '../../core/contact-dialogue.service';
 import { I18nKey } from '../../i18n/i18n.types';
@@ -7,6 +7,7 @@ import { TranslatePipe } from '../../i18n/translate.pipe';
 /** The answers read back before sending, each with an "edit" link back to its question. */
 @Component({
   selector: 'app-contact-summary',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TranslatePipe],
   template: `
     <dl class="summary">

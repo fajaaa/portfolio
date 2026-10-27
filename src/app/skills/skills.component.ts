@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   DestroyRef,
   ElementRef,
@@ -14,6 +15,8 @@ import {
 import { gsap } from 'gsap';
 
 import { MotionService } from '../core/motion.service';
+import { SoundService } from '../core/sound.service';
+import { SoundName } from '../core/sounds';
 import { TranslatePipe } from '../i18n/translate.pipe';
 import { RevealDirective } from '../shared/reveal.directive';
 import { PixelArtComponent } from '../ui/pixel-art/pixel-art.component';
@@ -40,6 +43,7 @@ const itemsIn = (bag: SkillCategoryId) => SKILLS.filter((skill) => skill.categor
  */
 @Component({
   selector: 'app-skills',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     BagTabsComponent,
     ItemInfoComponent,
@@ -55,6 +59,7 @@ export class SkillsComponent {
   private readonly injector = inject(Injector);
   private readonly zone = inject(NgZone);
   private readonly motion = inject(MotionService);
+  private readonly sound = inject(SoundService);
   private readonly grid = viewChild.required<ElementRef<HTMLElement>>('grid');
   private readonly slotButtons = viewChildren<ElementRef<HTMLButtonElement>>('slot');
   private revealed = false;
@@ -102,19 +107,25 @@ export class SkillsComponent {
       return;
     }
 
+    this.sound.play('select');
     this.activeBag.set(bag);
     this.selectedId.set(itemsIn(bag)[0].id);
     afterNextRender(() => this.restagger(), { injector: this.injector });
   }
 
-  protected select(skill: Skill): void {
+  /** Selects `skill`, with a sound when the selection actually changes. */
+  protected select(skill: Skill, sound: SoundName = 'select'): void {
+    if (skill.id !== this.selectedId()) {
+      this.sound.play(sound);
+    }
+
     this.selectedId.set(skill.id);
   }
 
   /** Hover selects too, but only with a mouse (touch already selects on tap). */
   protected onSlotPointerEnter(event: PointerEvent, skill: Skill): void {
     if (event.pointerType === 'mouse') {
-      this.select(skill);
+      this.select(skill, 'hover');
     }
   }
 

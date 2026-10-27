@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { AboutComponent } from '../about/about.component';
 import { ContactComponent } from '../contact/contact.component';
@@ -9,6 +9,7 @@ import { WorldSectionComponent } from '../world/world-section/world-section.comp
 
 @Component({
   selector: 'app-portfolio-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     WorldSectionComponent,

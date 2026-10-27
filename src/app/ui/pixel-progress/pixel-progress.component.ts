@@ -1,4 +1,11 @@
-import { Component, computed, input, linkedSignal, numberAttribute } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  linkedSignal,
+  numberAttribute,
+} from '@angular/core';
 
 /** Delay between two segments filling (or emptying), in ms. */
 const STEP_MS = 60;
@@ -10,6 +17,7 @@ const STEP_MS = 60;
  */
 @Component({
   selector: 'app-pixel-progress',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @for (segment of slots(); track segment) {
       <span

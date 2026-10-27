@@ -20,6 +20,7 @@
           [attr.aria-current]="active() === item.section ? 'location' : null"
           [attr.data-section]="item.section"
           [href]="'/#' + item.section"
+          (pointerenter)="sound.hover($event)"
           (click)="selected.emit({ section: item.section, event: $event })"
         >
           <app-pixel-art class="pause__marker" [sprite]="marker" />
@@ -30,7 +31,10 @@
     }
   </ul>
 
-  <app-lang-toggle class="lang-toggle--large" />
+  <div class="pause__settings">
+    <app-lang-toggle class="lang-toggle--large" />
+    <app-sound-toggle labelled />
+  </div>
 
   <p class="pause__hint">{{ 'hud.pause.hint' | t }}</p>
 </div>

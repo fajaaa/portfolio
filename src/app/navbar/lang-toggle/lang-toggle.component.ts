@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
 import { I18nService } from '../../core/i18n.service';
 import { I18nKey, LANGS, Lang } from '../../i18n/i18n.types';
@@ -7,6 +7,7 @@ import { TranslatePipe } from '../../i18n/translate.pipe';
 /** Pixel EN | BS switch. Add the `lang-toggle--large` class for the pause menu size. */
 @Component({
   selector: 'app-lang-toggle',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TranslatePipe],
   template: `
     @for (lang of langs; track lang) {

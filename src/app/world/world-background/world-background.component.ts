@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   DestroyRef,
   ElementRef,
@@ -30,6 +31,7 @@ import {
  */
 @Component({
   selector: 'app-world-background',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [SkyArtComponent, ForestArtComponent, CaveArtComponent, WaterArtComponent, CastleArtComponent],
   templateUrl: './world-background.component.html',
   styleUrl: './world-background.component.scss',

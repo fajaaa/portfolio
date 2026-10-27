@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   NgZone,
@@ -14,6 +15,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { I18nService } from '../core/i18n.service';
 import { MotionService } from '../core/motion.service';
+import { SoundService } from '../core/sound.service';
 import { TranslatePipe } from '../i18n/translate.pipe';
 import { RevealDirective } from '../shared/reveal.directive';
 import { DialogBoxComponent } from '../ui/dialog-box/dialog-box.component';
@@ -29,6 +31,7 @@ const FLASH_MS = 140;
  */
 @Component({
   selector: 'app-projects',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CartridgeComponent,
     DialogBoxComponent,
@@ -42,6 +45,7 @@ const FLASH_MS = 140;
 export class ProjectsComponent {
   private readonly i18n = inject(I18nService);
   private readonly motion = inject(MotionService);
+  private readonly sound = inject(SoundService);
   private readonly zone = inject(NgZone);
   private readonly flash = viewChild.required<ElementRef<HTMLElement>>('flash');
   private activeCartridge: CartridgeComponent | null = null;
@@ -71,6 +75,7 @@ export class ProjectsComponent {
     }
 
     this.inserting = true;
+    this.sound.play('select');
 
     try {
       if (!this.motion.reducedMotion()) {
@@ -86,6 +91,7 @@ export class ProjectsComponent {
   }
 
   protected onScreenClosed(): void {
+    this.sound.play('back');
     this.playing.set(null);
     this.activeCartridge?.eject();
     this.activeCartridge = null;

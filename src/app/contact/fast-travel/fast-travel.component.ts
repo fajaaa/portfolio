@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { I18nKey } from '../../i18n/i18n.types';
 import { TranslatePipe } from '../../i18n/translate.pipe';
@@ -20,6 +20,7 @@ interface FastTravelLink {
 /** Always-visible quick links (email, LinkedIn, GitHub, CV) for visitors who skip the dialogue. */
 @Component({
   selector: 'app-fast-travel',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PixelArtComponent, PixelButtonComponent, PixelPanelComponent, TranslatePipe],
   templateUrl: './fast-travel.component.html',
   styleUrl: './fast-travel.component.scss',

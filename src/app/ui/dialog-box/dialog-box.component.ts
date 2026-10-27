@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   NgZone,
@@ -14,6 +15,7 @@ import {
 } from '@angular/core';
 
 import { MotionService } from '../../core/motion.service';
+import { SoundService } from '../../core/sound.service';
 import { PixelPanelComponent } from '../pixel-panel/pixel-panel.component';
 
 /**
@@ -23,10 +25,11 @@ import { PixelPanelComponent } from '../pixel-panel/pixel-panel.component';
  * the box is on screen (`startWhenVisible`). Clicking skips to the end; reduced motion shows the
  * text at once. Screen readers always get the full text; with `live` its changes are announced
  * politely. `done` emits once the text is complete. Projected content (e.g. answer buttons)
- * renders below the text.
+ * renders below the text. Typing ticks quietly when sound is on.
  */
 @Component({
   selector: 'app-dialog-box',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PixelPanelComponent],
   templateUrl: './dialog-box.component.html',
   styleUrl: './dialog-box.component.scss',
@@ -48,6 +51,7 @@ export class DialogBoxComponent {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly zone = inject(NgZone);
   private readonly motion = inject(MotionService);
+  private readonly sound = inject(SoundService);
   private timer: ReturnType<typeof setInterval> | undefined;
 
   private readonly animated = computed(() => this.typewriter() && !this.motion.reducedMotion());
@@ -117,6 +121,11 @@ export class DialogBoxComponent {
     clearInterval(this.timer);
     this.timer = setInterval(() => {
       this.shown.update((count) => count + 1);
+
+      // A quiet tick on every second character.
+      if (this.shown() % 2 === 0) {
+        this.sound.play('tick');
+      }
 
       if (this.finished()) {
         this.complete();

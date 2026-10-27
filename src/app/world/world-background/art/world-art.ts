@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 /**
  * Per-world pixel-art layers (2–3 each), drawn in their stylesheets with pixel-svg tiles.
@@ -7,6 +7,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-sky-art',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="layer layer--clouds-far" data-parallax="4"><div class="drift drift--slow"></div></div>
     <div class="layer layer--clouds-near" data-parallax="7"><div class="drift"></div></div>
@@ -18,6 +19,7 @@ export class SkyArtComponent {}
 
 @Component({
   selector: 'app-forest-art',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="layer layer--trees-far" data-parallax="5"></div>
     <div class="layer layer--trees-near"></div>
@@ -49,6 +51,7 @@ export class ForestArtComponent {
 
 @Component({
   selector: 'app-cave-art',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="layer layer--bricks" data-parallax="3"></div>
     <div class="layer layer--crystals" data-parallax="6">
@@ -78,6 +81,7 @@ export class CaveArtComponent {
 
 @Component({
   selector: 'app-water-art',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="layer layer--bubbles" data-parallax="5">
       @for (bubble of bubbles; track $index) {
@@ -108,6 +112,7 @@ export class WaterArtComponent {
 
 @Component({
   selector: 'app-castle-art',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="layer layer--stars" data-parallax="4"></div>
     <div class="layer layer--castle"><div class="torches"></div></div>

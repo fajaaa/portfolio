@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 import { SectionId, WORLDS, WorldId } from '../../core/worlds';
 import { I18nKey } from '../../i18n/i18n.types';
@@ -12,6 +12,7 @@ import { WorldBackgroundComponent } from '../world-background/world-background.c
  */
 @Component({
   selector: 'app-world-section',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TranslatePipe, WorldBackgroundComponent],
   template: `
     <app-world-background [world]="world()" />

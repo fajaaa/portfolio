@@ -56,7 +56,9 @@ export class SmoothScrollService {
   };
 
   constructor() {
-    gsap.registerPlugin(ScrollTrigger);
+    // Registering starts ScrollTrigger's own rAF loop, scroll / wheel listeners and a timer.
+    // Inside the Angular zone each of those would run change detection on every frame.
+    this.zone.runOutsideAngular(() => gsap.registerPlugin(ScrollTrigger));
 
     effect(() => {
       const reduced = this.motion.reducedMotion();

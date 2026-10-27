@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   DestroyRef,
   ElementRef,
@@ -33,6 +34,7 @@ const NAME = 'Kenan Fajic';
  */
 @Component({
   selector: 'app-hero',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DialogBoxComponent, HeroStageComponent, PixelArtComponent, PixelButtonComponent, TranslatePipe],
   templateUrl: './hero.component.html',
   styleUrl: './hero.component.scss',

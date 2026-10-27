@@ -1,4 +1,4 @@
-import { Component, booleanAttribute, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, input } from '@angular/core';
 
 export type PixelPanelVariant = 'paper' | 'dark';
 
@@ -9,6 +9,7 @@ export type PixelPanelVariant = 'paper' | 'dark';
  */
 @Component({
   selector: 'app-pixel-panel',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div class="pixel-panel__frame"><ng-content /></div>`,
   styleUrl: './pixel-panel.component.scss',
   host: {

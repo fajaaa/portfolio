@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   Injector,
@@ -37,6 +38,7 @@ import { ContactSummaryComponent } from './summary/contact-summary.component';
  */
 @Component({
   selector: 'app-contact',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ContactSummaryComponent,
     DialogBoxComponent,

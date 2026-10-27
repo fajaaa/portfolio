@@ -1,4 +1,4 @@
-import { Component, booleanAttribute, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, input } from '@angular/core';
 
 import { PixelArtComponent } from '../../ui/pixel-art/pixel-art.component';
 import { NPC_BOB, NPC_IDLE, NPC_TALK } from '../contact-sprites';
@@ -9,6 +9,7 @@ import { NPC_BOB, NPC_IDLE, NPC_TALK } from '../contact-sprites';
  */
 @Component({
   selector: 'app-npc',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PixelArtComponent],
   template: `
     <app-pixel-art class="npc__frame npc__frame--idle" [sprite]="frames.idle" />

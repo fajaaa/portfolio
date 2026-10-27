@@ -124,6 +124,14 @@
   font-size: var(--font-size-lg);
 }
 
+.pause__settings {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
 .pause__hint {
   color: var(--paper-muted);
   font-family: var(--font-mono);

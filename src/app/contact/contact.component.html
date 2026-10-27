@@ -95,7 +95,7 @@
 
           <div class="contact__buttons">
             @if (step() !== 'greeting' && step() !== 'sent') {
-              <button pixelButton="secondary" type="button" (click)="back()">
+              <button pixelButton="secondary" sound="back" type="button" (click)="back()">
                 <app-pixel-art class="contact__arrow" [sprite]="icons.back" />
                 {{ 'contact.controls.back' | t }}
               </button>

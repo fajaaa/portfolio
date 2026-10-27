@@ -1,4 +1,11 @@
-import { Component, ElementRef, input, output, viewChildren } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  input,
+  output,
+  viewChildren,
+} from '@angular/core';
 
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { PixelArtComponent } from '../../ui/pixel-art/pixel-art.component';
@@ -14,6 +21,7 @@ export const bagTabId = (bag: SkillCategoryId) => `skills-tab-${bag}`;
  */
 @Component({
   selector: 'app-bag-tabs',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PixelArtComponent, TranslatePipe],
   templateUrl: './bag-tabs.component.html',
   styleUrl: './bag-tabs.component.scss',

@@ -84,3 +84,10 @@
     transition: none;
   }
 }
+
+.intro-cover {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-intro);
+  background: var(--ink);
+}

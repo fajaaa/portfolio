@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   DestroyRef,
   ElementRef,
@@ -29,6 +30,7 @@ import { Project } from '../projects.service';
  */
 @Component({
   selector: 'app-game-screen',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DialogBoxComponent,
     PixelArtComponent,

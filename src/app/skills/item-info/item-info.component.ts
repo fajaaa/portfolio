@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 import { I18nKey } from '../../i18n/i18n.types';
 import { TranslatePipe } from '../../i18n/translate.pipe';
@@ -23,6 +23,7 @@ const RARITY_KEYS: Record<SkillRarity, I18nKey> = {
 /** ITEM INFO card for one skill: big icon, name, type, rarity, description and "Used in". */
 @Component({
   selector: 'app-item-info',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PixelArtComponent, TranslatePipe],
   templateUrl: './item-info.component.html',
   styleUrl: './item-info.component.scss',

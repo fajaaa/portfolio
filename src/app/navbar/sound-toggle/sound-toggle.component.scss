@@ -1,0 +1,40 @@
+@use '../../ui/pixel' as *;
+
+:host {
+  display: inline-flex;
+  flex: none;
+}
+
+.sound-toggle {
+  min-width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin: var(--px);
+  padding: 0 var(--space-2);
+  border: 0;
+  background: var(--ink);
+  color: var(--paper-muted);
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  line-height: 1;
+  text-transform: uppercase;
+  box-shadow: pixel-border(var(--paper));
+}
+
+.sound-toggle:hover,
+.sound-toggle--on {
+  color: var(--coin);
+}
+
+.sound-toggle__icon {
+  width: 24px;
+  height: 18px;
+}
+
+:host(.sound-toggle-host--labelled) .sound-toggle {
+  height: 52px;
+  padding: 0 var(--space-4);
+}

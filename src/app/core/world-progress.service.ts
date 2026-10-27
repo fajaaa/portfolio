@@ -3,6 +3,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { I18nService } from './i18n.service';
 import { HUD_OFFSET, SmoothScrollService } from './smooth-scroll.service';
+import { SoundService } from './sound.service';
 import { ToastService } from './toast.service';
 import { WORLDS } from './worlds';
 
@@ -26,6 +27,7 @@ export class WorldProgressService {
   private readonly smoothScroll = inject(SmoothScrollService);
   private readonly toast = inject(ToastService);
   private readonly i18n = inject(I18nService);
+  private readonly sound = inject(SoundService);
   private readonly index = signal(0);
   private readonly ratio = signal(0);
   private readonly found = signal(false);
@@ -71,8 +73,10 @@ export class WorldProgressService {
   /** Re-measures after the next layout, e.g. once a route rendered its sections. */
   refresh(): void {
     cancelAnimationFrame(this.frame ?? 0);
-    this.frame = requestAnimationFrame(() => {
-      this.frame = requestAnimationFrame(() => this.update(window.scrollY));
+    this.zone.runOutsideAngular(() => {
+      this.frame = requestAnimationFrame(() => {
+        this.frame = requestAnimationFrame(() => this.update(window.scrollY));
+      });
     });
   }
 
@@ -109,7 +113,8 @@ export class WorldProgressService {
     }
 
     this.found.set(true);
-    this.ratio.set(Math.round(((index + fraction) / WORLDS.length) * 400) / 400);
+    // Whole percents: finer than the 40-segment bar needs, and every change re-renders the HUD.
+    this.ratio.set(Math.round(((index + fraction) / WORLDS.length) * 100) / 100);
     this.index.set(index);
 
     const quiet = performance.now() < this.quietUntil || this.smoothScroll.isAutoScrolling;
@@ -122,6 +127,7 @@ export class WorldProgressService {
   private announceLevelUp(): void {
     const world = this.world();
 
+    this.sound.play('coin');
     this.toast.show({
       key: 'level-up',
       title: this.i18n.t('hud.levelUp'),

@@ -1,50 +1,171 @@
+@use '../ui/pixel' as *;
+
 :host {
   display: block;
 }
 
-.not-found {
+.game-over {
   min-height: 100vh;
   display: grid;
   align-content: center;
   justify-items: center;
-  gap: var(--space-4);
-  padding: clamp(var(--space-12), 8vw, var(--space-16));
+  gap: var(--space-8);
+  padding: calc(var(--hud-height) + var(--space-10)) var(--space-4) var(--space-16);
   text-align: center;
+  color: var(--paper);
+  // Night castle sky with a faint pixel grid.
   background:
-    radial-gradient(circle at 50% 30%, rgba(var(--color-primary-rgb), 0.2), transparent 24rem),
-    var(--color-background-deep);
+    linear-gradient(rgba(255, 248, 231, 0.04) 2px, transparent 2px) 0 0 / 16px 16px,
+    linear-gradient(90deg, rgba(255, 248, 231, 0.04) 2px, transparent 2px) 0 0 / 16px 16px,
+    var(--w15-bg);
 }
 
-.not-found__code {
-  color: var(--color-accent);
+.game-over__title {
+  margin: 0;
+  color: var(--hp);
+  font-size: clamp(1.75rem, 1rem + 4vw, 4rem);
+  line-height: 1.2;
+  text-shadow:
+    calc(var(--px) * 1) calc(var(--px) * 1) 0 var(--ink),
+    calc(var(--px) * 2) calc(var(--px) * 2) 0 var(--ink);
+}
+
+.game-over__letter {
+  display: inline-block;
+  min-width: 0.5em;
+  // Held until the intro is done, then each letter drops in.
+  opacity: 0;
+}
+
+.game-over--play .game-over__letter {
+  animation: game-over-drop 420ms steps(5, end) calc(var(--i) * 70ms) both;
+}
+
+.game-over__scene {
+  padding-bottom: var(--space-2);
+  box-shadow: 0 var(--px) 0 var(--w15-stone);
+}
+
+.game-over__sprite {
+  width: calc(var(--px) * 26 * 2.5);
+  height: calc(var(--px) * 18 * 2.5);
+}
+
+.game-over__message {
+  width: min(100%, 32rem);
+  text-align: left;
+}
+
+.game-over__prompt {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-5);
+}
+
+.game-over__continue {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-family: var(--font-display);
+  font-size: clamp(0.875rem, 0.7rem + 0.8vw, 1.25rem);
+}
+
+.game-over__count {
+  min-width: 1.2ch;
+  color: var(--coin);
+  font-family: var(--font-mono);
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.game-over__options {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.game-over__option {
+  min-width: 7rem;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
+  border: 0;
+  background: none;
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+}
+
+.game-over__option--selected {
+  color: var(--coin);
+}
+
+.game-over__marker {
+  width: 8px;
+  height: 14px;
+  visibility: hidden;
+}
+
+.game-over__option--selected .game-over__marker {
+  visibility: visible;
+  animation: game-over-blink 800ms steps(1, end) infinite;
+}
+
+.game-over__hint {
+  color: var(--paper-muted);
+  font-family: var(--font-mono);
   font-size: var(--font-size-md);
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
 }
 
-.not-found__message {
-  max-width: 34rem;
-  font-size: var(--font-size-md);
+.game-over__status {
+  color: var(--coin);
+  font-family: var(--font-display);
+  font-size: clamp(0.875rem, 0.7rem + 0.8vw, 1.25rem);
+  line-height: 1.5;
 }
 
-.not-found__link {
-  min-height: 3rem;
-  display: inline-grid;
-  place-items: center;
-  margin-top: var(--space-4);
-  padding-inline: var(--space-6);
-  border: 1px solid rgba(var(--color-accent-rgb), 0.72);
-  color: var(--color-text-primary);
-  font-weight: var(--font-weight-bold);
-  text-decoration: none;
-  transition:
-    transform 180ms ease,
-    background-color 180ms ease,
-    border-color 180ms ease;
+.game-over__status--blink {
+  animation: game-over-blink 1s steps(1, end) infinite;
 }
 
-.not-found__link:hover {
-  transform: translateY(-2px);
-  border-color: var(--color-accent);
-  background: rgba(var(--color-primary-rgb), 0.14);
+@keyframes game-over-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-2em);
+  }
+
+  40% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes game-over-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (pointer: coarse) {
+  .game-over__hint {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-over__letter {
+    opacity: 1;
+  }
+
+  .game-over--play .game-over__letter,
+  .game-over__option--selected .game-over__marker,
+  .game-over__status--blink {
+    animation: none;
+  }
 }

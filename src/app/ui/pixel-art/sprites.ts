@@ -55,3 +55,35 @@ export const DOWNLOAD_SPRITE: PixelSprite = {
   ],
   palette: { X: 'currentColor' },
 };
+
+/** Speaker with sound waves (sound on). */
+export const SPEAKER_ON_SPRITE: PixelSprite = {
+  rows: [
+    '....X.......',
+    '...XX...X...',
+    '..XXX.X..X..',
+    'XXXXX..X.X..',
+    'XXXXX..X.X..',
+    'XXXXX..X.X..',
+    '..XXX.X..X..',
+    '...XX...X...',
+    '....X.......',
+  ],
+  palette: { X: 'currentColor' },
+};
+
+/** Speaker with a cross (muted). */
+export const SPEAKER_OFF_SPRITE: PixelSprite = {
+  rows: [
+    '....X.......',
+    '...XX.......',
+    '..XXX.X...X.',
+    'XXXXX..X.X..',
+    'XXXXX...X...',
+    'XXXXX..X.X..',
+    '..XXX.X...X.',
+    '...XX.......',
+    '....X.......',
+  ],
+  palette: { X: 'currentColor' },
+};

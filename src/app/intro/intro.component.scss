@@ -1,0 +1,240 @@
+@use '../ui/pixel' as *;
+
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-intro);
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: var(--space-16) var(--space-4) var(--space-8);
+  background: var(--ink);
+  color: var(--paper);
+  outline: none;
+  overscroll-behavior: contain;
+}
+
+// From here on the tiles alone are the ink screen.
+:host(.intro--leaving) {
+  background: transparent;
+  pointer-events: none;
+}
+
+.intro__tiles {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 1fr);
+  grid-template-rows: repeat(var(--rows), 1fr);
+}
+
+.intro__tile {
+  background: var(--ink);
+  // Covers sub-pixel seams between neighbours.
+  box-shadow: 0 0 0 1px var(--ink);
+}
+
+:host(.intro--leaving) .intro__tile {
+  animation: intro-tile-out 240ms steps(3, end) var(--delay) forwards;
+}
+
+.intro__skip {
+  position: fixed;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 1;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--px);
+  padding: 0 var(--space-3);
+  border: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 0.625rem;
+  box-shadow: pixel-border(var(--paper));
+}
+
+.intro__skip:hover {
+  color: var(--coin);
+}
+
+.intro__skip-arrows {
+  display: inline-flex;
+}
+
+.intro__skip-icon {
+  width: 5px;
+  height: 9px;
+}
+
+.intro__screen {
+  position: relative;
+  width: min(100%, 26rem);
+  display: grid;
+  justify-items: center;
+  gap: var(--space-10);
+}
+
+:host(.intro--leaving) :is(.intro__screen, .intro__skip) {
+  opacity: 0;
+  transition: opacity 120ms steps(2, end);
+}
+
+.intro__logo {
+  width: calc(var(--px) * 39);
+  height: calc(var(--px) * 27);
+  animation: intro-drop 600ms steps(6, end) both;
+}
+
+.intro__loading {
+  width: 100%;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.intro__loading-text {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xl);
+  line-height: 1;
+}
+
+.intro__bar {
+  margin: 0;
+}
+
+.intro__menu {
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-5);
+}
+
+.intro__start {
+  min-height: 56px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding: 0 var(--space-4);
+  border: 0;
+  background: none;
+  color: var(--coin);
+  font-family: var(--font-display);
+  font-size: clamp(0.875rem, 0.7rem + 1vw, 1.25rem);
+  text-shadow: calc(var(--px) * 0.5) calc(var(--px) * 0.5) 0 var(--hp);
+}
+
+.intro__marker {
+  width: 8px;
+  height: 14px;
+  visibility: hidden;
+}
+
+.intro__start:is(:hover, :focus-visible) .intro__marker {
+  visibility: visible;
+}
+
+.intro__start-text {
+  animation: intro-blink 1s steps(1, end) infinite;
+}
+
+:host(.intro--starting) .intro__start-text {
+  animation-duration: 120ms;
+}
+
+.intro__setting {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.intro__setting-label {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+}
+
+.intro__choices {
+  display: inline-flex;
+  gap: var(--px);
+  margin: var(--px);
+  background: var(--paper);
+  box-shadow: pixel-border(var(--paper));
+}
+
+.intro__choice {
+  min-width: 56px;
+  min-height: 44px;
+  padding: 0 var(--space-2);
+  border: 0;
+  background: var(--ink);
+  color: var(--paper-muted);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+}
+
+.intro__choice:hover {
+  color: var(--coin);
+}
+
+.intro__choice[aria-pressed='true'] {
+  background: var(--coin);
+  color: var(--ink);
+}
+
+.intro__choice:focus-visible {
+  position: relative;
+  z-index: 1;
+}
+
+.intro__hint {
+  margin-top: var(--space-2);
+  color: var(--paper-muted);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-md);
+  line-height: 1.2;
+  text-align: center;
+}
+
+@keyframes intro-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-40vh);
+  }
+
+  20% {
+    opacity: 1;
+  }
+}
+
+@keyframes intro-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes intro-tile-out {
+  to {
+    transform: scale(0);
+  }
+}
+
+@media (pointer: coarse) {
+  .intro__hint {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro__logo,
+  .intro__start-text {
+    animation: none;
+  }
+}

@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   DestroyRef,
   ElementRef,
@@ -13,6 +14,7 @@ import {
   viewChild,
 } from '@angular/core';
 
+import { HeroSceneService } from '../../core/hero-scene.service';
 import { I18nService } from '../../core/i18n.service';
 import { MotionService } from '../../core/motion.service';
 import { TranslatePipe } from '../../i18n/translate.pipe';
@@ -36,6 +38,7 @@ let sprite: IslandSprite | undefined;
  */
 @Component({
   selector: 'app-hero-stage',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TranslatePipe],
   templateUrl: './hero-stage.component.html',
   styleUrl: './hero-stage.component.scss',
@@ -45,6 +48,7 @@ export class HeroStageComponent {
   private readonly zone = inject(NgZone);
   private readonly i18n = inject(I18nService);
   private readonly motion = inject(MotionService);
+  private readonly heroScene = inject(HeroSceneService);
   private readonly canvas = viewChild<ElementRef<HTMLCanvasElement>>('canvas');
 
   protected readonly sprite = (sprite ??= createIslandSprite());
@@ -95,7 +99,12 @@ export class HeroStageComponent {
       });
     });
 
-    inject(DestroyRef).onDestroy(() => this.teardown());
+    const detach = this.heroScene.attach(() => this.scene?.celebrate());
+
+    inject(DestroyRef).onDestroy(() => {
+      detach();
+      this.teardown();
+    });
   }
 
   private async load(): Promise<void> {
@@ -119,7 +128,11 @@ export class HeroStageComponent {
     try {
       scene.init(canvas, {
         reducedMotion: this.motion.reducedMotion(),
-        onFirstFrame: () => this.zone.run(() => this.state.set('ready')),
+        onFirstFrame: () =>
+          this.zone.run(() => {
+            this.state.set('ready');
+            this.heroScene.markReady();
+          }),
         onFrame: () => this.moveBubble(),
         onCharacterClick: () => this.greet(),
         onContextLost: () => this.fail(),
@@ -250,7 +263,10 @@ export class HeroStageComponent {
     this.scene = undefined;
 
     if (!this.destroyed) {
-      this.zone.run(() => this.state.set('fallback'));
+      this.zone.run(() => {
+        this.state.set('fallback');
+        this.heroScene.markReady();
+      });
     }
   }
 

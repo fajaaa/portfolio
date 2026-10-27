@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   DestroyRef,
   ElementRef,
@@ -43,6 +44,7 @@ const COUNT_DELAY_MS = 250;
 
 @Component({
   selector: 'app-about',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DialogBoxComponent,
     PixelArtComponent,

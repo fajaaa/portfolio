@@ -23,6 +23,9 @@ export const bs: Dictionary = {
       en: 'English',
       bs: 'Bosanski',
     },
+    sound: {
+      label: 'Zvuk',
+    },
   },
   backToTop: 'Nazad na početak',
   hud: {
@@ -232,9 +235,33 @@ export const bs: Dictionary = {
       email: 'E-mail: {email}',
     },
   },
+  intro: {
+    title: 'Kenan Fajic: početni ekran',
+    loading: 'UČITAVANJE',
+    loadingLabel: 'Učitavanje',
+    pressStart: 'PRESS START',
+    language: 'JEZIK',
+    sound: 'ZVUK',
+    soundOff: 'NE',
+    soundOn: 'DA',
+    hint: '↑ ↓ biraj · ← → promijeni · Enter kreni',
+    skip: 'PRESKOČI',
+  },
+  konami: {
+    title: 'ŠIFRA AKTIVIRANA',
+    detail: '+40 NOVČIĆA',
+  },
   notFound: {
-    heading: 'Stranica nije pronađena',
-    message: 'Stranica koju tražiš ne postoji.',
+    title: 'GAME OVER: stranica nije pronađena',
+    heading: 'GAME OVER',
+    message:
+      'Stranica koju tražiš ne postoji. Možda je link pokvaren ili je nivo premješten.',
+    continue: 'CONTINUE?',
+    yes: 'DA',
+    no: 'NE',
+    thanks: 'HVALA NA IGRANJU',
+    insertCoin: 'INSERT COIN',
     back: 'Nazad na početnu',
+    hint: '← → biraj · Enter potvrdi',
   },
 };

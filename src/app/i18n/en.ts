@@ -21,6 +21,9 @@ export const en = {
       en: 'English',
       bs: 'Bosanski',
     },
+    sound: {
+      label: 'Sound',
+    },
   },
   backToTop: 'Back to start',
   hud: {
@@ -231,9 +234,33 @@ export const en = {
       email: 'Email: {email}',
     },
   },
+  intro: {
+    title: 'Kenan Fajic: start screen',
+    loading: 'LOADING',
+    loadingLabel: 'Loading',
+    pressStart: 'PRESS START',
+    language: 'LANGUAGE',
+    sound: 'SOUND',
+    soundOff: 'OFF',
+    soundOn: 'ON',
+    hint: '↑ ↓ select · ← → change · Enter start',
+    skip: 'SKIP',
+  },
+  konami: {
+    title: 'CHEAT CODE ACTIVATED',
+    detail: '+40 COINS',
+  },
   notFound: {
-    heading: 'Page not found',
-    message: 'The page you are looking for does not exist.',
+    title: 'GAME OVER: page not found',
+    heading: 'GAME OVER',
+    message:
+      'The page you are looking for does not exist. Maybe the link is broken, or the level was moved.',
+    continue: 'CONTINUE?',
+    yes: 'YES',
+    no: 'NO',
+    thanks: 'THANKS FOR PLAYING',
+    insertCoin: 'INSERT COIN',
     back: 'Back to home',
+    hint: '← → choose · Enter confirm',
   },
 } as const;

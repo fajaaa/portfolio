@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 /**
  * A string-map sprite: one string per row, one character per pixel. `palette` maps characters
@@ -9,19 +9,21 @@ export interface PixelSprite {
   readonly palette: Readonly<Record<string, string>>;
 }
 
-interface Run {
-  readonly x: number;
-  readonly y: number;
-  readonly width: number;
+interface ColorPath {
   readonly fill: string;
+  /** One `M x y h w v1 h-w z` rectangle per horizontal run of the color. */
+  readonly d: string;
 }
 
 /**
- * Renders a `PixelSprite` as a crisp inline SVG (one rect per horizontal run of a color).
+ * Renders a `PixelSprite` as a crisp inline SVG with one path per color, so even big sprites
+ * stay a handful of DOM nodes. OnPush: it only re-renders when `sprite` changes, which keeps
+ * the page's many sprites out of every change detection pass.
  * Decorative: hidden from screen readers. Size it from the outside with width/height.
  */
 @Component({
   selector: 'app-pixel-art',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <svg
       [attr.viewBox]="viewBox()"
@@ -30,8 +32,8 @@ interface Run {
       aria-hidden="true"
       focusable="false"
     >
-      @for (run of runs(); track $index) {
-        <rect [attr.x]="run.x" [attr.y]="run.y" [attr.width]="run.width" height="1" [style.fill]="run.fill" />
+      @for (path of paths(); track path.fill) {
+        <path [attr.d]="path.d" [style.fill]="path.fill" />
       }
     </svg>
   `,
@@ -57,9 +59,9 @@ export class PixelArtComponent {
     return `0 0 ${Math.max(...rows.map((row) => row.length))} ${rows.length}`;
   });
 
-  protected readonly runs = computed(() => {
+  protected readonly paths = computed((): ColorPath[] => {
     const { rows, palette } = this.sprite();
-    const runs: Run[] = [];
+    const byColor = new Map<string, string>();
 
     rows.forEach((row, y) => {
       for (let x = 0; x < row.length; ) {
@@ -70,14 +72,16 @@ export class PixelArtComponent {
           width++;
         }
 
-        if (palette[char]) {
-          runs.push({ x, y, width, fill: palette[char] });
+        const fill = palette[char];
+
+        if (fill) {
+          byColor.set(fill, `${byColor.get(fill) ?? ''}M${x} ${y}h${width}v1h-${width}z`);
         }
 
         x += width;
       }
     });
 
-    return runs;
+    return Array.from(byColor, ([fill, d]) => ({ fill, d }));
   });
 }

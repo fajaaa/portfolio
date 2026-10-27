@@ -1,6 +1,11 @@
 <div class="hud__bar">
   <nav class="hud" [attr.aria-label]="'nav.ariaLabel' | t">
-    <a class="hud__brand" [href]="hrefFor('home')" (click)="navigateTo('home', $event)">
+    <a
+      class="hud__brand"
+      [href]="hrefFor('home')"
+      (pointerenter)="sound.hover($event)"
+      (click)="onBrandClick($event)"
+    >
       <app-pixel-art class="hud__logo" [sprite]="logo" />
       <span class="hud__name">Kenan Fajic</span>
     </a>
@@ -13,6 +18,7 @@
             [class.hud__link--active]="activeSection() === item.section"
             [attr.aria-current]="activeSection() === item.section ? 'location' : null"
             [href]="hrefFor(item.section)"
+            (pointerenter)="sound.hover($event)"
             (click)="navigateTo(item.section, $event)"
           >
             <app-pixel-art class="hud__marker" [sprite]="marker" />
@@ -23,6 +29,7 @@
     </ul>
 
     <app-lang-toggle class="hud__lang" />
+    <app-sound-toggle class="hud__sound" />
 
     <button
       #menuToggle

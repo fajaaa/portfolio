@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   afterNextRender,
@@ -7,11 +8,13 @@ import {
   output,
 } from '@angular/core';
 
+import { SoundService } from '../../core/sound.service';
 import { SectionId, World } from '../../core/worlds';
 import { TranslatePipe } from '../../i18n/translate.pipe';
 import { PixelArtComponent } from '../../ui/pixel-art/pixel-art.component';
 import { CLOSE_SPRITE, MARKER_SPRITE } from '../../ui/pixel-art/sprites';
 import { LangToggleComponent } from '../lang-toggle/lang-toggle.component';
+import { SoundToggleComponent } from '../sound-toggle/sound-toggle.component';
 
 export interface PauseMenuSelection {
   section: SectionId;
@@ -25,7 +28,8 @@ export interface PauseMenuSelection {
  */
 @Component({
   selector: 'app-pause-menu',
-  imports: [TranslatePipe, PixelArtComponent, LangToggleComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [TranslatePipe, PixelArtComponent, LangToggleComponent, SoundToggleComponent],
   templateUrl: './pause-menu.component.html',
   styleUrl: './pause-menu.component.scss',
   host: {
@@ -43,6 +47,7 @@ export class PauseMenuComponent {
 
   protected readonly marker = MARKER_SPRITE;
   protected readonly closeIcon = CLOSE_SPRITE;
+  protected readonly sound = inject(SoundService);
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
 
@@ -87,6 +92,10 @@ export class PauseMenuComponent {
       next = key === 'ArrowDown' ? 0 : last;
     } else {
       next = (current + (key === 'ArrowDown' ? 1 : -1) + links.length) % links.length;
+    }
+
+    if (links[next] && links[next] !== links[current]) {
+      this.sound.play('hover');
     }
 
     links[next]?.focus();

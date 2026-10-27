@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 
 import { MotionService } from '../core/motion.service';
 import { RevealDirective } from '../shared/reveal.directive';
@@ -17,6 +17,7 @@ interface World {
 /** Dev-only page (/styleguide) showing every UI primitive on every world background. */
 @Component({
   selector: 'app-styleguide',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DialogBoxComponent,
     PixelButtonComponent,

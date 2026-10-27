@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   DestroyRef,
   ElementRef,
@@ -43,6 +44,7 @@ const INSERT_MS = 260;
  */
 @Component({
   selector: 'app-cartridge',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PixelArtComponent, PixelTagComponent, TranslatePipe],
   templateUrl: './cartridge.component.html',
   styleUrl: './cartridge.component.scss',

@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   DestroyRef,
   ElementRef,
@@ -34,6 +35,7 @@ const LEVELS = 8;
  */
 @Component({
   selector: 'app-pixel-portrait',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './pixel-portrait.component.html',
   styleUrl: './pixel-portrait.component.scss',
 })
