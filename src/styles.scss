@@ -279,6 +279,8 @@ body {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-base);
+  /* Pixelify Sans's "fi" ligature reads like a capital A ("final" looks like "Anal"). */
+  font-variant-ligatures: no-common-ligatures;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

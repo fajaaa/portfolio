@@ -48,23 +48,38 @@ export const bs: Dictionary = {
     greetings: ['Zdravo! Dobrodošli u moj svijet.', 'Hej, igraču 1!', 'Nazad na kodiranje...'],
   },
   about: {
-    eyebrow: 'O meni',
+    sheetTitle: 'KARTICA LIKA',
     heading: 'Student softverskog inženjerstva koji uči praveći stvarne projekte.',
     bio: 'Student sam završne godine softverskog inženjerstva na FIT-u u Mostaru. Volim praviti korisne aplikacije, učiti nove tehnologije i usavršavati svoje vještine kroz praktične projekte.',
-    portraitAlt: 'Kenan Fajic',
-    factsLabel: 'Osnovne informacije',
-    facts: {
-      location: 'Lokacija: Lukavac, Bosna i Hercegovina',
-      education: 'Obrazovanje: FIT Mostar - Softversko inženjerstvo',
-      languages: 'Jezici: engleski, bosanski',
+    portrait: {
+      alt: 'Fotografija: Kenan Fajic',
+      toggle: 'Prikaži pravu fotografiju',
     },
-    statsLabel: 'Statistika portfolija',
+    header: {
+      name: 'IME',
+      class: 'KLASA',
+      classValue: 'Softverski inženjer (student)',
+      level: 'LV',
+      levelValue: 'Završna godina',
+    },
+    attributes: {
+      origin: 'PORIJEKLO',
+      originValue: 'Lukavac, BiH',
+      guild: 'CEH',
+      guildValue: 'FIT Mostar – Softversko inženjerstvo',
+      languages: 'JEZICI',
+      languagesValue: 'Engleski, bosanski',
+    },
     stats: {
+      title: 'STATISTIKA',
       projects: 'Samostalni projekti',
       mentorship: 'Mjeseci mentorstva',
       areas: 'Tehničke oblasti',
     },
-    cv: 'Preuzmi CV',
+    cv: {
+      loot: 'PLIJEN: CV.PDF',
+      hint: 'Preuzmi CV',
+    },
   },
   projects: {
     eyebrow: 'Izdvojeni radovi',

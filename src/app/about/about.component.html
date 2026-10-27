@@ -1,37 +1,69 @@
-<section class="about" reveal="up" (revealed)="startCounters()">
-  <div class="about__card">
-    <div class="about__portrait">
-      <img
+<section class="about" aria-labelledby="about-heading">
+  <div class="about__sheet" reveal="up" [stagger]="120">
+    <app-pixel-panel class="about__title" variant="dark" raised>
+      <p class="about__label about__label--coin">{{ 'about.sheetTitle' | t }}</p>
+      <h2 id="about-heading" class="about__heading">{{ 'about.heading' | t }}</h2>
+    </app-pixel-panel>
+
+    <app-pixel-panel class="about__profile" raised>
+      <app-pixel-portrait
+        class="about__portrait"
         src="images/kenan-avatar.jfif"
-        [alt]="'about.portraitAlt' | t"
-        width="460"
-        height="460"
-        loading="lazy"
+        [alt]="'about.portrait.alt' | t"
+        [toggleLabel]="'about.portrait.toggle' | t"
       />
-    </div>
 
-    <div class="about__content">
-      <p class="about__eyebrow">{{ 'about.eyebrow' | t }}</p>
-      <h2>{{ 'about.heading' | t }}</h2>
-      <p class="about__bio">{{ 'about.bio' | t }}</p>
-
-      <ul class="about__facts" [attr.aria-label]="'about.factsLabel' | t">
-        @for (fact of facts; track fact) {
-          <li><app-pixel-tag>{{ fact | t }}</app-pixel-tag></li>
-        }
-      </ul>
-
-      <div class="about__stats" [attr.aria-label]="'about.statsLabel' | t">
-        @for (stat of stats; track stat.labelKey) {
-          <div class="about__stat">
-            <strong>{{ stat.value }}{{ stat.suffix }}</strong>
-            <span>{{ stat.labelKey | t }}</span>
+      <dl class="about__rows about__rows--header">
+        @for (row of header; track row.labelKey) {
+          <div class="about__row">
+            <dt class="about__label">{{ row.labelKey | t }}:</dt>
+            <dd class="about__value">{{ row.valueKey ? (row.valueKey | t) : row.value }}</dd>
           </div>
         }
-      </div>
+      </dl>
 
-      <a pixelButton="secondary" class="about__cv" href="Kenan-CV.pdf" download>
-        {{ 'about.cv' | t }}
+      <dl class="about__rows">
+        @for (row of attributes; track row.labelKey) {
+          <div class="about__row">
+            <dt class="about__label">{{ row.labelKey | t }}:</dt>
+            <dd class="about__value">{{ row.valueKey ? (row.valueKey | t) : row.value }}</dd>
+          </div>
+        }
+      </dl>
+    </app-pixel-panel>
+
+    <app-pixel-panel #statsPanel class="about__stats" variant="dark" raised>
+      <h3 class="about__label about__label--coin">{{ 'about.stats.title' | t }}</h3>
+
+      <ul class="about__stat-list">
+        @for (stat of stats; track stat.labelKey) {
+          <li class="about__stat">
+            <!-- Screen readers get the real value at once; the count-up is visual only. -->
+            <span class="visually-hidden">{{ stat.value }}{{ stat.suffix }}</span>
+            <span class="about__label">{{ stat.labelKey | t }}</span>
+            <span class="about__stat-bar" aria-hidden="true">
+              <app-pixel-progress [value]="fill(stat)" [color]="stat.color" />
+              <span class="about__stat-value">{{ shown(stat) }}{{ stat.suffix }}</span>
+            </span>
+          </li>
+        }
+      </ul>
+    </app-pixel-panel>
+
+    <app-dialog-box
+      class="about__bio"
+      speaker="KENAN"
+      typewriter
+      startWhenVisible
+      [speed]="25"
+      [text]="'about.bio' | t"
+    />
+
+    <div class="about__loot">
+      <a pixelButton href="Kenan-CV.pdf" download>
+        <app-pixel-art class="about__loot-icon" [sprite]="downloadIcon" />
+        {{ 'about.cv.loot' | t }}
+        <span class="visually-hidden">({{ 'about.cv.hint' | t }})</span>
       </a>
     </div>
   </div>

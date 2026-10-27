@@ -3,139 +3,164 @@
 }
 
 .about {
-  padding: clamp(var(--space-12), 8vw, var(--space-16)) clamp(var(--space-6), 7vw, var(--space-16));
+  padding: var(--space-6) var(--world-gutter, var(--space-6)) 0;
 }
 
-.about__card {
+// Desktop: portrait + attributes on the left, stats + bio + CV on the right.
+.about__sheet {
   width: min(100%, 72rem);
   margin-inline: auto;
   display: grid;
-  grid-template-columns: minmax(15rem, 0.75fr) minmax(0, 1.25fr);
-  align-items: center;
-  gap: clamp(var(--space-8), 7vw, var(--space-16));
-  padding: clamp(var(--space-6), 5vw, var(--space-12));
-  border: 1px solid var(--color-card-border);
-  background: var(--color-card);
-  box-shadow: var(--shadow-card);
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  grid-template-rows: auto auto auto 1fr;
+  grid-template-areas:
+    'title title'
+    'profile stats'
+    'profile bio'
+    'profile loot';
+  gap: var(--space-5) clamp(var(--space-5), 3vw, var(--space-8));
 }
 
-.about__portrait {
-  width: min(18rem, 72vw);
-  aspect-ratio: 1;
-  justify-self: center;
-  overflow: hidden;
-  border: 2px solid var(--color-accent);
-  background:
-    radial-gradient(circle at 35% 25%, rgba(var(--color-accent-rgb), 0.22), transparent 42%),
-    linear-gradient(135deg, var(--color-background-elevated), var(--color-card));
-  box-shadow:
-    0 0 0 0.75rem rgba(var(--color-primary-rgb), 0.08),
-    0 0 3rem rgba(var(--color-accent-rgb), 0.35);
+.about__title {
+  grid-area: title;
 }
 
-.about__portrait img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.about__profile {
+  grid-area: profile;
 }
 
-.about__content {
-  display: grid;
-  gap: var(--space-5);
-}
-
-.about__eyebrow {
-  color: var(--color-accent);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
+.about__stats {
+  grid-area: stats;
 }
 
 .about__bio {
-  max-width: 58ch;
-  font-size: var(--font-size-md);
+  grid-area: bio;
 }
 
-.about__facts {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-1);
+.about__loot {
+  grid-area: loot;
+}
+
+// Small Press Start 2P labels.
+.about__label {
   margin: 0;
+  font-family: var(--font-display);
+  font-size: 0.625rem;
+  font-weight: var(--font-weight-regular);
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+
+.about__label--coin {
+  color: var(--coin);
+}
+
+.about__heading {
+  margin-top: var(--space-3);
+  color: var(--paper);
+  font-size: var(--font-size-h4);
+  line-height: 1.6;
+}
+
+.about__portrait {
+  width: min(16rem, 100%);
+  margin: 0 auto var(--space-5);
+}
+
+.about__rows {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.about__rows--header {
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-4);
+  // Dashed pixel divider.
+  background: repeating-linear-gradient(
+      90deg,
+      var(--ink) 0 calc(var(--px) * 2),
+      transparent calc(var(--px) * 2) calc(var(--px) * 4)
+    )
+    bottom / 100% var(--px) no-repeat;
+}
+
+.about__row {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.about__value {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.about__stat-list {
+  display: grid;
+  gap: var(--space-4);
+  margin: var(--space-4) 0 0;
   padding: 0;
   list-style: none;
 }
 
-.about__stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-4);
-}
-
 .about__stat {
-  min-height: 6rem;
   display: grid;
-  align-content: center;
   gap: var(--space-1);
-  padding: var(--space-4);
-  border: 1px solid var(--color-card-border);
-  background: var(--color-background-elevated);
 }
 
-.about__stat strong {
-  color: var(--color-text-primary);
-  font-size: var(--font-size-2xl);
+.about__stat-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+
+  app-pixel-progress {
+    flex: 1 1 auto;
+  }
 }
 
-.about__stat span {
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
+.about__stat-value {
+  min-width: 2.5ch;
+  color: var(--coin);
+  font-family: var(--font-mono);
+  font-size: 2.25rem;
+  line-height: 1;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
-.about__cv {
-  justify-self: start;
+.about__loot {
+  align-self: start;
+}
+
+.about__loot-icon {
+  width: calc(var(--px) * 3.5);
+  height: calc(var(--px) * 4.5);
 }
 
 @media (max-width: 820px) {
-  .about__card,
-  .about__stats {
-    grid-template-columns: 1fr;
+  .about__sheet {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-template-areas: none;
   }
 
-  .about__card {
-    text-align: left;
+  .about__title,
+  .about__profile,
+  .about__stats,
+  .about__bio,
+  .about__loot {
+    grid-area: auto;
   }
 }
 
-@media (max-width: 560px) {
-  .about {
-    padding: var(--space-10) var(--space-4);
-  }
-
-  .about__card {
-    gap: var(--space-6);
-    padding: var(--space-5);
-  }
-
-  .about__portrait {
-    width: min(14rem, 68vw);
-  }
-
-  .about__content {
-    gap: var(--space-4);
-  }
-
-  .about__bio {
-    font-size: var(--font-size-base);
-  }
-
-  .about__stat {
-    min-height: 5.25rem;
-    padding: var(--space-3);
-  }
-
-  .about__cv {
-    // Leaves room for the button's outside pixel border.
-    width: calc(100% - var(--px) * 2);
+@media (max-width: 420px) {
+  .about__row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
   }
 }

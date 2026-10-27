@@ -47,23 +47,38 @@ export const en = {
     greetings: ['Hi! Welcome to my world.', 'Hey, player 1!', 'Back to coding...'],
   },
   about: {
-    eyebrow: 'About Me',
+    sheetTitle: 'CHARACTER SHEET',
     heading: 'Software Engineering student learning by building real projects.',
     bio: 'I am a final-year Software Engineering student at FIT Mostar. I enjoy building useful applications, learning new technologies, and improving my skills through practical projects.',
-    portraitAlt: 'Kenan Fajic',
-    factsLabel: 'Key facts',
-    facts: {
-      location: 'Location: Lukavac, Bosnia and Herzegovina',
-      education: 'Education: FIT Mostar - Software Engineering',
-      languages: 'Languages: English, Bosnian',
+    portrait: {
+      alt: 'Portrait photo of Kenan Fajic',
+      toggle: 'Show real photo',
     },
-    statsLabel: 'Portfolio statistics',
+    header: {
+      name: 'NAME',
+      class: 'CLASS',
+      classValue: 'Software Engineer (student)',
+      level: 'LV',
+      levelValue: 'Final year',
+    },
+    attributes: {
+      origin: 'ORIGIN',
+      originValue: 'Lukavac, BiH',
+      guild: 'GUILD',
+      guildValue: 'FIT Mostar – Software Engineering',
+      languages: 'LANGUAGES',
+      languagesValue: 'English, Bosnian',
+    },
     stats: {
+      title: 'STATS',
       projects: 'Self-Initiated Projects',
       mentorship: 'Mentorship Months',
       areas: 'Technical Areas',
     },
-    cv: 'Download CV',
+    cv: {
+      loot: 'LOOT: CV.PDF',
+      hint: 'Download CV',
+    },
   },
   projects: {
     eyebrow: 'Selected Work',

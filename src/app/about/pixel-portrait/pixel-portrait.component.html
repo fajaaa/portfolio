@@ -1,0 +1,14 @@
+<button
+  type="button"
+  class="portrait"
+  [attr.aria-pressed]="showPhoto()"
+  (pointerenter)="onPointerEnter($event)"
+  (pointerleave)="onPointerLeave($event)"
+  (focus)="onFocus($event)"
+  (blur)="onBlur()"
+  (click)="toggle()"
+>
+  <img #photo class="portrait__photo" [src]="src()" [alt]="alt()" width="460" height="460" loading="lazy" />
+  <canvas #canvas class="portrait__pixels" width="64" height="64" aria-hidden="true"></canvas>
+  <span class="visually-hidden">{{ toggleLabel() }}</span>
+</button>

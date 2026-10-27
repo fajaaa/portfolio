@@ -33,3 +33,19 @@ export const CLOSE_SPRITE: PixelSprite = {
   rows: ['XX...XX', 'XXX.XXX', '.XXXXX.', '..XXX..', '.XXXXX.', 'XXX.XXX', 'XX...XX'],
   palette: { X: 'currentColor' },
 };
+
+/** Arrow down into a tray. */
+export const DOWNLOAD_SPRITE: PixelSprite = {
+  rows: [
+    '..XXX..',
+    '..XXX..',
+    '..XXX..',
+    'XXXXXXX',
+    '.XXXXX.',
+    '..XXX..',
+    '...X...',
+    'X.....X',
+    'XXXXXXX',
+  ],
+  palette: { X: 'currentColor' },
+};
