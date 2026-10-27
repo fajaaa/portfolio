@@ -133,23 +133,13 @@
   --ease-pixel: steps(4, end);
   --ease-blink: steps(1, end);
 
-  /* Legacy aliases for the pre-redesign section styles.
-     Remove each one once the sections using it are redesigned (Phases 3-8). */
+  /* Legacy aliases for the pre-redesign styles (404 page, base links).
+     Remove each one once the styles using it are redesigned (Phase 9). */
   --color-background-deep: var(--ink);
-  --color-background: var(--w15-bg);
-  --color-background-elevated: var(--w13-bg);
-  --color-primary: var(--coin);
   --color-primary-rgb: 255, 210, 63;
   --color-accent: var(--w13-crystal-cyan);
   --color-accent-rgb: 90, 240, 255;
-  --gradient-primary: var(--coin);
   --color-text-primary: var(--paper);
-  --color-text-secondary: var(--paper-muted);
-  --color-text-inverse: var(--ink);
-  --color-card: var(--w15-stone);
-  --color-card-border: var(--ink);
-  --color-overlay: rgba(var(--ink-rgb), 0.82);
-  --shadow-card: var(--shadow-pixel);
 }
 
 @media (max-width: 479.98px) {

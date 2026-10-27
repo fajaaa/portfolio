@@ -1,0 +1,25 @@
+<app-pixel-panel variant="dark" raised>
+  <h3 id="fast-travel-title" class="fast-travel__title">{{ 'contact.fastTravel.title' | t }}</h3>
+  <p class="fast-travel__hint">{{ 'contact.fastTravel.hint' | t }}</p>
+
+  <ul class="fast-travel__list" aria-labelledby="fast-travel-title">
+    @for (link of links; track link.labelKey) {
+      <li>
+        <a
+          pixelButton="secondary"
+          class="fast-travel__link"
+          [href]="link.href"
+          [attr.target]="link.external ? '_blank' : null"
+          [attr.rel]="link.external ? 'noopener noreferrer' : null"
+          [attr.download]="link.download ? '' : null"
+        >
+          <app-pixel-art class="fast-travel__icon" [sprite]="link.icon" />
+          <span class="fast-travel__text">
+            <span>{{ link.labelKey | t }}</span>
+            <span class="fast-travel__value">{{ link.value }}</span>
+          </span>
+        </a>
+      </li>
+    }
+  </ul>
+</app-pixel-panel>

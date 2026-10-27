@@ -176,14 +176,24 @@ export const bs: Dictionary = {
     },
   },
   contact: {
-    eyebrow: 'Kontakt',
     heading: 'Javi mi se',
-    subtitle: 'Imaš projekat, posao ili ideju na umu? Pošalji mi poruku i javit ću ti se uskoro.',
-    linksLabel: 'Kontakt linkovi',
-    links: {
-      email: 'E-mail',
-      linkedin: 'LinkedIn',
-      github: 'GitHub',
+    npc: {
+      greeting:
+        'Hej, putniče! Imaš projekat, posao ili ideju na umu? Pošalji mi poruku i javit ću ti se uskoro.',
+      name: 'Prvo najvažnije: kako da te zovem?',
+      email: 'Drago mi je, {name}! Gdje da ti pošaljem odgovor? Upiši svoj e-mail.',
+      subject: 'Važi. O čemu je riječ u ovoj misiji? Daj joj kratak naslov.',
+      message: 'Sad ono glavno: ispričaj mi sve!',
+      summary:
+        'Evo šta sam zapisao. Ispravi šta treba preko „izmijeni“ ili pritisni POŠALJI kad sve bude u redu.',
+      sent: 'Hvala, {name}! Trebala bi ti se otvoriti aplikacija za e-mail sa svime popunjenim, samo tamo pritisni pošalji. Ništa se nije otvorilo? Može i preko e-maila u FAST TRAVEL meniju.',
+    },
+    errors: {
+      nameRequired: 'Hmm, nisam uhvatio tvoje ime. Možeš li ga upisati?',
+      emailRequired: 'Bez e-maila ti ne mogu odgovoriti. Možeš li ga upisati?',
+      emailInvalid: 'Hmm, ovaj e-mail mi izgleda ukleto. Pokušaj ponovo?',
+      subjectRequired: 'Svaka misija treba naslov. Kako ćemo nazvati ovu?',
+      messageRequired: 'Svitak je prazan! Napiši mi bar par riječi?',
     },
     fields: {
       name: 'Ime',
@@ -191,15 +201,32 @@ export const bs: Dictionary = {
       subject: 'Naslov',
       message: 'Poruka',
     },
-    errors: {
-      nameRequired: 'Ime je obavezno.',
-      emailRequired: 'E-mail je obavezan.',
-      emailInvalid: 'Unesi ispravnu e-mail adresu.',
-      subjectRequired: 'Naslov je obavezan.',
-      messageRequired: 'Poruka je obavezna.',
+    hints: {
+      message: 'Enter: dalje · Shift+Enter: novi red',
     },
-    submit: 'Otvori e-mail',
-    sent: 'Nacrt e-maila je otvoren. Pošalji ga iz svoje aplikacije za e-mail.',
+    step: 'KORAK {current}/{total}',
+    stepDone: 'SVE SPREMNO',
+    controls: {
+      back: 'Nazad',
+      next: 'Dalje',
+      send: 'Pošalji',
+      restart: 'Nova poruka',
+      edit: 'izmijeni',
+    },
+    quest: {
+      title: 'QUEST COMPLETE',
+      detail: '+100 XP',
+    },
+    fastTravel: {
+      title: 'FAST TRAVEL',
+      hint: 'Preskoči razgovor i idi pravo na cilj.',
+    },
+    links: {
+      email: 'E-mail',
+      linkedin: 'LinkedIn',
+      github: 'GitHub',
+      cv: 'Preuzmi CV',
+    },
     mailBody: {
       name: 'Ime: {name}',
       email: 'E-mail: {email}',

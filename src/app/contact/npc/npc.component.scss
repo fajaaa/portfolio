@@ -1,0 +1,68 @@
+:host {
+  // One sprite pixel = two UI pixels.
+  --npc-pixel: calc(var(--px) * 2);
+
+  position: relative;
+  display: grid;
+  width: calc(var(--npc-pixel) * 18);
+  height: calc(var(--npc-pixel) * 26);
+
+  // Shadow on the castle floor.
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: calc(var(--npc-pixel) * -1);
+    left: calc(var(--npc-pixel) * 2);
+    right: calc(var(--npc-pixel) * 2);
+    height: var(--npc-pixel);
+    background: rgba(var(--ink-rgb), 0.55);
+  }
+}
+
+.npc__frame {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+}
+
+.npc__frame--idle {
+  visibility: visible;
+}
+
+// Idle: stand / bob. Talking: mouth closed / open.
+@media (prefers-reduced-motion: no-preference) {
+  .npc__frame--idle {
+    animation: npc-first 1.2s steps(1, end) infinite;
+  }
+
+  .npc__frame--bob {
+    animation: npc-second 1.2s steps(1, end) infinite;
+  }
+
+  :host(.npc--talking) {
+    .npc__frame--idle {
+      animation-duration: 0.3s;
+    }
+
+    .npc__frame--bob {
+      animation: none;
+    }
+
+    .npc__frame--talk {
+      animation: npc-second 0.3s steps(1, end) infinite;
+    }
+  }
+}
+
+@keyframes npc-first {
+  50% {
+    visibility: hidden;
+  }
+}
+
+@keyframes npc-second {
+  50% {
+    visibility: visible;
+  }
+}

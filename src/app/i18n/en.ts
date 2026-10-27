@@ -175,14 +175,24 @@ export const en = {
     },
   },
   contact: {
-    eyebrow: 'Contact',
     heading: 'Get In Touch',
-    subtitle: 'Have a project, role, or idea in mind? Send a note and I will get back to you soon.',
-    linksLabel: 'Contact links',
-    links: {
-      email: 'Email',
-      linkedin: 'LinkedIn',
-      github: 'GitHub',
+    // What the NPC says on each step of the dialogue.
+    npc: {
+      greeting:
+        'Hey, traveler! Have a project, role, or idea in mind? Send me a note and I will get back to you soon.',
+      name: 'First things first: what should I call you?',
+      email: 'Nice to meet you, {name}! Where should I send my reply? Type your email.',
+      subject: "Got it. So what's this quest about? Give it a short title.",
+      message: 'Now the main part: tell me everything!',
+      summary: 'Here is what I wrote down. Fix anything with "edit", or hit SEND when it looks right.',
+      sent: 'Thanks, {name}! Your email app should open with everything filled in. Just hit send there. Nothing opened? The FAST TRAVEL email works too.',
+    },
+    errors: {
+      nameRequired: "Hmm, I didn't catch your name. Mind typing it in?",
+      emailRequired: "I can't reply without an email. Mind typing it in?",
+      emailInvalid: 'Hmm, that email looks cursed. Try again?',
+      subjectRequired: 'Every quest needs a title. What should we call this one?',
+      messageRequired: 'The scroll is empty! Write me a few words?',
     },
     fields: {
       name: 'Name',
@@ -190,15 +200,32 @@ export const en = {
       subject: 'Subject',
       message: 'Message',
     },
-    errors: {
-      nameRequired: 'Name is required.',
-      emailRequired: 'Email is required.',
-      emailInvalid: 'Enter a valid email address.',
-      subjectRequired: 'Subject is required.',
-      messageRequired: 'Message is required.',
+    hints: {
+      message: 'Enter: next · Shift+Enter: new line',
     },
-    submit: 'Open Email',
-    sent: 'Email draft opened. Send it from your email app.',
+    step: 'STEP {current}/{total}',
+    stepDone: 'ALL SET',
+    controls: {
+      back: 'Back',
+      next: 'Next',
+      send: 'Send',
+      restart: 'New message',
+      edit: 'edit',
+    },
+    quest: {
+      title: 'QUEST COMPLETE',
+      detail: '+100 XP',
+    },
+    fastTravel: {
+      title: 'FAST TRAVEL',
+      hint: 'Skip the chat and go straight there.',
+    },
+    links: {
+      email: 'Email',
+      linkedin: 'LinkedIn',
+      github: 'GitHub',
+      cv: 'Download CV',
+    },
     mailBody: {
       name: 'Name: {name}',
       email: 'Email: {email}',

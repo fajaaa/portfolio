@@ -1,9 +1,11 @@
+@use '../ui/pixel' as *;
+
 :host {
   display: block;
 }
 
 .contact {
-  padding: clamp(var(--space-12), 8vw, var(--space-16)) clamp(var(--space-6), 7vw, var(--space-16));
+  padding: var(--space-6) var(--world-gutter, var(--space-6)) 0;
 }
 
 .contact__header,
@@ -12,147 +14,224 @@
   margin-inline: auto;
 }
 
+// Short text on the world art: ink outline instead of a panel.
 .contact__header {
-  text-shadow: var(--text-outline);
   margin-bottom: var(--space-8);
+  text-shadow: var(--text-outline);
 }
 
-.contact__eyebrow {
-  color: var(--color-accent);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
+.contact__heading {
+  color: var(--paper);
+  font-size: var(--font-size-h2);
+  line-height: 1.5;
 }
 
-.contact__header h2 {
-  margin-top: var(--space-2);
-}
-
-.contact__subtitle {
-  max-width: 58ch;
-  margin-top: var(--space-3);
-  font-size: var(--font-size-md);
-}
-
+// Desktop: NPC + dialogue on the left, FAST TRAVEL on the right. Narrower: stacked.
 .contact__layout {
   display: grid;
-  grid-template-columns: minmax(16rem, 0.8fr) minmax(0, 1.2fr);
-  gap: clamp(var(--space-6), 6vw, var(--space-12));
+  grid-template-columns: minmax(0, 1fr) minmax(16rem, 21rem);
   align-items: start;
+  gap: var(--space-8);
 }
 
-.contact__info,
-.contact__form {
+.contact__stage {
   display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: end;
   gap: var(--space-4);
 }
 
-.contact__tile {
-  min-height: 5.5rem;
-  display: grid;
-  align-content: center;
-  gap: var(--space-1);
-  padding: var(--space-5);
-  border: 1px solid var(--color-card-border);
-  background: var(--color-card);
-  color: var(--color-text-primary);
-  text-decoration: none;
-  box-shadow: var(--shadow-card);
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    background-color 180ms ease;
+.contact__npc {
+  // Room for its floor shadow.
+  margin-bottom: calc(var(--px) * 3);
 }
 
-.contact__tile:hover {
-  transform: translateY(-2px);
-  border-color: rgba(var(--color-accent-rgb), 0.72);
-  background: var(--color-background-elevated);
-}
-
-.contact__tile strong {
-  font-size: var(--font-size-md);
-}
-
-.contact__tile span {
-  overflow-wrap: anywhere;
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
-}
-
-.contact__form {
-  padding: var(--space-6);
-  border: 1px solid var(--color-card-border);
-  background: var(--color-card);
-  box-shadow: var(--shadow-card);
-}
+/* ---------- Answer input ---------- */
 
 .contact__field {
-  display: grid;
-  gap: var(--space-1);
+  margin-top: var(--space-4);
 }
 
-.contact__field label {
-  color: var(--color-text-primary);
-  font-family: var(--font-display);
-  font-size: var(--font-size-label);
+// Keeps its space (and focus) while the question types, so the box does not jump.
+.contact__field--hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
-.contact__field input,
-.contact__field textarea {
+.contact__control {
+  position: relative;
+  // Room for the pixel border, drawn outside the input.
+  padding: var(--px);
+}
+
+.contact__input {
+  display: block;
   width: 100%;
   min-height: 44px;
-  padding: var(--space-2) var(--space-3);
-  border: var(--px) solid var(--ink);
-  background: var(--paper);
+  padding: var(--space-1) var(--space-3);
+  border: 0;
+  background: #ffffff;
   color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  line-height: 1.25;
+  caret-color: var(--ink);
+  caret-shape: block;
+  --input-border: var(--ink);
+  --input-extra: inset var(--px) var(--px) 0 0 rgba(var(--ink-rgb), 0.15);
+  box-shadow: pixel-border(var(--input-border)), var(--input-extra);
+
+  &:focus {
+    outline: none;
+  }
+
+  // Coin focus ring just outside the pixel border.
+  &:focus-visible {
+    --input-extra: 0 0 0 calc(var(--px) * 2) var(--coin);
+  }
+
+  // Empty: the custom blinking block below stands in for the caret.
+  &:placeholder-shown {
+    caret-color: transparent;
+  }
+
+  &[aria-invalid='true'] {
+    --input-border: var(--hp);
+  }
 }
 
-.contact__field textarea {
+.contact__input--message {
+  min-height: 8rem;
   resize: vertical;
 }
 
-.contact__field [aria-invalid='true'] {
-  border-color: var(--hp);
+.contact__caret {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--px) + var(--space-3));
+  display: none;
+  width: 1ch;
+  height: 1em;
+  background: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
-.contact__error {
-  min-height: 1.5em;
-  color: var(--coin);
-  font-size: var(--font-size-sm);
+.contact__caret--top {
+  top: calc(var(--px) + var(--space-1) + 0.125em);
+  transform: none;
 }
 
-.contact__submit {
-  // Leaves room for the button's outside pixel border.
-  width: calc(100% - var(--px) * 2);
+.contact__input:focus:placeholder-shown + .contact__caret {
+  display: block;
 }
 
-.contact__status {
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
+.contact__hint {
+  margin-top: var(--space-2);
+  color: #4a4a5c;
+  font-family: var(--font-mono);
+  font-size: 1.125rem;
+  line-height: 1.2;
+}
+
+@media (pointer: coarse) {
+  .contact__hint {
+    display: none;
+  }
+}
+
+/* ---------- Controls ---------- */
+
+.contact__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+.contact__progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-size: 0.625rem;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+
+.contact__segments {
+  display: flex;
+  gap: var(--px);
+  padding: var(--px);
+}
+
+.contact__segment {
+  width: calc(var(--px) * 3);
+  height: calc(var(--px) * 3);
+  box-shadow: pixel-border(var(--ink));
+}
+
+.contact__segment--filled {
+  background: var(--xp);
+}
+
+.contact__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+
+.contact__arrow {
+  width: calc(var(--px) * 2);
+  height: calc(var(--px) * 3.5);
 }
 
 @media (max-width: 900px) {
   .contact__layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
-@media (max-width: 560px) {
-  .contact {
-    padding: var(--space-10) var(--space-4);
+// Small screens: the NPC stands above the dialogue.
+@media (max-width: 640px) {
+  .contact__stage {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
   }
 
-  .contact__header {
-    margin-bottom: var(--space-6);
+  .contact__npc {
+    margin-left: var(--space-4);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .contact__field:not(.contact__field--hidden) .contact__control {
+    animation: contact-field-in 240ms steps(4, end);
   }
 
-  .contact__form,
-  .contact__tile {
-    padding: var(--space-4);
+  .contact__input:focus:placeholder-shown + .contact__caret {
+    animation: contact-caret-blink 1s steps(1, end) infinite;
+  }
+}
+
+// Stepped left-to-right wipe.
+@keyframes contact-field-in {
+  from {
+    clip-path: inset(0 100% 0 0);
   }
 
-  .contact__tile {
-    min-height: 4.75rem;
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes contact-caret-blink {
+  50% {
+    visibility: hidden;
   }
 }

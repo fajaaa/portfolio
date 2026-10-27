@@ -23,6 +23,12 @@ export const MARKER_SPRITE: PixelSprite = {
   palette: { X: 'currentColor' },
 };
 
+/** ◀ (the menu marker mirrored). */
+export const MARKER_LEFT_SPRITE: PixelSprite = {
+  rows: ['...X', '..XX', '.XXX', 'XXXX', '.XXX', '..XX', '...X'],
+  palette: { X: 'currentColor' },
+};
+
 /** ▲ */
 export const ARROW_UP_SPRITE: PixelSprite = {
   rows: ['...X...', '..XXX..', '.XXXXX.', 'XXXXXXX'],

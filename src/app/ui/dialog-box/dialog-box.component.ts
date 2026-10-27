@@ -21,8 +21,9 @@ import { PixelPanelComponent } from '../pixel-panel/pixel-panel.component';
  *
  * With `typewriter` the `text` is typed out at `speed` ms per character, optionally waiting until
  * the box is on screen (`startWhenVisible`). Clicking skips to the end; reduced motion shows the
- * text at once. Screen readers always get the full text. `done` emits once the text is complete.
- * Projected content (e.g. answer buttons) renders below the text.
+ * text at once. Screen readers always get the full text; with `live` its changes are announced
+ * politely. `done` emits once the text is complete. Projected content (e.g. answer buttons)
+ * renders below the text.
  */
 @Component({
   selector: 'app-dialog-box',
@@ -41,6 +42,7 @@ export class DialogBoxComponent {
   readonly typewriter = input(false, { transform: booleanAttribute });
   readonly speed = input(30, { transform: numberAttribute });
   readonly startWhenVisible = input(false, { transform: booleanAttribute });
+  readonly live = input(false, { transform: booleanAttribute });
   readonly done = output<void>();
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
@@ -51,11 +53,17 @@ export class DialogBoxComponent {
   private readonly animated = computed(() => this.typewriter() && !this.motion.reducedMotion());
 
   /** Number of characters shown; resets whenever the text or mode changes. */
-  private readonly shown = linkedSignal(() => (this.animated() ? 0 : this.text().length));
+  // The source is a fresh object on every change, so a new text resets the count even when the
+  // computed start value (0) stays the same.
+  private readonly shown = linkedSignal({
+    source: () => ({ text: this.text(), animated: this.animated() }),
+    computation: ({ text, animated }) => (animated ? 0 : text.length),
+  });
 
   protected readonly typed = computed(() => this.text().slice(0, this.shown()));
   protected readonly pending = computed(() => this.text().slice(this.shown()));
-  protected readonly finished = computed(() => this.shown() >= this.text().length);
+  /** False while the text is still being typed. */
+  readonly finished = computed(() => this.shown() >= this.text().length);
 
   constructor() {
     afterRenderEffect((onCleanup) => {

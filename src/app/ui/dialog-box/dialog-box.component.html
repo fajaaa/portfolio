@@ -3,7 +3,7 @@
 }
 
 <app-pixel-panel raised>
-  <p class="dialog-box__text">
+  <p class="dialog-box__text" [attr.aria-live]="live() ? 'polite' : null">
     <span class="visually-hidden">{{ text() }}</span>
     <!-- The untyped rest keeps its space so the box never changes size while typing. -->
     <span aria-hidden="true">{{ typed() }}<span class="dialog-box__pending">{{ pending() }}</span></span>
