@@ -65,8 +65,8 @@
   --space-12: calc(var(--px) * 12);
   --space-16: calc(var(--px) * 16);
 
-  /* Pixel drop shadow (stepped, no blur) */
-  --shadow-pixel: calc(var(--px) * 2) calc(var(--px) * 2) 0 0 var(--ink);
+  /* Focus ring: coin on dark surfaces; paper panels and the sky world switch it to ink (3:1+) */
+  --focus-ring: var(--coin);
 
   /* Stepped ink outline for short text that sits directly on world art */
   --text-outline:
@@ -79,13 +79,11 @@
   --font-body: 'Pixelify Sans', system-ui, sans-serif;
   --font-mono: 'VT323', 'Courier New', monospace;
 
-  --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 1.0625rem;
   --font-size-md: 1.1875rem;
   --font-size-lg: 1.25rem;
   --font-size-xl: 1.5rem;
-  --font-size-2xl: 2rem;
 
   /* Press Start 2P is roughly 1em per glyph, so the heading scale stays small */
   --font-size-h1: clamp(1.6rem, 0.856rem + 3.3vw, 3.5rem);
@@ -99,9 +97,6 @@
   --line-height-base: 1.55;
 
   --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
 
   /* Fixed HUD: menu bar + XP bar. Keep in sync with HUD_OFFSET (smooth-scroll.service.ts). */
   --hud-bar-height: 56px;
@@ -114,33 +109,16 @@
   --cursor-text: text;
 
   /* Layering */
-  --z-base: 0;
-  --z-raised: 10;
-  --z-sticky: 100;
   --z-hud: 1000;
   --z-overlay: 1100;
   --z-modal: 1200;
   --z-toast: 1300;
   --z-intro: 1400;
-  --z-cursor: 9999;
 
   /* Motion */
   --duration-fast: 150ms;
   --duration-base: 300ms;
-  --duration-slow: 600ms;
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease-pixel: steps(4, end);
   --ease-blink: steps(1, end);
-
-  /* Legacy aliases for the pre-redesign styles (404 page, base links).
-     Remove each one once the styles using it are redesigned (Phase 9). */
-  --color-background-deep: var(--ink);
-  --color-primary-rgb: 255, 210, 63;
-  --color-accent: var(--w13-crystal-cyan);
-  --color-accent-rgb: 90, 240, 255;
-  --color-text-primary: var(--paper);
 }
 
 @media (max-width: 479.98px) {
@@ -296,7 +274,7 @@ a {
 }
 
 a {
-  color: var(--color-accent);
+  color: var(--w13-crystal-cyan);
   text-decoration-thickness: 2px;
   text-underline-offset: 0.2em;
 }
@@ -361,7 +339,7 @@ h6 {
 }
 
 :focus-visible {
-  outline: calc(var(--px) * 2) solid var(--coin);
+  outline: calc(var(--px) * 2) solid var(--focus-ring);
   outline-offset: var(--px);
 }
 

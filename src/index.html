@@ -5,10 +5,54 @@
     <title>Kenan Fajic</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Description / og:description / twitter:description follow the language at runtime (PageMetaService). -->
+    <meta
+      name="description"
+      content="Kenan Fajic: final-year Software Engineering student at FIT Mostar and full-stack developer. Play through his projects, skills and contacts in a retro pixel-art game portfolio."
+    />
+    <meta name="theme-color" content="#0b0b14" />
+    <link rel="canonical" href="https://fajaaa.github.io/portfolio/" />
+
+    <!-- Social previews: crawlers don't run JS, so these must be absolute and static. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Kenan Fajic" />
+    <meta property="og:title" content="Kenan Fajic: The Game" />
+    <meta
+      property="og:description"
+      content="Kenan Fajic: final-year Software Engineering student at FIT Mostar and full-stack developer. Play through his projects, skills and contacts in a retro pixel-art game portfolio."
+    />
+    <meta property="og:url" content="https://fajaaa.github.io/portfolio/" />
+    <meta property="og:image" content="https://fajaaa.github.io/portfolio/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Pixel-art title screen: KENAN FAJIC, full-stack developer, on a floating voxel island"
+    />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="bs_BA" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Kenan Fajic: The Game" />
+    <meta
+      name="twitter:description"
+      content="Kenan Fajic: final-year Software Engineering student at FIT Mostar and full-stack developer. Play through his projects, skills and contacts in a retro pixel-art game portfolio."
+    />
+    <meta name="twitter:image" content="https://fajaaa.github.io/portfolio/og-image.png" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Press Start 2P (latin) sets the HUD, headings and buttons, so fetch it before the CSS asks.
+         The URL is the one Google's CSS currently serves; if Google bumps the font version
+         (v16 → v17), update it, or the preload is simply wasted (nothing breaks). -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Press+Start+2P&family=VT323&subset=latin-ext&display=swap"
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="https://fonts.gstatic.com/s/pressstart2p/v16/e3t4euO8T-267oIAQAu6jDQyK3nVivM.woff2"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Press+Start+2P&family=VT323&display=swap"
       rel="stylesheet"
     />
     <link rel="icon" type="image/png" sizes="512x512" href="favicon_kf_512.png" />

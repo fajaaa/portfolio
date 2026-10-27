@@ -5,6 +5,8 @@ export const en = {
       notFound: 'Page not found',
       styleguide: 'Styleguide',
     },
+    description:
+      'Kenan Fajic: final-year Software Engineering student at FIT Mostar and full-stack developer. Play through his projects, skills and contacts in a retro pixel-art game portfolio.',
   },
   nav: {
     ariaLabel: 'Primary navigation',
@@ -100,7 +102,7 @@ export const en = {
         'An IoT smart safe simulation with remote control, security code generation, and real-time device status monitoring.',
     },
     cartridge: {
-      insert: 'Insert cartridge: {title}',
+      insert: 'Insert cartridge:',
       level: 'LV {level}',
       more: '+{count}',
     },

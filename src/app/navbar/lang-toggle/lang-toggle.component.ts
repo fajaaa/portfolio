@@ -16,7 +16,7 @@ import { TranslatePipe } from '../../i18n/translate.pipe';
         type="button"
         [class.lang-toggle__button--active]="i18n.lang() === lang"
         [attr.aria-pressed]="i18n.lang() === lang"
-        [attr.aria-label]="labels[lang] | t"
+        [attr.aria-label]="lang.toUpperCase() + ' (' + (labels[lang] | t) + ')'"
         [attr.lang]="lang"
         (click)="i18n.setLang(lang)"
       >

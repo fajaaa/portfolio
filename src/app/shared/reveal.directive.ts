@@ -23,16 +23,18 @@ interface RevealTween {
   to: gsap.TweenVars;
 }
 
-const FADE_CLEAR = 'transform,opacity,visibility';
+const FADE_CLEAR = 'transform,opacity';
 
+// Opacity, not autoAlpha: `visibility: hidden` would take not-yet-revealed content out of the
+// tab order and the accessibility tree.
 const VARIANTS: Record<RevealVariant, RevealTween> = {
   up: {
-    from: { autoAlpha: 0, y: 24 },
-    to: { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', clearProps: FADE_CLEAR },
+    from: { opacity: 0, y: 24 },
+    to: { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out', clearProps: FADE_CLEAR },
   },
   pop: {
-    from: { autoAlpha: 0, scale: 0.85 },
-    to: { autoAlpha: 1, scale: 1, duration: 0.45, ease: 'back.out(1.7)', clearProps: FADE_CLEAR },
+    from: { opacity: 0, scale: 0.85 },
+    to: { opacity: 1, scale: 1, duration: 0.45, ease: 'back.out(1.7)', clearProps: FADE_CLEAR },
   },
   // Stepped left-to-right wipe.
   pixel: {
@@ -59,6 +61,7 @@ export class RevealDirective {
   private readonly zone = inject(NgZone);
   private readonly motion = inject(MotionService);
   private context: gsap.Context | undefined;
+  private stopFocusListener: (() => void) | undefined;
 
   constructor() {
     // Ensures ScrollTrigger is registered before any trigger is created.
@@ -76,11 +79,17 @@ export class RevealDirective {
     // If reduced motion turns on before the element was revealed, show it right away.
     effect(() => {
       if (this.motion.reducedMotion()) {
-        untracked(() => this.context?.revert());
+        untracked(() => {
+          this.stopFocusListener?.();
+          this.context?.revert();
+        });
       }
     });
 
-    inject(DestroyRef).onDestroy(() => this.context?.revert());
+    inject(DestroyRef).onDestroy(() => {
+      this.stopFocusListener?.();
+      this.context?.revert();
+    });
   }
 
   private animate(): void {
@@ -89,13 +98,18 @@ export class RevealDirective {
     const targets = stagger > 0 ? Array.from(this.host.children) : this.host;
 
     this.context = gsap.context(() => {
-      gsap.fromTo(targets, variant.from, {
+      const tween = gsap.fromTo(targets, variant.from, {
         ...variant.to,
         delay: Math.max(this.delay(), 0) / 1000,
         stagger,
         scrollTrigger: { trigger: this.host, start: 'top 85%', once: true },
         onStart: () => this.zone.run(() => this.revealed.emit()),
       });
+
+      // Keyboard focus can land here before the entrance played: finish it at once.
+      const showNow = () => tween.progress(1);
+      this.host.addEventListener('focusin', showNow, { once: true });
+      this.stopFocusListener = () => this.host.removeEventListener('focusin', showNow);
     }, this.host);
   }
 }

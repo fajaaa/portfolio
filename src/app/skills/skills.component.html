@@ -80,10 +80,10 @@
         <app-pixel-panel class="skills__info" raised>
           <h3 class="skills__info-title">{{ 'skills.itemInfo' | t }}</h3>
 
-          <!-- The live card and an invisible copy of every item share one cell: the panel keeps
-               the height of the longest item, so changing the selection never moves the layout. -->
+          <!-- The card and an invisible copy of every item share one cell: the panel keeps the
+               height of the longest item, so changing the selection never moves the layout. -->
           <div class="skills__stack">
-            <div class="skills__info-live" aria-live="polite" aria-atomic="true">
+            <div class="skills__info-live">
               <app-item-info [skill]="selected()" />
             </div>
             @for (skill of skills; track skill.id) {
@@ -92,6 +92,13 @@
               </div>
             }
           </div>
+
+          <!-- Announces keyboard / click picks only; mouse hover changes the card silently. -->
+          <p class="visually-hidden" aria-live="polite">
+            @if (announced(); as skill) {
+              {{ skill.label }}: {{ skill.descriptionKey | t }}
+            }
+          </p>
         </app-pixel-panel>
       </div>
     </div>

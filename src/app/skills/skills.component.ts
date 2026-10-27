@@ -98,6 +98,9 @@ export class SkillsComponent {
     () => this.items().find((skill) => skill.id === this.selectedId()) ?? this.items()[0],
   );
 
+  /** Last item picked by focus or click, for the screen reader announcement. */
+  protected readonly announced = signal<Skill | null>(null);
+
   constructor() {
     inject(DestroyRef).onDestroy(() => this.restaggerTween?.kill());
   }
@@ -120,6 +123,10 @@ export class SkillsComponent {
     }
 
     this.selectedId.set(skill.id);
+
+    if (sound !== 'hover') {
+      this.announced.set(skill);
+    }
   }
 
   /** Hover selects too, but only with a mouse (touch already selects on tap). */
@@ -190,15 +197,15 @@ export class SkillsComponent {
       this.restaggerTween?.kill();
       this.restaggerTween = gsap.fromTo(
         this.grid().nativeElement.children,
-        { autoAlpha: 0, scale: 0.6 },
+        { opacity: 0, scale: 0.6 },
         {
-          autoAlpha: 1,
+          opacity: 1,
           scale: 1,
           duration: 0.2,
           ease: 'steps(4)',
           stagger: 0.025,
           overwrite: true,
-          clearProps: 'transform,opacity,visibility',
+          clearProps: 'transform,opacity',
         },
       );
     });

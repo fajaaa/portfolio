@@ -19,7 +19,7 @@
           [class.pause__link--active]="active() === item.section"
           [attr.aria-current]="active() === item.section ? 'location' : null"
           [attr.data-section]="item.section"
-          [href]="'/#' + item.section"
+          [href]="'#' + item.section"
           (pointerenter)="sound.hover($event)"
           (click)="selected.emit({ section: item.section, event: $event })"
         >

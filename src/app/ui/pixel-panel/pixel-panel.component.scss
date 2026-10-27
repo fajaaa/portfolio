@@ -6,6 +6,8 @@
   --panel-border: var(--ink);
   --panel-bevel: inset calc(var(--px) * -1) calc(var(--px) * -1) 0 0 rgba(var(--ink-rgb), 0.12);
   --panel-drop: 0 0 0 0 transparent;
+  // Coin would be under 3:1 on paper.
+  --focus-ring: var(--ink);
 
   display: block;
   // Room for the border, which is drawn outside the frame.
@@ -17,6 +19,7 @@
   --panel-fg: var(--paper);
   --panel-border: var(--paper);
   --panel-bevel: inset var(--px) var(--px) 0 0 rgba(255, 248, 231, 0.1);
+  --focus-ring: var(--coin);
 }
 
 :host(.pixel-panel--raised) {

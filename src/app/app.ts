@@ -40,7 +40,6 @@ export class App {
 
   protected readonly intro = inject(IntroService);
 
-  protected readonly title = signal('portfolio');
   protected readonly arrowUp = ARROW_UP_SPRITE;
   protected readonly showBackToTop = signal(false);
 

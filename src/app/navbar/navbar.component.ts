@@ -32,7 +32,8 @@ const COMPACT_QUERY = '(max-width: 760px)';
 
 /**
  * Game HUD: logo, world menu, language and sound toggles, and the XP bar (scroll progress per
- * world). Tapping the logo 5× counts as the Konami code. The menu bar hides while scrolling down and returns on scroll up; the XP bar stays.
+ * world). Tapping the logo 5× counts as the Konami code. The menu bar hides while scrolling
+ * down and returns on scroll up; the XP bar stays.
  */
 @Component({
   selector: 'app-navbar',
@@ -48,6 +49,8 @@ const COMPACT_QUERY = '(max-width: 760px)';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
   host: {
+    // The HUD (menu bar + XP bar) is the page header.
+    role: 'banner',
     '[class.hud--hidden]': 'isHidden()',
     '(focusin)': 'isHidden.set(false)',
   },
@@ -158,8 +161,9 @@ export class NavbarComponent {
     this.navigateTo('home', event);
   }
 
+  /** Relative to <base href>, so links also work when the site is served from a sub-path. */
   protected hrefFor(fragment: SectionId): string {
-    return `/#${fragment}`;
+    return `#${fragment}`;
   }
 
   private onScroll({ y, direction }: ScrollState): void {

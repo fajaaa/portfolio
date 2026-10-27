@@ -3,9 +3,10 @@
   class="cart"
   type="button"
   aria-haspopup="dialog"
-  [attr.aria-label]="'projects.cartridge.insert' | t: { title: project().title }"
   (click)="selected.emit()"
 >
+  <!-- The name comes from the visible text (title, level, tags) behind this prefix. -->
+  <span class="visually-hidden">{{ 'projects.cartridge.insert' | t }}</span>
   <span class="cart__grip" aria-hidden="true"></span>
 
   <span class="cart__label">

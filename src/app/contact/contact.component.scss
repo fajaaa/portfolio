@@ -85,9 +85,9 @@
     outline: none;
   }
 
-  // Coin focus ring just outside the pixel border.
+  // Focus ring just outside the pixel border.
   &:focus-visible {
-    --input-extra: 0 0 0 calc(var(--px) * 2) var(--coin);
+    --input-extra: 0 0 0 calc(var(--px) * 2) var(--focus-ring);
   }
 
   // Empty: the custom blinking block below stands in for the caret.

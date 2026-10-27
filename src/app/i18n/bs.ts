@@ -7,6 +7,8 @@ export const bs: Dictionary = {
       notFound: 'Stranica nije pronađena',
       styleguide: 'Styleguide',
     },
+    description:
+      'Kenan Fajic: student završne godine softverskog inženjerstva na FIT-u u Mostaru i full-stack developer. Prođi kroz njegove projekte, vještine i kontakte u retro pixel-art portfoliju u stilu igre.',
   },
   nav: {
     ariaLabel: 'Glavna navigacija',
@@ -101,7 +103,7 @@ export const bs: Dictionary = {
         'IoT simulacija pametnog sefa sa daljinskim upravljanjem, generisanjem sigurnosnog koda i praćenjem stanja uređaja u stvarnom vremenu.',
     },
     cartridge: {
-      insert: 'Ubaci kasetu: {title}',
+      insert: 'Ubaci kasetu:',
       level: 'LV {level}',
       more: '+{count}',
     },

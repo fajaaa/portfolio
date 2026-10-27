@@ -10,7 +10,6 @@ import { WorldSectionComponent } from '../world/world-section/world-section.comp
 @Component({
   selector: 'app-portfolio-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     WorldSectionComponent,
     HeroComponent,

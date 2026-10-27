@@ -11,6 +11,7 @@ import { TitleStrategy, provideRouter, withInMemoryScrolling } from '@angular/ro
 
 import { routes } from './app.routes';
 import { I18nTitleStrategy } from './core/i18n-title.strategy';
+import { PageMetaService } from './core/page-meta.service';
 import { HUD_OFFSET } from './core/smooth-scroll.service';
 
 export const appConfig: ApplicationConfig = {
@@ -28,5 +29,7 @@ export const appConfig: ApplicationConfig = {
     { provide: TitleStrategy, useClass: I18nTitleStrategy },
     // Keeps router anchor jumps (deep links, links from other routes) clear of the fixed HUD.
     provideAppInitializer(() => inject(ViewportScroller).setOffset([0, HUD_OFFSET])),
+    // Meta description in the current language.
+    provideAppInitializer(() => void inject(PageMetaService)),
   ],
 };

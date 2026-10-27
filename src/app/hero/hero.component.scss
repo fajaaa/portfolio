@@ -3,6 +3,9 @@
 }
 
 .hero {
+  // Coin is only ~2:1 on the sky.
+  --focus-ring: var(--ink);
+
   // Roughly one screen together with the world plate above it.
   min-height: calc(100svh - var(--hud-height) - var(--space-16) * 2);
   display: grid;
@@ -57,13 +60,16 @@
   display: inline-block;
 }
 
+// Paper on sky is under 3:1, so the typed line sits on an ink plate (like a terminal line).
 .hero__subtitle {
-  min-height: 1.2em;
+  min-height: calc(1.1em + var(--space-2) * 2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--ink);
   color: var(--paper);
   font-family: var(--font-mono);
   font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.5rem);
   line-height: 1.1;
-  text-shadow: var(--text-outline);
+  box-shadow: calc(var(--px) * 2) calc(var(--px) * 2) 0 0 rgba(var(--ink-rgb), 0.35);
 }
 
 .hero__cursor {
@@ -106,10 +112,12 @@
 
 .hero__scroll {
   justify-self: center;
+  padding: var(--space-1) var(--space-2);
+  background: var(--ink);
   color: var(--paper);
   font-family: var(--font-display);
   font-size: 0.625rem;
-  text-shadow: var(--text-outline);
+  line-height: 1.6;
   animation: hero-blink 1.2s steps(1, end) infinite;
 }
 

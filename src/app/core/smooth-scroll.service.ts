@@ -22,6 +22,12 @@ export type ScrollListener = (state: ScrollState) => void;
 /** A programmatic scroll counts as finished once no scroll event arrived for this long. */
 const AUTO_SCROLL_IDLE_MS = 200;
 
+/** How long a deep-linked section (/#skills) is kept in place while the page above it loads. */
+const ANCHOR_HOLD_MS = 4000;
+
+/** Inputs that mean the user scrolls by hand, which ends the anchor hold. */
+const USER_SCROLL_INPUTS = ['wheel', 'touchstart', 'keydown', 'pointerdown'] as const;
+
 export interface ScrollToOptions {
   /** Pixels added to the target position (negative = stop above the target). */
   offset?: number;
@@ -44,7 +50,13 @@ export class SmoothScrollService {
   private autoScrollTimer: ReturnType<typeof setTimeout> | undefined;
   private autoScrolling = false;
   private lastY = 0;
+  private heldAnchor: string | null = null;
   private readonly listeners = new Set<ScrollListener>();
+
+  private readonly releaseAnchor = () => {
+    this.heldAnchor = null;
+    USER_SCROLL_INPUTS.forEach((type) => window.removeEventListener(type, this.releaseAnchor));
+  };
 
   private readonly onTick = (time: number) => this.lenis?.raf(time * 1000);
   private readonly onLenisScroll = (lenis: Lenis) => this.emit(lenis.scroll);
@@ -93,12 +105,18 @@ export class SmoothScrollService {
     this.zone.runOutsideAngular(() => {
       window.addEventListener('scroll', this.onNativeScroll, { passive: true });
 
+      this.holdAnchor();
+
       // Async content (e.g. GitHub projects) changes the page height; keep trigger positions fresh.
       this.resizeObserver = new ResizeObserver(() => {
+        this.restoreAnchor();
         clearTimeout(this.refreshTimer);
         this.refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 200);
       });
       this.resizeObserver.observe(document.body);
+
+      // The pixel fonts change text metrics (and so trigger positions) once they arrive.
+      document.fonts?.ready.then(() => ScrollTrigger.refresh());
     });
   }
 
@@ -145,6 +163,35 @@ export class SmoothScrollService {
   start(): void {
     this.lenis?.start();
     document.documentElement.style.removeProperty('overflow');
+  }
+
+  /**
+   * The router jumps to a deep link's section (/#skills) as soon as the page renders, but the
+   * GitHub projects and fonts above it arrive later and push it down. Until the user scrolls
+   * (or ANCHOR_HOLD_MS pass), every page resize puts the section back under the HUD.
+   */
+  private holdAnchor(): void {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+
+    if (!id) {
+      return;
+    }
+
+    this.heldAnchor = id;
+    USER_SCROLL_INPUTS.forEach((type) =>
+      window.addEventListener(type, this.releaseAnchor, { passive: true }),
+    );
+    setTimeout(this.releaseAnchor, ANCHOR_HOLD_MS);
+  }
+
+  private restoreAnchor(): void {
+    const target = this.heldAnchor ? document.getElementById(this.heldAnchor) : null;
+
+    if (target) {
+      // Lenis measures the page lazily; with its old (shorter) limit it would clamp the jump.
+      this.lenis?.resize();
+      this.scrollTo(target, { offset: -HUD_OFFSET, immediate: true });
+    }
   }
 
   private createLenis(): void {

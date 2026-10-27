@@ -1,7 +1,7 @@
 @use '../../ui/pixel' as *;
 
 :host {
-  --lang-height: 36px;
+  --lang-height: 44px;
   --lang-font: 0.625rem;
 
   display: inline-flex;
@@ -45,12 +45,6 @@
 .lang-toggle__button:focus-visible {
   position: relative;
   z-index: 1;
-}
-
-@media (pointer: coarse) {
-  :host {
-    --lang-height: 44px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
