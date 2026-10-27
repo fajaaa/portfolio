@@ -1,0 +1,75 @@
+<dialog
+  #dialog
+  class="screen"
+  data-lenis-prevent
+  aria-labelledby="game-screen-now game-screen-title"
+  aria-describedby="game-screen-description"
+  (close)="onClose()"
+  (click)="onClick($event)"
+>
+  @if (project(); as game) {
+    <div class="screen__crt">
+      <header class="screen__header">
+        <p id="game-screen-now" class="screen__now">{{ 'projects.screen.nowPlaying' | t }}</p>
+        <!-- Initial focus: keeps the screen scrolled to the top (the buttons can be below the fold). -->
+        <h2 id="game-screen-title" class="screen__title" tabindex="-1" autofocus>{{ game.title }}</h2>
+      </header>
+
+      <div class="screen__body">
+        @if (cover(); as art) {
+          <div class="screen__cover">
+            <app-pixel-art class="screen__cover-art" [sprite]="art" />
+          </div>
+        }
+
+        <div class="screen__info">
+          <app-dialog-box
+            id="game-screen-description"
+            typewriter
+            [speed]="18"
+            [speaker]="'projects.screen.readme' | t"
+            [text]="description()"
+          />
+
+          <ul class="screen__tags" [attr.aria-label]="'projects.screen.stackLabel' | t">
+            @for (tech of game.techStack; track tech) {
+              <li><app-pixel-tag variant="coin">{{ tech }}</app-pixel-tag></li>
+            }
+          </ul>
+        </div>
+      </div>
+
+      <div class="screen__actions">
+        <a
+          pixelButton
+          [href]="game.githubUrl"
+          target="_blank"
+          rel="noopener"
+          [attr.aria-label]="'projects.screen.codeLabel' | t: { title: game.title }"
+        >
+          {{ 'projects.screen.code' | t }}
+        </a>
+        @if (game.demoUrl !== game.githubUrl) {
+          <a
+            pixelButton="secondary"
+            [href]="game.demoUrl"
+            target="_blank"
+            rel="noopener"
+            [attr.aria-label]="'projects.screen.demoLabel' | t: { title: game.title }"
+          >
+            {{ 'projects.screen.demo' | t }}
+          </a>
+        }
+        <button
+          class="screen__eject"
+          pixelButton="ghost"
+          type="button"
+          [attr.aria-label]="'projects.screen.ejectLabel' | t: { title: game.title }"
+          (click)="eject()"
+        >
+          {{ 'projects.screen.eject' | t }}
+        </button>
+      </div>
+    </div>
+  }
+</dialog>

@@ -8,6 +8,7 @@ import {
   I18nKey,
   I18nListKey,
   I18nParams,
+  I18nPluralKey,
   LANGS,
   Lang,
 } from '../i18n/i18n.types';
@@ -51,6 +52,16 @@ export class I18nService {
       : text;
   }
 
+  /**
+   * Picks the plural form for `count` (by the current language's rules) and fills in `{count}`:
+   * `plural('projects.count', 3)` gives "3 GAMES FOUND" / "3 IGRE PRONAĐENE".
+   */
+  plural(key: I18nPluralKey, count: number, params?: I18nParams): string {
+    const form = pluralCategory(this.current(), count);
+
+    return this.t(`${key}.${form}` as I18nKey, { ...params, count });
+  }
+
   /** Returns a translated list, e.g. the hero subtitles. */
   list(key: I18nListKey): readonly string[] {
     const value = this.lookup(key);
@@ -79,6 +90,23 @@ export class I18nService {
 
     return /^(bs|hr|sr)\b/.test(browserLang) ? 'bs' : 'en';
   }
+}
+
+/** CLDR plural category for the two supported languages. */
+function pluralCategory(lang: Lang, count: number): 'one' | 'few' | 'other' {
+  if (lang === 'en') {
+    return count === 1 ? 'one' : 'other';
+  }
+
+  // Bosnian: 1, 21, 31... -> one; 2-4, 22-24... (not 12-14) -> few; the rest -> other.
+  const tens = Math.abs(count) % 100;
+  const ones = tens % 10;
+
+  if (ones === 1 && tens !== 11) {
+    return 'one';
+  }
+
+  return ones >= 2 && ones <= 4 && (tens < 12 || tens > 14) ? 'few' : 'other';
 }
 
 function resolve(dictionary: unknown, key: string): unknown {

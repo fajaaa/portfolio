@@ -1,0 +1,43 @@
+import type { PixelSprite } from '../../ui/pixel-art/pixel-art.component';
+
+/** AquaControl: a water drop next to a water bill with a usage meter. 32x24. */
+export const AQUA_CONTROL_COVER: PixelSprite = {
+  rows: [
+    'bbbHbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+    'bHbbbbbbbbbbbbbHbbbbbbbbbbbHbbbb',
+    'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+    'bbbbbbbbKbbbbbbbbbKKKKKKKKKKKKHb',
+    'bbbbbbbKCKbbbHbbbbKWWWWWWWWWWKKb',
+    'bbbbbbbKCKbbbbbbbbKWWCWWGGGGWKKb',
+    'bbbbbbKCCCKbbbbbbbKWCCCWWWWWWKKb',
+    'bbbbbbKCCCKbbbbbbbKWCSCWGGGWWKKb',
+    'bbbbbKCCCCCKbbbbbbKWWWWWWWWWWKKb',
+    'bHbbbKCCCCCKbbbbbbKWGWGWGWGWWKKb',
+    'bbbbKCWCCCCSKbbbbbKWWWWWWWWWWKKb',
+    'bbbbKCWCCCCSKbbbbbKWWWWWWWSWWKKb',
+    'bbbKCWCCCCCCSKbbbbKWWWCWWWSWWKKb',
+    'bbbKCWCCCCCSSKbbbbKWWWCWCWSWWKKb',
+    'bbKCWWCCCCCCSSKbbbKWCWCWCWSWWKKb',
+    'HbKCWWCCCCCCSSKbbbKWCWCWCWSWWKKb',
+    'bbKCWCCCCCCCSSKbbbKWGGGGGGGGWKKb',
+    'bbKCCCCCCCCCSSKbbbKWWWWWWWWWWKKb',
+    'bbKCCCCCCCCCSSKbbbKWYWWRRRRRWKKb',
+    'bbbKCCCCCCCSSKbbbbKWWWWWWWWWWKKb',
+    'bbbbKSSSSSSSKbbbbbKWKWKWKWKWKbKb',
+    'bbbbbbKKKKKbbbbbbbKbKbKbKbKbKbKb',
+    'bbbBBBbbbBBBbbbBBBbbbBBBbbbBBBHb',
+    'BBBbbbBBBbbbBBBbbbBBBbbbBBBbbbBB',
+  ],
+  palette: {
+    b: 'var(--w14-deep)',
+    B: 'var(--w14-bg)',
+    H: 'var(--w14-bubbles)',
+    K: 'var(--ink)',
+    C: 'var(--w13-crystal-cyan)',
+    S: 'var(--w14-bg)',
+    W: 'var(--paper)',
+    G: 'var(--w15-stone)',
+    Y: 'var(--coin)',
+    R: 'var(--hp)',
+  },
+};

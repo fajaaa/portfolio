@@ -1,0 +1,32 @@
+<button
+  #button
+  class="cart"
+  type="button"
+  aria-haspopup="dialog"
+  [attr.aria-label]="'projects.cartridge.insert' | t: { title: project().title }"
+  (click)="selected.emit()"
+>
+  <span class="cart__grip" aria-hidden="true"></span>
+
+  <span class="cart__label">
+    <span class="cart__art">
+      <app-pixel-art class="cart__cover" [sprite]="cover()" />
+      <span class="cart__shine" aria-hidden="true"></span>
+    </span>
+    <span class="cart__title">{{ project().title }}</span>
+  </span>
+
+  <span class="cart__strip">
+    <span class="cart__level">{{ 'projects.cartridge.level' | t: { level: level() } }}</span>
+    <span class="cart__tags">
+      @for (tech of tags(); track tech) {
+        <app-pixel-tag>{{ tech }}</app-pixel-tag>
+      }
+      @if (extraTags() > 0) {
+        <app-pixel-tag variant="ink">{{ 'projects.cartridge.more' | t: { count: extraTags() } }}</app-pixel-tag>
+      }
+    </span>
+  </span>
+
+  <span class="cart__foot" aria-hidden="true"></span>
+</button>

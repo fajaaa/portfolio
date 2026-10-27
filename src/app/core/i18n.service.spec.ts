@@ -44,9 +44,24 @@ describe('I18nService', () => {
 
   it('interpolates params', () => {
     const i18n = TestBed.inject(I18nService);
-    expect(i18n.t('projects.card.codeLabel', { title: 'AquaControl' })).toBe(
-      'AquaControl GitHub repository',
+    expect(i18n.t('projects.screen.codeLabel', { title: 'AquaControl' })).toBe(
+      'View code of AquaControl on GitHub',
     );
+  });
+
+  it('picks plural forms per language', () => {
+    const i18n = TestBed.inject(I18nService);
+    expect(i18n.plural('projects.count', 1)).toBe('1 GAME FOUND');
+    expect(i18n.plural('projects.count', 21)).toBe('21 GAMES FOUND');
+
+    i18n.setLang('bs');
+
+    expect(i18n.plural('projects.count', 1)).toBe('1 IGRA PRONAĐENA');
+    expect(i18n.plural('projects.count', 3)).toBe('3 IGRE PRONAĐENE');
+    expect(i18n.plural('projects.count', 5)).toBe('5 IGARA PRONAĐENO');
+    expect(i18n.plural('projects.count', 12)).toBe('12 IGARA PRONAĐENO');
+    expect(i18n.plural('projects.count', 21)).toBe('21 IGRA PRONAĐENA');
+    expect(i18n.plural('projects.count', 22)).toBe('22 IGRE PRONAĐENE');
   });
 
   it('updates the navbar instantly and marks the active language', () => {

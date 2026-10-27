@@ -1,20 +1,36 @@
-<section class="projects">
-  <div class="projects__header">
-    <p class="projects__eyebrow">{{ 'projects.eyebrow' | t }}</p>
-    <h2>{{ 'projects.heading' | t }}</h2>
-  </div>
+<section class="projects" aria-labelledby="projects-heading">
+  <header class="projects__header">
+    <h2 id="projects-heading" class="projects__heading">{{ 'projects.heading' | t }}</h2>
+    <p class="projects__count" role="status">{{ count() }}</p>
+  </header>
 
-  @if (projects$ | async; as projects) {
-    @if (projects.length > 0) {
-      <div class="projects__grid" reveal="up" [stagger]="120">
-        @for (project of projects; track project.githubUrl) {
-          <app-project-card class="projects__item" [project]="project" />
+  @if (projects(); as list) {
+    @if (list.length > 0) {
+      <ul class="projects__grid" reveal="pop" [stagger]="90">
+        @for (project of list; track project.githubUrl; let i = $index) {
+          <li class="projects__item">
+            <app-cartridge
+              #cartridge
+              [project]="project"
+              [index]="i"
+              (selected)="play(project, cartridge)"
+            />
+          </li>
         }
-      </div>
+      </ul>
     } @else {
-      <p class="projects__state">{{ 'projects.empty' | t }}</p>
+      <app-dialog-box class="projects__empty" speaker="KENAN" [text]="'projects.empty' | t" />
     }
   } @else {
-    <p class="projects__state">{{ 'projects.loading' | t }}</p>
+    <div class="projects__loading" role="status">
+      <p class="projects__loading-text">{{ 'projects.loading' | t }}</p>
+      <span class="projects__loader" aria-hidden="true">
+        <span class="projects__loader-fill"></span>
+      </span>
+    </div>
   }
+
+  <div #flash class="projects__flash" aria-hidden="true"></div>
+
+  <app-game-screen [project]="playing()" (closed)="onScreenClosed()" />
 </section>

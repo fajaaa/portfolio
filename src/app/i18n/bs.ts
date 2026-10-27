@@ -82,10 +82,14 @@ export const bs: Dictionary = {
     },
   },
   projects: {
-    eyebrow: 'Izdvojeni radovi',
-    heading: 'Moji projekti',
-    loading: 'Učitavam projekte sa GitHuba...',
-    empty: 'Nije pronađen nijedan javni GitHub repozitorij.',
+    heading: 'ODABERI IGRU',
+    count: {
+      one: '{count} IGRA PRONAĐENA',
+      few: '{count} IGRE PRONAĐENE',
+      other: '{count} IGARA PRONAĐENO',
+    },
+    loading: 'UČITAVAM…',
+    empty: 'Polica sa kasetama je prazna: nije pronađen nijedan javni GitHub repozitorij.',
     defaultDescription: 'Javni GitHub repozitorij sa profila fajaaa.',
     descriptions: {
       aquaControl:
@@ -93,12 +97,21 @@ export const bs: Dictionary = {
       smartSafe:
         'IoT simulacija pametnog sefa sa daljinskim upravljanjem, generisanjem sigurnosnog koda i praćenjem stanja uređaja u stvarnom vremenu.',
     },
-    card: {
-      code: 'Kod',
-      codeLabel: 'GitHub repozitorij projekta {title}',
-      demo: 'Demo',
-      demoLabel: 'Demo uživo projekta {title}',
+    cartridge: {
+      insert: 'Ubaci kasetu: {title}',
+      level: 'LV {level}',
+      more: '+{count}',
+    },
+    screen: {
+      nowPlaying: 'SADA IGRAŠ:',
+      readme: 'README',
       stackLabel: 'Korištene tehnologije',
+      code: 'POGLEDAJ KOD',
+      codeLabel: 'Pogledaj kod projekta {title} na GitHubu',
+      demo: 'IGRAJ DEMO',
+      demoLabel: 'Igraj demo projekta {title}',
+      eject: 'IZBACI',
+      ejectLabel: 'Izbaci: zatvori {title}',
     },
   },
   skills: {

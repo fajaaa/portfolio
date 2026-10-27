@@ -24,4 +24,16 @@ type PathsTo<T, V> = {
 
 export type I18nKey = PathsTo<typeof en, string>;
 export type I18nListKey = PathsTo<typeof en, readonly string[]>;
+
+/**
+ * Count-dependent text: `one` (1, 21, 31...), `few` (2-4, 22-24... in Bosnian) and `other`.
+ * English only uses `one` and `other`; its `few` repeats `other`.
+ */
+export interface PluralForms {
+  readonly one: string;
+  readonly few: string;
+  readonly other: string;
+}
+
+export type I18nPluralKey = PathsTo<typeof en, PluralForms>;
 export type I18nParams = Readonly<Record<string, string | number>>;

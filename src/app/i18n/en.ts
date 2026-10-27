@@ -81,10 +81,14 @@ export const en = {
     },
   },
   projects: {
-    eyebrow: 'Selected Work',
-    heading: 'My Projects',
-    loading: 'Loading GitHub projects...',
-    empty: 'No public GitHub repositories found.',
+    heading: 'SELECT A GAME',
+    count: {
+      one: '{count} GAME FOUND',
+      few: '{count} GAMES FOUND',
+      other: '{count} GAMES FOUND',
+    },
+    loading: 'LOADING…',
+    empty: 'The cartridge shelf is empty: no public GitHub repositories found.',
     defaultDescription: 'Public GitHub repository from the fajaaa profile.',
     descriptions: {
       aquaControl:
@@ -92,12 +96,21 @@ export const en = {
       smartSafe:
         'An IoT smart safe simulation with remote control, security code generation, and real-time device status monitoring.',
     },
-    card: {
-      code: 'Code',
-      codeLabel: '{title} GitHub repository',
-      demo: 'Demo',
-      demoLabel: '{title} live demo',
+    cartridge: {
+      insert: 'Insert cartridge: {title}',
+      level: 'LV {level}',
+      more: '+{count}',
+    },
+    screen: {
+      nowPlaying: 'NOW PLAYING:',
+      readme: 'README',
       stackLabel: 'Technology stack',
+      code: 'VIEW CODE',
+      codeLabel: 'View code of {title} on GitHub',
+      demo: 'PLAY DEMO',
+      demoLabel: 'Play demo of {title}',
+      eject: 'EJECT',
+      ejectLabel: 'Eject: close {title}',
     },
   },
   skills: {
