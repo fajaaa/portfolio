@@ -35,10 +35,16 @@ export const en = {
     },
   },
   hero: {
-    greeting: 'Hello, I am',
+    player: 'PLAYER 1',
     subtitles: ['Full-Stack Developer', 'Angular Enthusiast', 'Problem Solver'],
-    cta: 'View My Work',
-    photoAlt: 'Kenan Fajic',
+    intro:
+      'Final-year Software Engineering student at FIT Mostar. I build useful apps and earn XP with every project.',
+    start: 'START',
+    cv: 'Download CV',
+    scroll: 'SCROLL',
+    sceneLabel:
+      'Voxel island: a tiny Kenan typing at his computer, with a tree, a waterfall, clouds and birds',
+    greetings: ['Hi! Welcome to my world.', 'Hey, player 1!', 'Back to coding...'],
   },
   about: {
     eyebrow: 'About Me',

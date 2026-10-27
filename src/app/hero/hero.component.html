@@ -1,26 +1,50 @@
-<section class="hero">
+<section class="hero" [class.hero--play]="introDone()">
   <div class="hero__content">
     <div class="hero__copy">
-      <p class="hero__greeting">{{ 'hero.greeting' | t }}</p>
-      <h1 class="hero__name">Kenan Fajic</h1>
-      <p class="hero__subtitle">
-        <span>{{ displayedSubtitle() }}</span>
+      <p class="hero__player hero__reveal" style="--delay: 0ms">{{ 'hero.player' | t }}</p>
+
+      <h1 class="hero__name">
+        <span class="visually-hidden">{{ name }}</span>
+        @for (word of nameWords; track $index) {
+          <span class="hero__word" aria-hidden="true">
+            @for (letter of word; track letter.index) {
+              <span class="hero__letter" [style.--i]="letter.index">{{ letter.char }}</span>
+            }
+          </span>
+        }
+      </h1>
+
+      <p class="hero__subtitle hero__reveal" style="--delay: 650ms">
+        <span class="visually-hidden">{{ subtitleSummary() }}</span>
+        <span aria-hidden="true">{{ displayedSubtitle() }}</span>
         <span class="hero__cursor" aria-hidden="true"></span>
       </p>
-      <button pixelButton class="hero__cta" type="button" (click)="scrollToProjects()">
-        {{ 'hero.cta' | t }}
-      </button>
+
+      <app-dialog-box
+        class="hero__intro hero__reveal"
+        style="--delay: 800ms"
+        speaker="Kenan"
+        [text]="'hero.intro' | t"
+      />
+
+      <div class="hero__actions hero__reveal" style="--delay: 950ms">
+        <button pixelButton type="button" (click)="scrollToProjects()">
+          <app-pixel-art class="hero__start-icon" [sprite]="marker" />
+          {{ 'hero.start' | t }}
+        </button>
+        <a pixelButton="secondary" href="Kenan-CV.pdf" download>{{ 'hero.cv' | t }}</a>
+      </div>
     </div>
 
-    <figure class="hero__visual">
-      <img
-        class="hero__photo"
-        src="images/kenan-hero.jpg"
-        [alt]="'hero.photoAlt' | t"
-        width="1066"
-        height="1600"
-        fetchpriority="high"
-      />
-    </figure>
+    <div class="hero__stage hero__reveal" style="--delay: 200ms">
+      <!-- Separate element: the entrance animates the outer one, the scroll drift this one. -->
+      <div class="hero__drift" #stage>
+        <app-hero-stage />
+      </div>
+    </div>
   </div>
+
+  <p class="hero__scroll hero__reveal" style="--delay: 1300ms" aria-hidden="true">
+    ▼ {{ 'hero.scroll' | t }}
+  </p>
 </section>

@@ -13,7 +13,7 @@ export type DeepString<T> = T extends string
 /** The shape every dictionary must match exactly. */
 export type Dictionary = DeepString<typeof en>;
 
-/** Dot paths into T whose value extends V, e.g. `'hero.greeting'`. */
+/** Dot paths into T whose value extends V, e.g. `'hero.start'`. */
 type PathsTo<T, V> = {
   [K in keyof T & string]: T[K] extends V
     ? K

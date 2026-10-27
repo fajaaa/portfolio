@@ -37,10 +37,15 @@ export const bs: Dictionary = {
     },
   },
   hero: {
-    greeting: 'Zdravo, ja sam',
+    player: 'IGRAČ 1',
     subtitles: ['Full-stack developer', 'Angular entuzijasta', 'Rješavam probleme'],
-    cta: 'Pogledaj moje radove',
-    photoAlt: 'Kenan Fajic',
+    intro:
+      'Student završne godine softverskog inženjerstva na FIT-u u Mostaru. Pravim korisne aplikacije i sa svakim projektom skupljam XP.',
+    start: 'START',
+    cv: 'Preuzmi CV',
+    scroll: 'SKROLAJ',
+    sceneLabel: 'Voxel ostrvo: mali Kenan kuca na računaru, uz drvo, vodopad, oblake i ptice',
+    greetings: ['Zdravo! Dobrodošli u moj svijet.', 'Hej, igraču 1!', 'Nazad na kodiranje...'],
   },
   about: {
     eyebrow: 'O meni',

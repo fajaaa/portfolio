@@ -4,7 +4,7 @@ import { I18nService } from '../core/i18n.service';
 import { I18nKey, I18nParams } from './i18n.types';
 
 /**
- * `{{ 'hero.greeting' | t }}` or `{{ 'projects.card.codeLabel' | t: { title } }}`.
+ * `{{ 'hero.start' | t }}` or `{{ 'projects.card.codeLabel' | t: { title } }}`.
  * Impure and reading the `lang` signal, so the view re-renders as soon as the language changes.
  */
 @Pipe({ name: 't', pure: false })
