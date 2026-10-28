@@ -1,0 +1,62 @@
+.styleguide {
+  display: grid;
+  gap: var(--space-6);
+  padding: calc(84px + var(--space-4)) var(--space-4) var(--space-16);
+}
+
+.styleguide__note {
+  margin-block: var(--space-2) var(--space-4);
+  color: var(--paper-muted);
+}
+
+.styleguide__fonts {
+  display: grid;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.styleguide__font--display {
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+}
+
+.styleguide__font--body {
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+}
+
+.styleguide__font--mono {
+  font-family: var(--font-mono);
+  font-size: 1.75rem;
+}
+
+.styleguide__world {
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-6) var(--space-4);
+  color: var(--paper);
+}
+
+.styleguide__world > app-pixel-tag {
+  justify-self: start;
+}
+
+.styleguide__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--space-4);
+}
+
+.styleguide__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.styleguide__bars {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 24rem;
+}

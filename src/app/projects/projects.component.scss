@@ -1,60 +1,118 @@
+@use '../ui/pixel' as *;
+
 :host {
   display: block;
 }
 
 .projects {
-  padding: clamp(var(--space-12), 8vw, var(--space-16)) clamp(var(--space-6), 7vw, var(--space-16));
-  background: var(--color-background-deep);
+  padding: var(--space-6) var(--world-gutter, var(--space-6)) 0;
 }
 
-.projects__header {
+.projects__header,
+.projects__grid,
+.projects__empty,
+.projects__loading {
   width: min(100%, 72rem);
   margin-inline: auto;
+}
+
+// Short text on the world art: ink outline instead of a panel.
+.projects__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-6);
   margin-bottom: var(--space-8);
+  text-shadow: var(--text-outline);
 }
 
-.projects__eyebrow {
-  color: var(--color-accent);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
+.projects__heading {
+  color: var(--paper);
+  font-size: var(--font-size-h2);
+  line-height: 1.5;
 }
 
-.projects__header h2 {
-  position: relative;
-  display: inline-block;
-  margin-top: var(--space-2);
-  padding-bottom: var(--space-3);
-}
-
-.projects__header h2::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 65%;
-  height: 0.2rem;
-  border-radius: var(--radius-sm);
-  background: var(--gradient-primary);
+.projects__count {
+  color: var(--coin);
+  font-family: var(--font-mono);
+  font-size: 1.75rem;
+  line-height: 1;
 }
 
 .projects__grid {
-  width: min(100%, 72rem);
-  margin-inline: auto;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-6);
+  gap: var(--space-8) var(--space-6);
+  margin-block: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.projects__state {
-  width: min(100%, 72rem);
-  margin-inline: auto;
-  padding: var(--space-6);
-  border: 1px solid var(--color-card-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-card);
-  text-align: center;
+// Both start where the header starts (the 72rem column) instead of being centered.
+.projects__empty {
+  width: min(100%, 40rem);
+  margin-left: max(0px, (100% - 72rem) / 2);
 }
+
+.projects__loading {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-3);
+  width: min(100%, 24rem);
+  margin-left: max(0px, (100% - 72rem) / 2);
+  padding: var(--space-4);
+  background: var(--ink);
+  box-shadow: pixel-border(var(--paper));
+}
+
+.projects__loading-text {
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: var(--font-size-label);
+  line-height: 1.5;
+}
+
+// Indeterminate pixel progress: ten segments (4 px-units + 1 gap) filling in steps, on loop.
+.projects__loader {
+  display: block;
+  width: calc(var(--px) * 52);
+  max-width: 100%;
+  height: calc(var(--px) * 6);
+  margin: var(--px);
+  padding: var(--px);
+  background: var(--ink);
+  box-shadow: pixel-border(var(--paper));
+}
+
+.projects__loader-fill {
+  display: block;
+  width: calc(var(--px) * 30);
+  height: 100%;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--w13-crystal-cyan) 0 calc(var(--px) * 4),
+    transparent calc(var(--px) * 4) calc(var(--px) * 5)
+  );
+}
+
+// Full-page flash for the cartridge insert; animated from the component.
+.projects__flash {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  background: var(--paper);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .projects__loader-fill {
+    animation: projects-loading 1.32s steps(11, end) infinite;
+  }
+}
+
+// Keyframes for the animations above: src/app/ui/_shared-keyframes.scss (global, see why there).
 
 @media (max-width: 1024px) {
   .projects__grid {
@@ -62,21 +120,13 @@
   }
 }
 
-@media (max-width: 680px) {
-  .projects {
-    padding: var(--space-10) var(--space-4);
-  }
-
+@media (max-width: 640px) {
   .projects__header {
     margin-bottom: var(--space-6);
   }
 
   .projects__grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-5);
-  }
-
-  .projects__state {
-    padding: var(--space-5);
+    grid-template-columns: minmax(0, 24rem);
+    justify-content: center;
   }
 }

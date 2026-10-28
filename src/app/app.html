@@ -1,17 +1,30 @@
-<app-navbar />
+<!-- While the intro is open, the page behind it is rendered but out of reach. -->
+<app-navbar [attr.inert]="intro.visible() ? '' : null" />
 
-<main class="app-shell">
+<main class="app-shell" [attr.inert]="intro.visible() ? '' : null">
   <router-outlet />
 </main>
 
+<app-toast-outlet />
+
 <button
+  pixelButton
   class="back-to-top"
   type="button"
-  [class.back-to-top--visible]="showBackToTop"
-  [attr.aria-hidden]="showBackToTop ? null : true"
-  [attr.tabindex]="showBackToTop ? 0 : -1"
-  aria-label="Back to top"
+  [class.back-to-top--visible]="showBackToTop()"
+  [attr.inert]="showBackToTop() && !intro.visible() ? null : ''"
+  [attr.aria-label]="'backToTop' | t"
+  [attr.data-tooltip]="'backToTop' | t"
   (click)="scrollToTop()"
 >
-  <span class="back-to-top__icon" aria-hidden="true">↑</span>
+  <app-pixel-art class="back-to-top__icon" [sprite]="arrowUp" />
 </button>
+
+<!-- Only first visits need the intro, so it loads in its own chunk; ink covers the page meanwhile. -->
+@if (intro.visible()) {
+  @defer (on immediate) {
+    <app-intro />
+  } @placeholder {
+    <div class="intro-cover"></div>
+  }
+}

@@ -1,170 +1,269 @@
+@use '../ui/pixel' as *;
+
 :host {
   display: block;
 }
 
 .skills {
-  padding: clamp(var(--space-12), 8vw, var(--space-16)) clamp(var(--space-6), 7vw, var(--space-16));
-  background: var(--color-background-elevated);
+  padding: var(--space-6) var(--world-gutter, var(--space-6)) 0;
 }
 
 .skills__header,
-.skills__desktop,
-.skills__mobile {
+.skills__cabinet {
   width: min(100%, 72rem);
   margin-inline: auto;
 }
 
+// Short text on the world art: ink outline instead of a panel.
 .skills__header {
+  display: grid;
+  gap: var(--space-3);
   margin-bottom: var(--space-8);
+  text-shadow: var(--text-outline);
 }
 
-.skills__eyebrow {
-  color: var(--color-accent);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
+.skills__heading {
+  color: var(--paper);
+  font-size: var(--font-size-h2);
+  line-height: 1.5;
 }
 
-.skills__header h2 {
-  margin-top: var(--space-2);
+.skills__intro {
+  max-width: 40rem;
+  color: var(--paper);
+  font-size: var(--font-size-md);
 }
 
-.skills__desktop {
+.skills__cabinet {
+  --panel-padding: var(--space-6);
+}
+
+// Stage on the left, roster on the right (the roster comes first in the DOM and the tab order).
+.skills__screen {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-6);
+  grid-template-columns: minmax(0, 26rem) minmax(0, 1fr);
+  grid-template-areas: 'stage roster';
+  align-items: start;
+  gap: var(--space-8);
 }
 
-.skills__mobile {
-  display: none;
+.skills__stage {
+  grid-area: stage;
 }
 
-.skills__card {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: var(--space-5);
-  padding: var(--space-6);
-  border: 1px solid var(--color-card-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-card);
-  box-shadow: var(--shadow-card);
+.skills__roster {
+  grid-area: roster;
 }
 
-.skills__card--tab {
-  margin-top: var(--space-5);
+/* ---------- Roster ---------- */
+
+.skills__roster-title {
+  margin-bottom: var(--space-2);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: var(--font-size-h4);
+  line-height: 1.5;
 }
 
-.skills__card-heading {
+.skills__grid {
   display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
   gap: var(--space-2);
+  margin: 0;
+  // Room for the cursor frame, drawn outside the tile, and its P1 tag above the top row.
+  padding: var(--space-6) var(--space-2) var(--space-2);
+  list-style: none;
 }
 
-.skills__card-heading h3 {
-  font-size: var(--font-size-xl);
-}
-
-.skills__list {
-  display: grid;
-  gap: var(--space-4);
+.skills__cell {
+  display: flex;
+  min-width: 0;
 }
 
 .skills__tile {
-  min-height: 3.9rem;
-  display: grid;
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  padding: var(--space-4);
-  border: 1px solid var(--color-card-border);
-  border-radius: var(--radius-md);
-  background: var(--color-background);
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    background-color 180ms ease,
-    box-shadow 180ms ease;
-}
+  gap: var(--space-2);
+  padding: var(--space-3) var(--px) var(--space-2);
+  border: 0;
+  background: #10264d;
+  color: var(--paper);
+  font: inherit;
+  // Rarity strip along the bottom, inner shadow top-left (a sunken tile).
+  box-shadow:
+    inset 0 calc(var(--px) * -1) 0 0 var(--rarity, transparent),
+    inset var(--px) var(--px) 0 0 rgba(0, 0, 0, 0.45);
+  cursor: pointer;
 
-.skills__tile:hover,
-.skills__tile:focus-within {
-  transform: translateY(-3px);
-  border-color: rgba(var(--color-accent-rgb), 0.72);
-  background: rgba(var(--color-primary-rgb), 0.08);
-  box-shadow: 0 0.9rem 1.8rem rgba(0, 0, 0, 0.22);
-}
-
-.skills__tile-top {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: var(--space-3);
-  color: var(--color-text-primary);
-  font-weight: var(--font-weight-semibold);
-}
-
-.skills__icon {
-  width: 2.25rem;
-  height: 2.25rem;
-  display: grid;
-  place-items: center;
-  border-radius: var(--radius-md);
-  background: rgba(var(--color-primary-rgb), 0.16);
-  color: var(--color-accent);
-  transition:
-    background-color 180ms ease,
-    color 180ms ease,
-    transform 180ms ease;
-}
-
-.skills__tile:hover .skills__icon,
-.skills__tile:focus-within .skills__icon {
-  transform: scale(1.06);
-  background: rgba(var(--color-accent-rgb), 0.22);
-  color: var(--color-text-primary);
-}
-
-.skills__icon-image {
-  width: 1.45rem;
-  height: 1.45rem;
-  object-fit: contain;
-}
-
-@media (max-width: 1080px) {
-  .skills__desktop {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  // The cursor shows the selection; this ring shows keyboard focus.
+  &:focus-visible {
+    outline: var(--px) solid var(--paper);
+    outline-offset: calc(var(--px) * -2);
   }
 }
 
-@media (max-width: 760px) {
-  .skills {
-    padding: var(--space-10) var(--space-4);
+.skills__tile--selected {
+  background: #1d4384;
+}
+
+// 16x16 icon at 3x.
+.skills__tile-icon {
+  width: 48px;
+  height: 48px;
+}
+
+.skills__tile-label {
+  // Two lines reserved, so every tile is the same height.
+  min-height: 2em;
+  font-family: var(--font-mono);
+  font-size: calc(var(--px) * 5);
+  line-height: 1;
+  text-align: center;
+  hyphens: manual;
+  overflow-wrap: anywhere;
+}
+
+// P1 cursor: a two-pixel red frame (one step outside the tile, one inside) with a tag on top.
+// A white copy (::after) flashes over it with opacity, which runs on the compositor.
+.skills__cursor,
+.skills__cursor::after {
+  position: absolute;
+  inset: calc(var(--px) * -1);
+  box-shadow:
+    pixel-border(var(--hp)),
+    inset 0 0 0 var(--px) var(--hp);
+  pointer-events: none;
+}
+
+.skills__cursor::after {
+  content: '';
+  inset: 0;
+  box-shadow:
+    pixel-border(var(--paper)),
+    inset 0 0 0 var(--px) var(--paper);
+  opacity: 0;
+}
+
+.skills__cursor-tag {
+  position: absolute;
+  bottom: calc(100% + var(--px));
+  left: calc(var(--px) * -1);
+  padding: var(--px) calc(var(--px) * 1.5);
+  background: var(--hp);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 0.5rem;
+  line-height: 1;
+}
+
+/* ---------- Legend + RANDOM ---------- */
+
+.skills__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.skills__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin: 0;
+  padding: 0;
+  color: var(--paper-muted);
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  list-style: none;
+}
+
+.skills__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.skills__swatch {
+  width: calc(var(--px) * 3);
+  height: calc(var(--px) * 3);
+  background: var(--rarity);
+}
+
+/* ---------- Motion ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  // The cursor snaps onto a new tile, then flashes red/white; it stays red while RANDOM spins.
+  .skills__cursor {
+    animation: skills-snap 120ms steps(2, end);
   }
 
+  .skills__cursor::after {
+    animation: skills-flash 1s steps(1, end) 120ms infinite;
+  }
+
+  .skills__cursor--spinning,
+  .skills__cursor--spinning::after {
+    animation: none;
+  }
+}
+
+// Keyframes for the animations above: src/app/ui/_shared-keyframes.scss (global, see why there).
+
+/* ---------- Layout ---------- */
+
+// One column: roster on top, the stage right below it (scene and card side by side).
+@media (max-width: 960px) {
+  .skills__screen {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'roster'
+      'stage';
+    gap: var(--space-6);
+  }
+}
+
+@media (max-width: 640px) {
   .skills__header {
     margin-bottom: var(--space-6);
   }
 
-  .skills__desktop {
-    display: none;
+  .skills__cabinet {
+    --panel-padding: var(--space-3);
   }
 
-  .skills__mobile {
-    display: block;
-  }
-}
-
-@media (max-width: 520px) {
-  .skills__card {
-    gap: var(--space-4);
-    padding: var(--space-4);
-  }
-
-  .skills__list {
-    gap: var(--space-3);
+  .skills__grid {
+    gap: var(--space-1);
+    padding-inline: var(--space-1);
   }
 
   .skills__tile {
-    min-height: 3.5rem;
-    padding: var(--space-3);
+    padding: var(--space-2) 0;
+  }
+
+  // Icons only: the stage below shows the name. The label stays for screen readers.
+  .skills__tile-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  // 16x16 icon at 2x.
+  .skills__tile-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .skills__controls {
+    justify-content: center;
   }
 }

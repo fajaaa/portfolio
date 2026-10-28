@@ -1,0 +1,66 @@
+@use '../pixel' as *;
+
+:host {
+  position: relative;
+  display: block;
+  color: var(--ink);
+}
+
+:host(.dialog-box--with-speaker) {
+  padding-top: var(--space-4);
+}
+
+:host(.dialog-box--typing) {
+  cursor: var(--cursor-pointer);
+}
+
+.dialog-box__speaker {
+  position: absolute;
+  top: 0;
+  left: var(--space-4);
+  z-index: 1;
+  padding: var(--space-1) var(--space-2);
+  background: var(--coin);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 0.625rem;
+  line-height: 1.5;
+  text-transform: uppercase;
+  box-shadow: pixel-border(var(--ink));
+}
+
+.dialog-box__text {
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-base);
+  white-space: pre-line;
+}
+
+.dialog-box__pending {
+  visibility: hidden;
+}
+
+.dialog-box__next {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: var(--font-size-sm);
+  line-height: 1;
+  text-align: right;
+  visibility: hidden;
+}
+
+.dialog-box__next--visible {
+  visibility: visible;
+  animation: dialog-box-blink 1s var(--ease-blink) infinite;
+}
+
+@keyframes dialog-box-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog-box__next--visible {
+    animation: none;
+  }
+}

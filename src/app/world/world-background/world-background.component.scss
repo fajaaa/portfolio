@@ -1,0 +1,9 @@
+:host {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  pointer-events: none;
+  // The parallax layers (art/_base.scss) follow this box crossing the viewport.
+  view-timeline: --world block;
+}

@@ -1,49 +1,83 @@
-<nav class="navbar" aria-label="Primary navigation">
-  <a class="navbar__brand" [href]="hrefFor('home')" (click)="navigateTo('home', $event)">
-    Kenan Fajic
-  </a>
+<div class="hud__bar">
+  <nav class="hud" [attr.aria-label]="'nav.ariaLabel' | t">
+    <a
+      class="hud__brand"
+      [href]="hrefFor('home')"
+      (pointerenter)="sound.hover($event)"
+      (click)="onBrandClick($event)"
+    >
+      <app-pixel-art class="hud__logo" [sprite]="logo" />
+      <span class="hud__name">Kenan Fajic</span>
+    </a>
 
-  <div class="navbar__links navbar__links--desktop">
-    @for (item of navItems; track item.fragment) {
-      <a
-        class="navbar__link"
-        [class.navbar__link--active]="activeSection === item.fragment"
-        [attr.aria-current]="activeSection === item.fragment ? 'page' : null"
-        [href]="hrefFor(item.fragment)"
-        (click)="navigateTo(item.fragment, $event)"
-      >
-        {{ item.label }}
-      </a>
+    <ul class="hud__menu">
+      @for (item of navItems; track item.section) {
+        <li>
+          <a
+            class="hud__link"
+            [class.hud__link--active]="activeSection() === item.section"
+            [attr.aria-current]="activeSection() === item.section ? 'location' : null"
+            [href]="hrefFor(item.section)"
+            (pointerenter)="sound.hover($event)"
+            (click)="navigateTo(item.section, $event)"
+          >
+            <app-pixel-art class="hud__marker" [sprite]="marker" />
+            <span>{{ item.labelKey | t }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+
+    <app-lang-toggle class="hud__lang" />
+    <app-sound-toggle class="hud__sound" />
+
+    <button
+      #menuToggle
+      class="hud__toggle"
+      type="button"
+      aria-haspopup="dialog"
+      aria-controls="pause-menu"
+      [attr.aria-expanded]="isMenuOpen()"
+      [attr.aria-label]="'nav.toggleMenu' | t"
+      (click)="openMenu()"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+</div>
+
+@if (worlds.hasWorlds()) {
+  <div class="hud__xp">
+    <!-- Re-created on every level-up, so the flash animation starts over each time. -->
+    @for (up of [worlds.levelUps()]; track up) {
+      <p class="hud__level" [class.hud__level--up]="up > 0">
+        <span class="hud__level-number">{{
+          'hud.level' | t: { level: worlds.level(), total: totalLevels }
+        }}</span>
+        <span aria-hidden="true">·</span>
+        <span class="hud__level-name">{{ worlds.world().labelKey | t }}</span>
+      </p>
     }
+    <app-pixel-progress
+      class="hud__xp-bar"
+      [value]="worlds.progress()"
+      [segments]="xpSegments()"
+      [groups]="totalLevels"
+      [label]="'hud.xpLabel' | t"
+    />
   </div>
+}
 
-  <button
-    class="navbar__toggle"
-    type="button"
-    [class.navbar__toggle--open]="isMenuOpen"
-    [attr.aria-expanded]="isMenuOpen"
-    aria-controls="mobile-navigation"
-    aria-label="Toggle navigation"
-    (click)="toggleMenu()"
-  >
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
-</nav>
-
-@if (isMenuOpen) {
-  <div id="mobile-navigation" class="navbar__mobile" @mobileMenu>
-    @for (item of navItems; track item.fragment) {
-      <a
-        class="navbar__mobile-link"
-        [class.navbar__mobile-link--active]="activeSection === item.fragment"
-        [attr.aria-current]="activeSection === item.fragment ? 'page' : null"
-        [href]="hrefFor(item.fragment)"
-        (click)="navigateTo(item.fragment, $event)"
-      >
-        {{ item.label }}
-      </a>
-    }
-  </div>
+@if (isMenuOpen()) {
+  <app-pause-menu
+    id="pause-menu"
+    animate.enter="pause-menu--enter"
+    animate.leave="pause-menu--leave"
+    [items]="navItems"
+    [active]="activeSection()"
+    (selected)="onMenuSelect($event)"
+    (closed)="closeMenu()"
+  />
 }

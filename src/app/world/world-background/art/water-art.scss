@@ -1,0 +1,86 @@
+// WORLD 1-4: water in stepped bands, rising bubbles, sand floor.
+@use '../../../ui/pixel' as *;
+@use 'base';
+
+$bubble: (
+  '.BB.',
+  'B.hB',
+  'B..B',
+  '.BB.'
+);
+
+$sand: (
+  '......SSSS......',
+  '..SSSSSSSSSSS...',
+  'SSSSSSSSSSSSSSSS',
+  'SSsSSSSSSSSsSSSS',
+  'SSSSSSSsSSSSSSSS',
+  'SSSSSSSSSSSSSSsS',
+  'SsSSSSSSSSSSSSSS',
+  'SSSSSsSSSSsSSSSS'
+);
+
+$bubble-palette: (B: #9fd8ff, h: #ffffff);
+$sand-palette: (S: #e8c872, s: #c9a24f);
+
+:host {
+  background: linear-gradient(
+    var(--w14-bg) 0 22%,
+    color-mix(in srgb, var(--w14-bg) 75%, var(--w14-deep)) 22% 44%,
+    color-mix(in srgb, var(--w14-bg) 50%, var(--w14-deep)) 44% 66%,
+    color-mix(in srgb, var(--w14-bg) 25%, var(--w14-deep)) 66% 88%,
+    var(--w14-deep) 88% 100%
+  );
+}
+
+.layer--bubbles {
+  inset: -6% 0;
+}
+
+// A full-height column whose sprite sits at its top; moving the column by its own height
+// carries the bubble from the bottom to the top of the world.
+.bubble {
+  position: absolute;
+  top: 0;
+  width: calc(var(--px) * 4);
+  height: 100%;
+  transform: translateY(100%);
+  animation: bubble-rise 16s steps(120, end) infinite;
+}
+
+.bubble::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(var(--px) * 4);
+  height: calc(var(--px) * 4);
+  background: pixel-svg($bubble, $bubble-palette) 0 0 / 100% 100%;
+  animation: bubble-wobble 1.6s steps(1, end) infinite alternate;
+}
+
+.layer--sand {
+  inset: auto 0 0;
+  height: calc(var(--px) * 8);
+  background: pixel-svg($sand, $sand-palette) 0 0 / px-size(16, 8) repeat-x;
+}
+
+@keyframes bubble-rise {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(-4%);
+  }
+}
+
+@keyframes bubble-wobble {
+  50% {
+    transform: translateX(var(--px));
+  }
+
+  100% {
+    transform: translateX(calc(var(--px) * -1));
+  }
+}

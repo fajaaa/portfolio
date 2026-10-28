@@ -1,0 +1,153 @@
+@use '../../ui/pixel' as *;
+
+// The dialog is the TV: a stone bezel around an ink CRT screen.
+.screen {
+  width: min(100% - var(--space-4) * 2, 54rem);
+  max-width: none;
+  max-height: calc(100dvh - var(--space-4) * 2);
+  margin: auto;
+  padding: calc(var(--px) * 3);
+  border: 0;
+  background: var(--w15-stone);
+  color: var(--paper);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  box-shadow: pixel-border(var(--ink));
+}
+
+// ::backdrop doesn't inherit custom properties in every browser, so colors are literal.
+.screen::backdrop {
+  background:
+    repeating-linear-gradient(to bottom, rgba(255, 248, 231, 0.04) 0 2px, transparent 2px 4px),
+    rgba(11, 11, 20, 0.88);
+}
+
+.screen__crt {
+  position: relative;
+  display: grid;
+  gap: var(--space-5);
+  padding: clamp(var(--space-4), 3vw, var(--space-6));
+  background: var(--ink);
+  box-shadow: inset 0 0 0 var(--px) var(--w13-bg);
+}
+
+// Subtle scanlines over the whole screen.
+.screen__crt::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 248, 231, 0.045) 0 1px,
+    transparent 1px 3px
+  );
+}
+
+.screen__header {
+  display: grid;
+  gap: var(--space-2);
+  padding-bottom: var(--space-4);
+  // Dashed pixel divider.
+  background: repeating-linear-gradient(
+      90deg,
+      var(--w15-stone) 0 calc(var(--px) * 2),
+      transparent calc(var(--px) * 2) calc(var(--px) * 4)
+    )
+    bottom / 100% var(--px) no-repeat;
+}
+
+.screen__now {
+  color: var(--coin);
+  font-family: var(--font-display);
+  font-size: 0.625rem;
+  line-height: 1.6;
+}
+
+.screen__title {
+  color: var(--paper);
+  font-size: var(--font-size-h3);
+  line-height: 1.5;
+}
+
+// Focused only programmatically when the screen opens; it isn't a control.
+.screen__title:focus {
+  outline: none;
+}
+
+.screen__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  align-items: start;
+  gap: var(--space-6);
+}
+
+.screen__cover {
+  padding: var(--px);
+}
+
+.screen__cover-art {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  box-shadow: pixel-border(var(--paper));
+}
+
+.screen__info {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.screen__tags {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.screen__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-3);
+}
+
+.screen__eject {
+  margin-left: auto;
+}
+
+@media (max-width: 720px) {
+  .screen__body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+
+  .screen__cover {
+    width: min(100%, 22rem);
+    justify-self: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .screen__actions {
+    display: grid;
+  }
+
+  .screen__eject {
+    margin-left: var(--px);
+  }
+}
+
+// CRT power-on: the picture opens from a bright line, in steps.
+@media (prefers-reduced-motion: no-preference) {
+  .screen[open] {
+    animation: screen-on 240ms steps(4, end);
+  }
+
+  .screen[open]::backdrop {
+    animation: screen-backdrop-in 240ms steps(3, end);
+  }
+}
+
+// Keyframes for the animations above: src/app/ui/_shared-keyframes.scss (global, see why there).

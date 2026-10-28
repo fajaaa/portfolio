@@ -1,0 +1,17 @@
+@if (speaker(); as name) {
+  <span class="dialog-box__speaker">{{ name }}</span>
+}
+
+<app-pixel-panel raised>
+  <p class="dialog-box__text" [attr.aria-live]="live() ? 'polite' : null">
+    <span class="visually-hidden">{{ text() }}</span>
+    <!-- The untyped rest keeps its space so the box never changes size while typing. -->
+    <span aria-hidden="true">{{ typed() }}<span class="dialog-box__pending">{{ pending() }}</span></span>
+  </p>
+
+  <ng-content />
+
+  <span class="dialog-box__next" [class.dialog-box__next--visible]="finished()" aria-hidden="true">
+    ▼
+  </span>
+</app-pixel-panel>

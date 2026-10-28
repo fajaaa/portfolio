@@ -1,100 +1,28 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal } from '@angular/core';
 
-import { ScrollRevealDirective } from '../shared/scroll-reveal.directive';
+import { I18nService } from '../core/i18n.service';
+import { TranslatePipe } from '../i18n/translate.pipe';
+import { RevealDirective } from '../shared/reveal.directive';
+import { DialogBoxComponent } from '../ui/dialog-box/dialog-box.component';
+import { NpcComponent } from './npc/npc.component';
+import { SavePointComponent } from './save-point/save-point.component';
 
-interface ContactLink {
-  label: string;
-  value: string;
-  href: string;
-  icon: string;
-}
-
+/**
+ * WORLD 1-5, the end of the game: the NPC (Kenan) types one line about being available, next to
+ * the SAVE POINT card with every way to get in touch.
+ */
 @Component({
   selector: 'app-contact',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatSnackBarModule,
-    ScrollRevealDirective,
-  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [DialogBoxComponent, NpcComponent, RevealDirective, SavePointComponent, TranslatePipe],
   templateUrl: './contact.component.html',
   styleUrl: './contact.component.scss',
 })
 export class ContactComponent {
-  private readonly contactEmail = 'kenanfajic25@gmail.com';
-  private readonly formBuilder = inject(FormBuilder);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly i18n = inject(I18nService);
 
-  protected readonly contactLinks: ContactLink[] = [
-    {
-      label: 'Email',
-      value: this.contactEmail,
-      href: `mailto:${this.contactEmail}`,
-      icon: 'mail',
-    },
-    {
-      label: 'LinkedIn',
-      value: 'linkedin.com/in/kenan-fajic',
-      href: 'https://www.linkedin.com/in/kenan-fajic?utm_source=share_via&utm_content=profile&utm_medium=member_android',
-      icon: 'work',
-    },
-    {
-      label: 'GitHub',
-      value: 'github.com/fajaaa',
-      href: 'https://github.com/fajaaa',
-      icon: 'code',
-    },
-  ];
+  protected readonly npcLine = computed(() => this.i18n.t('contact.npc'));
 
-  protected readonly contactForm = this.formBuilder.nonNullable.group({
-    name: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    subject: ['', Validators.required],
-    message: ['', Validators.required],
-  });
-
-  protected get name() {
-    return this.contactForm.controls.name;
-  }
-
-  protected get email() {
-    return this.contactForm.controls.email;
-  }
-
-  protected get subject() {
-    return this.contactForm.controls.subject;
-  }
-
-  protected get message() {
-    return this.contactForm.controls.message;
-  }
-
-  protected submit(): void {
-    if (this.contactForm.invalid) {
-      this.contactForm.markAllAsTouched();
-      return;
-    }
-
-    const { name, email, subject, message } = this.contactForm.getRawValue();
-    const body = [`Name: ${name}`, `Email: ${email}`, '', message].join('\n');
-    const mailtoUrl = `mailto:${this.contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-    window.location.href = mailtoUrl;
-    this.snackBar.open('Email draft opened. Send it from your email app.', 'Close', {
-      duration: 4500,
-      panelClass: 'contact__snackbar',
-    });
-  }
+  /** True while the line is being typed (the NPC moves its mouth); a new language retypes it. */
+  protected readonly talking = linkedSignal({ source: this.npcLine, computation: () => true });
 }

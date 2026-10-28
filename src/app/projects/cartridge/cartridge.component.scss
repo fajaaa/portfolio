@@ -1,0 +1,163 @@
+@use '../../ui/pixel' as *;
+
+:host {
+  display: block;
+  height: 100%;
+  // Room for the pixel border and the drop shadow, both drawn outside the cartridge.
+  padding: var(--px) calc(var(--px) * 4) calc(var(--px) * 4) var(--px);
+}
+
+// The plastic body; `--cart-body` / `--cart-text` come from the component.
+.cart {
+  --cart-shade: color-mix(in srgb, var(--cart-body) 68%, var(--ink));
+  --cart-light: color-mix(in srgb, var(--cart-body) 62%, #fff);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--cart-body);
+  color: var(--cart-text);
+  text-align: center;
+  box-shadow:
+    inset var(--px) var(--px) 0 0 var(--cart-light),
+    inset calc(var(--px) * -1) calc(var(--px) * -1) 0 0 var(--cart-shade),
+    pixel-border(var(--ink)),
+    calc(var(--px) * 3) calc(var(--px) * 3) 0 0 var(--ink);
+  transform-origin: 50% 100%;
+  transition: transform 160ms steps(3, end);
+}
+
+.cart:hover,
+.cart:focus-visible {
+  transform: translateY(calc(var(--px) * -2)) rotate(-3deg);
+}
+
+.cart:active {
+  transform: translateY(var(--px));
+}
+
+.cart:focus-visible {
+  outline: calc(var(--px) * 2) solid var(--coin);
+  outline-offset: calc(var(--px) * 3);
+}
+
+// Ridged top grip.
+.cart__grip {
+  display: block;
+  height: calc(var(--px) * 5);
+  margin: calc(var(--px) * 3) calc(var(--px) * 4) 0;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--cart-shade) 0 var(--px),
+    var(--cart-light) var(--px) calc(var(--px) * 2),
+    transparent calc(var(--px) * 2) calc(var(--px) * 3)
+  );
+}
+
+// Label sticker.
+.cart__label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: calc(var(--px) * 3) calc(var(--px) * 4) 0;
+  padding: var(--space-2) var(--space-2) var(--space-3);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow:
+    pixel-border(var(--ink)),
+    inset 0 calc(var(--px) * -1) 0 0 rgba(var(--ink-rgb), 0.12);
+}
+
+.cart__art {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  box-shadow: 0 0 0 var(--px) var(--ink);
+}
+
+.cart__cover {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+}
+
+// Pixel shine: two hard-edged bars that sweep across the label in steps.
+.cart__shine {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0 30%,
+    rgba(255, 255, 255, 0.5) 30% 42%,
+    transparent 42% 50%,
+    rgba(255, 255, 255, 0.35) 50% 55%,
+    transparent 55%
+  );
+  transform: translateX(-100%);
+}
+
+.cart__title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.6875rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+// "LV / tech" strip printed on the plastic.
+.cart__strip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding: var(--space-4) var(--space-3) var(--space-2);
+  text-align: left;
+}
+
+.cart__level {
+  flex: none;
+  font-family: var(--font-display);
+  font-size: 0.625rem;
+  line-height: 1.5;
+}
+
+.cart__tags {
+  display: flex;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+// Connector edge at the bottom.
+.cart__foot {
+  display: block;
+  height: calc(var(--px) * 3);
+  margin: 0 calc(var(--px) * 6);
+  background: var(--cart-shade);
+  box-shadow: inset 0 var(--px) 0 0 rgba(var(--ink-rgb), 0.35);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cart:hover .cart__shine,
+  .cart:focus-visible .cart__shine {
+    animation: cart-shine 560ms steps(8, end) both;
+  }
+}
+
+// Keyframes for the animations above: src/app/ui/_shared-keyframes.scss (global, see why there).
+
+@media (prefers-reduced-motion: reduce) {
+  .cart {
+    transition: none;
+  }
+
+  .cart:hover,
+  .cart:focus-visible {
+    transform: translateY(calc(var(--px) * -2));
+  }
+}

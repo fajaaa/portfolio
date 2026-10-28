@@ -1,6 +1,55 @@
-<section class="not-found">
-  <p class="not-found__code">404</p>
-  <h1>Page not found</h1>
-  <p class="not-found__message">The page you are looking for does not exist.</p>
-  <a class="not-found__link" routerLink="/" fragment="home">Back to home</a>
+<section class="game-over" [class.game-over--play]="introDone()">
+  <h1 class="game-over__title">
+    <span class="visually-hidden">{{ 'notFound.title' | t }}</span>
+    <span class="game-over__letters" aria-hidden="true">
+      @for (letter of letters; track $index) {
+        <span class="game-over__letter" [style.--i]="$index">{{ letter }}</span>
+      }
+    </span>
+  </h1>
+
+  <div class="game-over__scene">
+    <app-pixel-art class="game-over__sprite" [sprite]="sprite" />
+  </div>
+
+  <app-dialog-box class="game-over__message" speaker="404" [text]="'notFound.message' | t" />
+
+  <div class="game-over__prompt" aria-live="polite">
+    @switch (state()) {
+      @case ('continue') {
+        <p class="game-over__continue">
+          <span>{{ 'notFound.continue' | t }}</span>
+          <span class="game-over__count" aria-hidden="true">{{ count() }}</span>
+        </p>
+
+        <div class="game-over__options">
+          @for (option of ['yes', 'no']; track option; let i = $index) {
+            <button
+              #option
+              class="game-over__option"
+              type="button"
+              [class.game-over__option--selected]="selected() === i"
+              (focus)="selected.set(i)"
+              (pointerenter)="selected.set(i)"
+              (keydown)="onOptionKeydown($event)"
+              (click)="i === 0 ? yes() : no()"
+            >
+              <app-pixel-art class="game-over__marker" [sprite]="marker" />
+              {{ (i === 0 ? 'notFound.yes' : 'notFound.no') | t }}
+            </button>
+          }
+        </div>
+
+        <p class="game-over__hint">{{ 'notFound.hint' | t }}</p>
+      }
+      @case ('thanks') {
+        <p class="game-over__status">{{ 'notFound.thanks' | t }}</p>
+        <a pixelButton class="game-over__home" routerLink="/">{{ 'notFound.back' | t }}</a>
+      }
+      @case ('insertCoin') {
+        <p class="game-over__status game-over__status--blink">{{ 'notFound.insertCoin' | t }}</p>
+        <a pixelButton class="game-over__home" routerLink="/">{{ 'notFound.back' | t }}</a>
+      }
+    }
+  </div>
 </section>

@@ -1,0 +1,109 @@
+// Shared pixel-art helpers for the UI primitives.
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:string';
+
+// Four offset copies of the box draw a border just outside it with notched (stepped) corners.
+// Leave `$width` of free space around the element (padding on a wrapper or margin).
+// Extra shadows (drop shadows) go after it so the border stays on top.
+@function pixel-border($color: var(--ink), $width: var(--px)) {
+  @return (
+    0 calc(#{$width} * -1) 0 0 $color,
+    0 $width 0 0 $color,
+    calc(#{$width} * -1) 0 0 0 $color,
+    $width 0 0 0 $color
+  );
+}
+
+// `#` has to be escaped inside a data URI.
+@function escape-svg-color($color) {
+  $value: '#{$color}';
+
+  @if string.slice($value, 1, 1) == '#' {
+    @return '%23' + string.slice($value, 2);
+  }
+
+  @return $value;
+}
+
+// String-map sprites -> crisp SVG data URIs, at compile time.
+// `$rows`: list of equal-length strings, one character per pixel.
+// `$palette`: map of character -> color; characters not in it stay transparent.
+// To keep the CSS small, each color becomes one path and each horizontal run of it a
+// 1px-wide stroke ("M x,y.5 h len").
+
+// Adds the runs of one sprite, drawn at `$offset` (`x y`), to a map of color char -> path data.
+@function -add-sprite-paths($paths, $rows, $palette, $offset) {
+  $width: string.length(list.nth($rows, 1));
+  $offset-x: list.nth($offset, 1);
+  $offset-y: list.nth($offset, 2);
+
+  @for $y from 1 through list.length($rows) {
+    $row: list.nth($rows, $y);
+    $x: 1;
+
+    @while $x <= $width {
+      $char: string.slice($row, $x, $x);
+      $run: 1;
+
+      @while $x + $run <= $width and string.slice($row, $x + $run, $x + $run) == $char {
+        $run: $run + 1;
+      }
+
+      @if map.has-key($palette, $char) {
+        $path: '';
+
+        @if map.has-key($paths, $char) {
+          $path: map.get($paths, $char);
+        }
+
+        $paths: map.set($paths, $char, $path + 'M#{$x - 1 + $offset-x},#{$y - 1 + $offset-y}.5h#{$run}');
+      }
+
+      $x: $x + $run;
+    }
+  }
+
+  @return $paths;
+}
+
+@function -svg-uri($paths, $palette, $width, $height, $scale) {
+  $shapes: '';
+
+  @each $char, $path in $paths {
+    $shapes: $shapes + "%3Cpath stroke='#{escape-svg-color(map.get($palette, $char))}' d='#{$path}'/%3E";
+  }
+
+  @return url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='#{$width * $scale}' height='#{$height * $scale}' viewBox='0 0 #{$width} #{$height}' shape-rendering='crispEdges'%3E#{$shapes}%3C/svg%3E");
+}
+
+// One sprite. `$canvas`: optional `width height` of the image (defaults to the sprite size),
+// with the sprite at `$offset` inside it, so a background tile can carry spacing.
+// `$scale`: intrinsic size multiplier (e.g. 2 for a 32px cursor from a 16px grid).
+@function pixel-svg($rows, $palette, $canvas: null, $offset: 0 0, $scale: 1) {
+  $width: string.length(list.nth($rows, 1));
+  $height: list.length($rows);
+
+  @if $canvas {
+    $width: list.nth($canvas, 1);
+    $height: list.nth($canvas, 2);
+  }
+
+  @return -svg-uri(-add-sprite-paths((), $rows, $palette, $offset), $palette, $width, $height, $scale);
+}
+
+// Several sprites on one `width height` canvas: `$sprites` is a list of `($rows, x y)` pairs.
+@function pixel-scene($sprites, $palette, $canvas, $scale: 1) {
+  $paths: ();
+
+  @each $rows, $offset in $sprites {
+    $paths: -add-sprite-paths($paths, $rows, $palette, $offset);
+  }
+
+  @return -svg-uri($paths, $palette, list.nth($canvas, 1), list.nth($canvas, 2), $scale);
+}
+
+// Size of a pixel-svg tile drawn at the `--px` scale.
+@function px-size($width, $height) {
+  @return calc(var(--px) * #{$width}) calc(var(--px) * #{$height});
+}

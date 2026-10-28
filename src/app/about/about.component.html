@@ -1,48 +1,69 @@
-<section
-  id="about"
-  class="about"
-  scrollReveal
-  animationType="fade-up"
-  [threshold]="0.32"
-  (revealed)="startCounters()"
->
-  <div class="about__card">
-    <div class="about__portrait">
-      <img
+<section class="about" aria-labelledby="about-heading">
+  <div class="about__sheet" reveal="up" [stagger]="120">
+    <app-pixel-panel class="about__title" variant="dark" raised>
+      <p class="about__label about__label--coin">{{ 'about.sheetTitle' | t }}</p>
+      <h2 id="about-heading" class="about__heading">{{ 'about.heading' | t }}</h2>
+    </app-pixel-panel>
+
+    <app-pixel-panel class="about__profile" raised>
+      <app-pixel-portrait
+        class="about__portrait"
         src="images/kenan-avatar.jfif"
-        alt="Kenan Fajic"
-        width="460"
-        height="460"
-        loading="lazy"
+        [alt]="'about.portrait.alt' | t"
+        [toggleLabel]="'about.portrait.toggle' | t"
       />
-    </div>
 
-    <div class="about__content">
-      <p class="about__eyebrow">About Me</p>
-      <h2>Software Engineering student learning by building real projects.</h2>
-      <p class="about__bio">
-        I am a final-year Software Engineering student at FIT Mostar. I enjoy building useful
-        applications, learning new technologies, and improving my skills through practical projects.
-      </p>
-
-      <mat-chip-set class="about__facts" aria-label="Key facts">
-        @for (fact of facts; track fact) {
-          <mat-chip>{{ fact }}</mat-chip>
-        }
-      </mat-chip-set>
-
-      <div class="about__stats" aria-label="Portfolio statistics">
-        @for (stat of stats; track stat.label) {
-          <div class="about__stat">
-            <strong>{{ stat.value }}{{ stat.suffix }}</strong>
-            <span>{{ stat.label }}</span>
+      <dl class="about__rows about__rows--header">
+        @for (row of header; track row.labelKey) {
+          <div class="about__row">
+            <dt class="about__label">{{ row.labelKey | t }}:</dt>
+            <dd class="about__value">{{ row.valueKey ? (row.valueKey | t) : row.value }}</dd>
           </div>
         }
-      </div>
+      </dl>
 
-      <a mat-stroked-button class="about__cv" href="Kenan-CV.pdf" download>
-        <mat-icon aria-hidden="true">download</mat-icon>
-        Download CV
+      <dl class="about__rows">
+        @for (row of attributes; track row.labelKey) {
+          <div class="about__row">
+            <dt class="about__label">{{ row.labelKey | t }}:</dt>
+            <dd class="about__value">{{ row.valueKey ? (row.valueKey | t) : row.value }}</dd>
+          </div>
+        }
+      </dl>
+    </app-pixel-panel>
+
+    <app-pixel-panel #statsPanel class="about__stats" variant="dark" raised>
+      <h3 class="about__label about__label--coin">{{ 'about.stats.title' | t }}</h3>
+
+      <ul class="about__stat-list">
+        @for (stat of stats; track stat.labelKey) {
+          <li class="about__stat">
+            <!-- Screen readers get the real value at once; the count-up is visual only. -->
+            <span class="visually-hidden">{{ stat.value }}{{ stat.suffix }}</span>
+            <span class="about__label">{{ stat.labelKey | t }}</span>
+            <span class="about__stat-bar" aria-hidden="true">
+              <app-pixel-progress [value]="fill(stat)" [color]="stat.color" />
+              <span class="about__stat-value">{{ shown(stat) }}{{ stat.suffix }}</span>
+            </span>
+          </li>
+        }
+      </ul>
+    </app-pixel-panel>
+
+    <app-dialog-box
+      class="about__bio"
+      speaker="KENAN"
+      typewriter
+      startWhenVisible
+      [speed]="25"
+      [text]="'about.bio' | t"
+    />
+
+    <div class="about__loot">
+      <a pixelButton href="Kenan-CV.pdf" download>
+        <app-pixel-art class="about__loot-icon" [sprite]="downloadIcon" />
+        {{ 'about.cv.loot' | t }}
+        <span class="visually-hidden">({{ 'about.cv.hint' | t }})</span>
       </a>
     </div>
   </div>

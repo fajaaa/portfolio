@@ -1,96 +1,160 @@
-import { CommonModule } from '@angular/common';
-import { Component, HostBinding, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { animate, style, transition, trigger } from '@angular/animations';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  ElementRef,
+  NgZone,
+  afterNextRender,
+  computed,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
 
+import { I18nService } from '../core/i18n.service';
+import { IntroService } from '../core/intro.service';
+import { MotionService } from '../core/motion.service';
+import { HUD_OFFSET, SmoothScrollService } from '../core/smooth-scroll.service';
+import { TranslatePipe } from '../i18n/translate.pipe';
+import { DialogBoxComponent } from '../ui/dialog-box/dialog-box.component';
+import { PixelArtComponent } from '../ui/pixel-art/pixel-art.component';
+import { MARKER_SPRITE } from '../ui/pixel-art/sprites';
+import { PixelButtonComponent } from '../ui/pixel-button/pixel-button.component';
+import { HeroStageComponent } from './hero-stage/hero-stage.component';
+
+const NAME = 'Kenan Fajic';
+
+/**
+ * WORLD 1-1: name, typing subtitle, intro and CTAs next to the voxel island. The entrance
+ * (letters dropping in, then the rest) waits for `IntroService.introDone`. While the hero
+ * scrolls away, the island drifts up and shrinks a little (a CSS scroll-driven animation).
+ * The subtitle only types while the hero is on screen: every typed letter is a change
+ * detection pass, which would otherwise keep running for the whole visit.
+ */
 @Component({
   selector: 'app-hero',
-  standalone: true,
-  imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [DialogBoxComponent, HeroStageComponent, PixelArtComponent, PixelButtonComponent, TranslatePipe],
   templateUrl: './hero.component.html',
   styleUrl: './hero.component.scss',
-  animations: [
-    trigger('subtitleType', [
-      transition('* => *', [
-        style({ opacity: 0.55 }),
-        animate('120ms ease-out', style({ opacity: 1 })),
-      ]),
-    ]),
-  ],
 })
-export class HeroComponent implements OnInit, OnDestroy {
-  private readonly subtitles = ['Full-Stack Developer', 'Angular Enthusiast', 'Problem Solver'];
+export class HeroComponent {
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+  private readonly zone = inject(NgZone);
+  private readonly smoothScroll = inject(SmoothScrollService);
+  private readonly i18n = inject(I18nService);
+  private readonly motion = inject(MotionService);
+  private readonly subtitles = computed(() => this.i18n.list('hero.subtitles'));
   private readonly typingSpeed = 70;
   private readonly deletingSpeed = 38;
   private readonly holdDelay = 1400;
-  private typingTimer: ReturnType<typeof window.setTimeout> | undefined;
-  private subtitleIndex = 0;
-  private characterIndex = 0;
+  private typingTimer: ReturnType<typeof setTimeout> | undefined;
+  private readonly subtitleIndex = signal(0);
+  private readonly characterIndex = signal(0);
   private isDeleting = false;
+  /** True while the hero is (nearly) on screen. */
+  private readonly onScreen = signal(true);
 
-  protected displayedSubtitle = '';
+  protected readonly introDone = inject(IntroService).introDone;
+  protected readonly name = NAME;
+  protected readonly nameWords = splitName(NAME);
+  protected readonly marker = MARKER_SPRITE;
 
-  @HostBinding('style.--hero-shift-x.px')
-  protected shiftX = 0;
+  // Derived from the current language, so switching it swaps the typed text immediately.
+  private readonly currentSubtitle = computed(() => {
+    const subtitles = this.subtitles();
 
-  @HostBinding('style.--hero-shift-y.px')
-  protected shiftY = 0;
+    return subtitles[this.subtitleIndex() % subtitles.length] ?? '';
+  });
 
-  ngOnInit(): void {
-    this.typeNextCharacter();
-  }
+  /** Under reduced motion the subtitles swap whole instead of being typed. */
+  protected readonly displayedSubtitle = computed(() =>
+    this.motion.reducedMotion()
+      ? this.currentSubtitle()
+      : this.currentSubtitle().slice(0, this.characterIndex()),
+  );
 
-  ngOnDestroy(): void {
-    if (this.typingTimer) {
-      window.clearTimeout(this.typingTimer);
-    }
-  }
+  /** The typed text is hidden from screen readers; they get all subtitles at once. */
+  protected readonly subtitleSummary = computed(() => this.subtitles().join(', '));
 
-  @HostListener('mousemove', ['$event'])
-  protected onMouseMove(event: MouseEvent): void {
-    const target = event.currentTarget as HTMLElement;
-    const rect = target.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / rect.width - 0.5;
-    const y = (event.clientY - rect.top) / rect.height - 0.5;
+  constructor() {
+    const destroyRef = inject(DestroyRef);
 
-    this.shiftX = Number((x * 18).toFixed(2));
-    this.shiftY = Number((y * 18).toFixed(2));
-  }
+    afterNextRender(() => {
+      if (typeof IntersectionObserver === 'undefined') {
+        return;
+      }
 
-  @HostListener('mouseleave')
-  protected onMouseLeave(): void {
-    this.shiftX = 0;
-    this.shiftY = 0;
+      const observer = this.zone.runOutsideAngular(
+        () =>
+          new IntersectionObserver(([entry]) => this.onScreen.set(entry.isIntersecting), {
+            rootMargin: '120px 0px',
+          }),
+      );
+      observer.observe(this.host);
+      destroyRef.onDestroy(() => observer.disconnect());
+    });
+
+    // Types while the intro is done and the hero is visible; pauses (keeping its place) otherwise.
+    effect(() => {
+      const run = this.introDone() && this.onScreen();
+
+      untracked(() => {
+        if (run && !this.typingTimer) {
+          this.typeNextCharacter();
+        } else if (!run) {
+          this.stopTyping();
+        }
+      });
+    });
+
+    destroyRef.onDestroy(() => this.stopTyping());
   }
 
   protected scrollToProjects(): void {
-    document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    this.smoothScroll.scrollTo('#projects', { offset: -HUD_OFFSET });
+  }
+
+  private stopTyping(): void {
+    clearTimeout(this.typingTimer);
+    this.typingTimer = undefined;
   }
 
   private typeNextCharacter(): void {
-    const currentSubtitle = this.subtitles[this.subtitleIndex];
+    const length = this.currentSubtitle().length;
+    // Clamped because a language switch can make the current subtitle shorter.
+    const characterIndex = Math.min(
+      this.characterIndex() + (this.isDeleting ? -1 : 1),
+      length,
+    );
 
-    if (this.isDeleting) {
-      this.characterIndex -= 1;
-    } else {
-      this.characterIndex += 1;
-    }
+    this.characterIndex.set(Math.max(characterIndex, 0));
 
-    this.displayedSubtitle = currentSubtitle.slice(0, this.characterIndex);
-
-    if (!this.isDeleting && this.characterIndex === currentSubtitle.length) {
+    if (!this.isDeleting && characterIndex === length) {
       this.isDeleting = true;
-      this.typingTimer = window.setTimeout(() => this.typeNextCharacter(), this.holdDelay);
+      this.typingTimer = setTimeout(() => this.typeNextCharacter(), this.holdDelay);
       return;
     }
 
-    if (this.isDeleting && this.characterIndex === 0) {
+    if (this.isDeleting && characterIndex <= 0) {
       this.isDeleting = false;
-      this.subtitleIndex = (this.subtitleIndex + 1) % this.subtitles.length;
+      this.subtitleIndex.update((index) => (index + 1) % this.subtitles().length);
     }
 
-    this.typingTimer = window.setTimeout(
+    this.typingTimer = setTimeout(
       () => this.typeNextCharacter(),
       this.isDeleting ? this.deletingSpeed : this.typingSpeed,
     );
   }
+}
+
+/** Upper-case letters per word, numbered across the whole name (the drop-in order). */
+function splitName(name: string): { char: string; index: number }[][] {
+  let index = 0;
+
+  return name
+    .toUpperCase()
+    .split(' ')
+    .map((word) => Array.from(word, (char) => ({ char, index: index++ })));
 }

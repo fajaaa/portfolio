@@ -1,0 +1,88 @@
+<!-- The ink screen itself: tiles that dissolve diagonally when the intro closes. -->
+<div class="intro__tiles" aria-hidden="true">
+  @for (tile of tiles(); track tile.id) {
+    <span class="intro__tile" [style.--delay.ms]="tile.delay"></span>
+  }
+</div>
+
+<button class="intro__skip" type="button" (pointerenter)="sound.hover($event)" (click)="skip()">
+  {{ 'intro.skip' | t }}
+  <span class="intro__skip-arrows" aria-hidden="true">
+    <app-pixel-art class="intro__skip-icon" [sprite]="marker" />
+    <app-pixel-art class="intro__skip-icon" [sprite]="marker" />
+  </span>
+</button>
+
+<div class="intro__screen">
+  <h2 id="intro-title" class="visually-hidden">{{ 'intro.title' | t }}</h2>
+
+  <app-pixel-art class="intro__logo" [sprite]="logo" />
+
+  @if (phase() === 'loading') {
+    <div class="intro__loading">
+      <p class="intro__loading-text" aria-hidden="true">
+        <span>{{ 'intro.loading' | t }}</span>
+        <span>{{ percent() }}%</span>
+      </p>
+      <app-pixel-progress
+        class="intro__bar"
+        color="var(--coin)"
+        [value]="percent() / 100"
+        [segments]="20"
+        [label]="'intro.loadingLabel' | t"
+      />
+    </div>
+  } @else {
+    <div class="intro__menu">
+      <button
+        class="intro__start"
+        type="button"
+        data-row="0"
+        (pointerenter)="sound.hover($event)"
+        (click)="start()"
+      >
+        <app-pixel-art class="intro__marker" [sprite]="marker" />
+        <span class="intro__start-text">{{ 'intro.pressStart' | t }}</span>
+      </button>
+
+      <div class="intro__setting" role="group" aria-labelledby="intro-language">
+        <span id="intro-language" class="intro__setting-label">{{ 'intro.language' | t }}</span>
+        <span class="intro__choices">
+          @for (lang of langs; track lang) {
+            <button
+              class="intro__choice"
+              type="button"
+              data-row="1"
+              [attr.lang]="lang"
+              [attr.aria-pressed]="i18n.lang() === lang"
+              (pointerenter)="sound.hover($event)"
+              (click)="setLang(lang)"
+            >
+              {{ lang.toUpperCase() }}
+            </button>
+          }
+        </span>
+      </div>
+
+      <div class="intro__setting" role="group" aria-labelledby="intro-sound">
+        <span id="intro-sound" class="intro__setting-label">{{ 'intro.sound' | t }}</span>
+        <span class="intro__choices">
+          @for (on of [false, true]; track on) {
+            <button
+              class="intro__choice"
+              type="button"
+              data-row="2"
+              [attr.aria-pressed]="sound.enabled() === on"
+              (pointerenter)="sound.hover($event)"
+              (click)="setSound(on)"
+            >
+              {{ (on ? 'intro.soundOn' : 'intro.soundOff') | t }}
+            </button>
+          }
+        </span>
+      </div>
+
+      <p class="intro__hint">{{ 'intro.hint' | t }}</p>
+    </div>
+  }
+</div>

@@ -1,0 +1,23 @@
+<div class="stage__art" role="img" [attr.aria-label]="'hero.sceneLabel' | t">
+  <svg
+    class="stage__sprite"
+    [class.stage__sprite--hidden]="state() === 'ready'"
+    [attr.viewBox]="'0 0 ' + sprite.size + ' ' + sprite.size"
+    shape-rendering="crispEdges"
+    preserveAspectRatio="xMidYMid meet"
+    aria-hidden="true"
+    focusable="false"
+  >
+    @for (path of sprite.paths; track path.color) {
+      <path [attr.stroke]="path.color" [attr.d]="path.d" />
+    }
+  </svg>
+
+  @if (state() !== 'fallback') {
+    <canvas #canvas class="stage__canvas" [class.stage__canvas--ready]="state() === 'ready'"></canvas>
+  }
+</div>
+
+<p class="stage__bubble" [class.stage__bubble--open]="greeting()" aria-live="polite">
+  {{ greeting() }}
+</p>

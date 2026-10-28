@@ -1,71 +1,86 @@
-<section id="skills" class="skills">
-  <div
-    class="skills__header"
-    scrollReveal
-    animationType="fade-up"
-    [threshold]="0.22"
-  >
-    <p class="skills__eyebrow">Technical Stack</p>
-    <h2>Skills</h2>
-  </div>
+<section class="skills" aria-labelledby="skills-heading">
+  <header class="skills__header">
+    <h2 id="skills-heading" class="skills__heading">{{ 'skills.heading' | t }}</h2>
+    <p class="skills__intro">{{ 'skills.intro' | t }}</p>
+  </header>
 
-  <div class="skills__desktop" aria-label="Skill categories">
-    @for (category of categories; track category.title; let index = $index) {
-      <article
-        class="skills__card"
-        scrollReveal
-        [animationType]="index % 2 === 0 ? 'fade-left' : 'fade-right'"
-        [delay]="index * 120"
-        [threshold]="0.18"
-      >
-        <ng-container
-          [ngTemplateOutlet]="categoryContent"
-          [ngTemplateOutletContext]="{ $implicit: category }"
-        />
-      </article>
-    }
-  </div>
+  <app-pixel-panel class="skills__cabinet" variant="dark" raised reveal="up">
+    <div class="skills__screen">
+      <div class="skills__roster">
+        <p class="skills__roster-title">{{ 'skills.rosterTitle' | t }}</p>
 
-  <mat-tab-group class="skills__mobile" mat-stretch-tabs="false" mat-align-tabs="start">
-    @for (category of categories; track category.title; let index = $index) {
-      <mat-tab [label]="category.title">
-        <article
-          class="skills__card skills__card--tab"
-          scrollReveal
-          animationType="fade-up"
-          [delay]="index * 120"
-          [threshold]="0.18"
+        <ul
+          #grid
+          class="skills__grid"
+          reveal="pop"
+          [stagger]="25"
+          [delay]="150"
+          [attr.aria-label]="'skills.rosterLabel' | t"
+          aria-describedby="skills-hint"
         >
-          <ng-container
-            [ngTemplateOutlet]="categoryContent"
-            [ngTemplateOutletContext]="{ $implicit: category }"
-          />
-        </article>
-      </mat-tab>
-    }
-  </mat-tab-group>
+          @for (item of skills; track item.id; let i = $index) {
+            @let isSelected = item.id === selected().id;
+            <li class="skills__cell">
+              <button
+                #tile
+                type="button"
+                class="skills__tile"
+                [class.skills__tile--selected]="isSelected"
+                [attr.data-rarity]="item.rarity"
+                [attr.aria-current]="isSelected ? 'true' : null"
+                [tabindex]="isSelected ? 0 : -1"
+                (click)="select(item)"
+                (focus)="select(item)"
+                (pointerenter)="onTilePointerEnter($event, item)"
+                (keydown)="onTileKeydown($event, i)"
+              >
+                <app-pixel-art class="skills__tile-icon" [sprite]="icons[item.id]" />
+                <span class="skills__tile-label">{{ tileLabels[item.id] }}</span>
+                @if (isSelected) {
+                  <span
+                    class="skills__cursor"
+                    [class.skills__cursor--spinning]="spinning()"
+                    aria-hidden="true"
+                  >
+                    <span class="skills__cursor-tag">P1</span>
+                  </span>
+                }
+              </button>
+            </li>
+          }
+        </ul>
+        <p id="skills-hint" class="visually-hidden">{{ 'skills.rosterHint' | t }}</p>
 
-  <ng-template #categoryContent let-category>
-    <div class="skills__card-heading">
-      <h3>{{ category.title }}</h3>
-      <p>{{ category.summary }}</p>
-    </div>
+        <div class="skills__controls">
+          <ul class="skills__legend" [attr.aria-label]="'skills.legendLabel' | t">
+            @for (entry of legend; track entry.rarity) {
+              <li class="skills__legend-item" [attr.data-rarity]="entry.rarity">
+                <span class="skills__swatch" aria-hidden="true"></span>{{ entry.key | t }}
+              </li>
+            }
+          </ul>
 
-    <div class="skills__list">
-      @for (skill of category.skills; track skill.label) {
-        <div class="skills__tile">
-          <div class="skills__tile-top">
-            <span class="skills__icon">
-              @if (skill.iconType === 'image') {
-                <img class="skills__icon-image" [src]="skill.icon" alt="" aria-hidden="true" />
-              } @else {
-                <mat-icon aria-hidden="true">{{ skill.icon }}</mat-icon>
-              }
-            </span>
-            <span>{{ skill.label }}</span>
-          </div>
+          <button
+            pixelButton
+            sound="none"
+            type="button"
+            class="skills__random"
+            [disabled]="spinning()"
+            (click)="spin()"
+          >
+            <span aria-hidden="true">?</span> {{ 'skills.random' | t }}
+          </button>
         </div>
-      }
+      </div>
+
+      <app-skill-stage class="skills__stage" [skill]="selected()" />
+
+      <!-- Announces keyboard / click / RANDOM picks only; mouse hover changes the stage silently. -->
+      <p class="visually-hidden" aria-live="polite">
+        @if (announced(); as skill) {
+          {{ skill.label }}: {{ skill.descriptionKey | t }}
+        }
+      </p>
     </div>
-  </ng-template>
+  </app-pixel-panel>
 </section>

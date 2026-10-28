@@ -1,0 +1,67 @@
+<app-pixel-panel variant="dark" raised>
+  <div class="save__head">
+    <app-pixel-art class="save__crystal" [sprite]="icons.crystal" />
+    <h3 id="save-point-title" class="save__title">{{ 'contact.savePoint.title' | t }}</h3>
+  </div>
+
+  <div class="save__status">
+    <p class="save__badge">
+      <span class="save__dot" aria-hidden="true"></span>
+      {{ 'contact.savePoint.status' | t }}
+    </p>
+    <p class="save__ready" id="save-point-ready">{{ 'contact.savePoint.readyFor' | t }}</p>
+    <ul class="save__roles" aria-labelledby="save-point-ready">
+      @for (role of roles(); track role) {
+        <li class="save__role">{{ role }}</li>
+      }
+    </ul>
+  </div>
+
+  <div class="save__email">
+    <p class="save__label">{{ 'contact.links.email' | t }}</p>
+    <p class="save__address">{{ email }}</p>
+    <div class="save__actions">
+      <button
+        pixelButton
+        sound="none"
+        type="button"
+        class="save__copy"
+        [class.save__copy--done]="copied()"
+        [attr.aria-label]="'contact.savePoint.copyLabel' | t"
+        (click)="copyEmail()"
+      >
+        <app-pixel-art class="save__icon" [sprite]="icons.copy" />
+        {{ (copied() ? 'contact.savePoint.copied' : 'contact.savePoint.copy') | t }}
+      </button>
+      <a pixelButton="secondary" [href]="'mailto:' + email">
+        <app-pixel-art class="save__icon" [sprite]="icons.mail" />
+        {{ 'contact.savePoint.write' | t }}
+      </a>
+    </div>
+  </div>
+
+  <ul class="save__links" aria-labelledby="save-point-title">
+    @for (link of links; track link.href) {
+      <li>
+        <a
+          pixelButton="secondary"
+          class="save__link"
+          [href]="link.href"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <app-pixel-art class="save__icon" [sprite]="link.icon" />
+          <span class="save__link-text">
+            <span>{{ link.labelKey | t }}</span>
+            <span class="save__link-value">{{ link.value }}</span>
+          </span>
+        </a>
+      </li>
+    }
+  </ul>
+
+  <a pixelButton class="save__cv" href="Kenan-CV.pdf" download>
+    <app-pixel-art class="save__icon" [sprite]="icons.download" />
+    {{ 'contact.links.cv' | t }}
+  </a>
+</app-pixel-panel>

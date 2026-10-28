@@ -1,0 +1,197 @@
+// Keyframes shared globally (not in their component stylesheets) on purpose.
+//
+// Angular scopes a component's @keyframes names and rewrites the matching `animation`
+// references, but its rewrite assumes unminified CSS: in a production build it misses a
+// reference that opens or closes a rule nested in @media (`{animation:name ...}`), so those
+// animations silently never ran. Names Angular does not see defined in the component are left
+// alone, so defining these keyframes here, unscoped, makes every reference match. Each name
+// carries its component prefix to stay unique.
+
+// contact/npc/npc.component.scss
+
+@keyframes npc-first {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes npc-second {
+  50% {
+    opacity: 1;
+  }
+}
+
+// contact/save-point/save-point.component.scss
+
+@keyframes save-float {
+  50% {
+    transform: translateY(calc(var(--px) * -1));
+  }
+}
+
+@keyframes save-blink {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+// hero/hero.component.scss
+
+@keyframes hero-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes hero-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-1.5em);
+  }
+
+  20% {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-4));
+  }
+}
+
+// navbar/navbar.component.scss
+
+@keyframes hud-level-up {
+  50% {
+    color: var(--coin);
+  }
+}
+
+@keyframes hud-level-up-number {
+  50% {
+    color: var(--paper);
+  }
+}
+
+// projects/cartridge/cartridge.component.scss
+
+@keyframes cart-shine {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+// projects/game-screen/game-screen.component.scss
+
+@keyframes screen-on {
+  from {
+    transform: scaleY(0.04);
+    filter: brightness(2.5);
+  }
+
+  60% {
+    transform: scaleY(1);
+    filter: brightness(1.5);
+  }
+
+  to {
+    transform: none;
+    filter: none;
+  }
+}
+
+@keyframes screen-backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+// projects/projects.component.scss
+
+@keyframes projects-loading {
+  from {
+    width: 0;
+  }
+
+  // 11 steps of 5: empty, then 1 to 10 segments.
+  to {
+    width: calc(var(--px) * 55);
+  }
+}
+
+// skills/skill-stage/skill-stage.component.scss
+
+@keyframes stage-idle {
+  50% {
+    transform: translateY(calc(var(--px) * -1));
+  }
+}
+
+@keyframes stage-rise {
+  from {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+
+  85% {
+    opacity: 0.5;
+  }
+
+  to {
+    transform: translateY(calc(var(--px) * -60));
+    opacity: 0;
+  }
+}
+
+@keyframes stage-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  48% {
+    opacity: 0.6;
+  }
+
+  52% {
+    opacity: 1;
+  }
+}
+
+// skills/skills.component.scss
+
+@keyframes skills-snap {
+  from {
+    transform: scale(1.2);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes skills-flash {
+  50% {
+    opacity: 1;
+  }
+}
+
+// world/world-section/world-section.component.scss
+
+@keyframes world-plate-wipe {
+  from {
+    clip-path: inset(-12px 100% -12px -12px);
+  }
+
+  to {
+    clip-path: inset(-12px -12px -12px -12px);
+  }
+}
+
+@keyframes world-plate-flash {
+  50% {
+    color: var(--paper);
+  }
+}
