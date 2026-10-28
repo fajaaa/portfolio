@@ -1,0 +1,251 @@
+@use '../../ui/pixel' as *;
+
+// Sits on the dark cabinet panel: paper text.
+:host {
+  display: grid;
+  align-content: start;
+  gap: var(--space-5);
+}
+
+/* ---------- Scene ---------- */
+
+.stage__scene {
+  --floor: calc(var(--px) * 14);
+  --icon-size: calc(var(--px) * 40); // 16x16 icon at 10x
+
+  position: relative;
+  height: calc(var(--px) * 72);
+  // Room for the border, drawn outside.
+  margin: var(--px);
+  overflow: hidden;
+  // Stepped deep water, darker toward the surface of the screen.
+  background: linear-gradient(
+    to bottom,
+    #071f48 0 25%,
+    #0a2a61 25% 50%,
+    var(--w14-deep) 50% 75%,
+    #134a9c 75%
+  );
+  box-shadow: pixel-border(var(--paper));
+}
+
+// Two stacked cones of light from above: the inner one doubles the brightness.
+.stage__beam {
+  position: absolute;
+  inset: 0 12% var(--floor);
+  background: rgba(159, 216, 255, 0.14);
+  clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0 18%;
+    background: rgba(159, 216, 255, 0.14);
+    clip-path: polygon(40% 0, 60% 0, 100% 100%, 0 100%);
+  }
+}
+
+.stage__bubbles i {
+  position: absolute;
+  bottom: var(--floor);
+  left: var(--x);
+  width: calc(var(--px) * 2);
+  height: calc(var(--px) * 2);
+  background: var(--w14-bubbles);
+  opacity: 0.6;
+  transform: translateY(var(--y));
+
+  &:nth-child(1) {
+    --x: 14%;
+    --y: -40px;
+    --duration: 5.5s;
+    --delay: -1s;
+  }
+
+  &:nth-child(2) {
+    --x: 26%;
+    --y: -150px;
+    --duration: 7s;
+    --delay: -4s;
+  }
+
+  &:nth-child(3) {
+    --x: 72%;
+    --y: -90px;
+    --duration: 6s;
+    --delay: -2.5s;
+  }
+
+  &:nth-child(4) {
+    --x: 84%;
+    --y: -190px;
+    --duration: 8s;
+    --delay: -6s;
+  }
+
+  &:nth-child(5) {
+    --x: 60%;
+    --y: -220px;
+    --duration: 6.5s;
+    --delay: -5s;
+  }
+}
+
+.stage__number {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-4);
+  color: rgba(255, 248, 231, 0.35);
+  font-family: var(--font-display);
+  font-size: var(--font-size-h2);
+  line-height: 1;
+}
+
+.stage__player {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  padding: var(--px) var(--space-2);
+  background: var(--hp);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: var(--font-size-label);
+  line-height: 1.4;
+  box-shadow: pixel-border(var(--paper));
+}
+
+// Sand blocks: a light top edge and a seam every 10 pixels.
+.stage__floor {
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--floor);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 calc(var(--px) * 9),
+      rgba(92, 58, 27, 0.35) 0 calc(var(--px) * 10)
+    ),
+    var(--w14-sand);
+  box-shadow:
+    inset 0 var(--px) 0 0 #fff0b8,
+    inset 0 calc(var(--px) * -2) 0 0 rgba(92, 58, 27, 0.3);
+}
+
+// Stepped oval under the fighter.
+.stage__shadow {
+  position: absolute;
+  bottom: calc(var(--floor) - var(--px) * 2);
+  left: 0;
+  right: 0;
+  width: calc(var(--icon-size) * 0.8);
+  height: calc(var(--px) * 3);
+  margin-inline: auto;
+  background: rgba(var(--ink-rgb), 0.35);
+  clip-path: polygon(
+    12% 0,
+    88% 0,
+    88% 34%,
+    100% 34%,
+    100% 67%,
+    88% 67%,
+    88% 100%,
+    12% 100%,
+    12% 67%,
+    0 67%,
+    0 34%,
+    12% 34%
+  );
+}
+
+// Centered with margins (not a transform), so GSAP owns the transform for the warp-in.
+.stage__fighter {
+  position: absolute;
+  bottom: var(--floor);
+  left: 0;
+  right: 0;
+  width: fit-content;
+  margin-inline: auto;
+  line-height: 0;
+  transform-origin: 50% 100%;
+}
+
+.stage__icon {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+
+.stage__flash {
+  position: absolute;
+  inset: 0;
+  background: var(--paper);
+  opacity: 0;
+  pointer-events: none;
+}
+
+// CRT scanlines over the whole scene.
+.stage__scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.14) 0 2px,
+    transparent 2px var(--px)
+  );
+  pointer-events: none;
+}
+
+/* ---------- Card ---------- */
+
+// Elements stacked in one grid cell: the tallest sets the height, `.stage__sizer` ones are invisible.
+.stage__stack {
+  display: grid;
+
+  > * {
+    grid-area: 1 / 1;
+    min-width: 0;
+  }
+}
+
+.stage__sizer {
+  visibility: hidden;
+}
+
+/* ---------- Motion ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .stage__icon {
+    animation: stage-idle 1.2s steps(1, end) infinite;
+  }
+
+  .stage__bubbles i {
+    animation: stage-rise var(--duration) steps(24) var(--delay) infinite;
+  }
+
+  .stage__beam::after {
+    animation: stage-flicker 3s steps(1, end) infinite;
+  }
+}
+
+// Idle stance: the fighter breathes up and down by one pixel step.
+
+// Keyframes for the animations above: src/app/ui/_shared-keyframes.scss (global, see why there).
+
+/* ---------- Layout ---------- */
+
+// Below the roster on tablets: scene and card side by side.
+@media (min-width: 641px) and (max-width: 960px) {
+  :host {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-6);
+  }
+}
+
+@media (max-width: 640px) {
+  .stage__scene {
+    --floor: calc(var(--px) * 10);
+    --icon-size: calc(var(--px) * 24); // 6x
+
+    height: calc(var(--px) * 48);
+  }
+}

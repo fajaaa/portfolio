@@ -15,6 +15,47 @@
   will-change: transform;
 }
 
+[data-parallax='3'] {
+  --depth: 3;
+}
+
+[data-parallax='4'] {
+  --depth: 4;
+}
+
+[data-parallax='5'] {
+  --depth: 5;
+}
+
+[data-parallax='6'] {
+  --depth: 6;
+}
+
+[data-parallax='7'] {
+  --depth: 7;
+}
+
+// Parallax: a layer drifts from -depth to +depth yPercent while its world crosses the viewport
+// (entering at the bottom to leaving at the top, the `--world` view timeline set by
+// WorldBackgroundComponent). A CSS scroll-driven animation runs on the compositor, with no
+// JavaScript per scroll frame. No fill mode: browsers without scroll timelines see a 0s
+// animation and keep the layers still. Declared at the top level, where Angular scopes the
+// keyframe name (not inside @media); reduced motion turns it off below.
+[data-parallax] {
+  animation: world-parallax linear;
+  animation-timeline: --world;
+}
+
+@keyframes world-parallax {
+  from {
+    transform: translateY(calc(var(--depth, 0) * -1%));
+  }
+
+  to {
+    transform: translateY(calc(var(--depth, 0) * 1%));
+  }
+}
+
 // Ambient loops stop while the world is off-screen (set by WorldBackgroundComponent)
 // and under reduced motion.
 :host-context(.is-idle) *,
@@ -28,5 +69,9 @@
   *::before,
   *::after {
     animation-play-state: paused !important;
+  }
+
+  [data-parallax] {
+    animation: none;
   }
 }

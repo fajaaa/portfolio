@@ -1,4 +1,5 @@
 @use './app/ui/pixel' as *;
+@use './app/ui/shared-keyframes';
 
 /* =========================================================================
    Design tokens
@@ -238,9 +239,16 @@ html {
   font-size: 100%;
 }
 
-/* Lenis adds .lenis to <html> while it runs; native smooth scrolling would fight it. */
+/* Worlds off screen pause all their animations (class set by WorldSectionComponent). */
+.world--offscreen *,
+.world--offscreen *::before,
+.world--offscreen *::after {
+  animation-play-state: paused !important;
+}
+
+/* Smooth in-page anchor jumps; scrollTo() calls pick their own behavior. */
 @media (prefers-reduced-motion: no-preference) {
-  html:not(.lenis) {
+  html {
     scroll-behavior: smooth;
   }
 }

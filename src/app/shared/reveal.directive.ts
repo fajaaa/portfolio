@@ -14,7 +14,6 @@ import {
 import { gsap } from 'gsap';
 
 import { MotionService } from '../core/motion.service';
-import { SmoothScrollService } from '../core/smooth-scroll.service';
 
 export type RevealVariant = 'up' | 'pop' | 'pixel';
 
@@ -43,11 +42,16 @@ const VARIANTS: Record<RevealVariant, RevealTween> = {
   },
 };
 
+/** The entrance starts once the element's top is 15% above the bottom of the viewport. */
+const REVEAL_ROOT_MARGIN = '0px 0px -15% 0px';
+
 /**
  * Plays a one-time entrance animation when the element scrolls into view.
  *
  * `<div reveal="pixel" [delay]="200">` animates the host; with `[stagger]="120"` the host's
  * children animate one after another instead. Delay and stagger are in ms.
+ * Watched with an IntersectionObserver (no per-frame scroll work); an element that is already
+ * above the viewport (deep link, restored scroll) plays right away.
  * Does nothing under reduced motion (`revealed` still emits so dependent logic runs).
  */
 @Directive({ selector: '[reveal]' })
@@ -61,55 +65,92 @@ export class RevealDirective {
   private readonly zone = inject(NgZone);
   private readonly motion = inject(MotionService);
   private context: gsap.Context | undefined;
+  private observer: IntersectionObserver | undefined;
+  private played = false;
   private stopFocusListener: (() => void) | undefined;
 
   constructor() {
-    // Ensures ScrollTrigger is registered before any trigger is created.
-    inject(SmoothScrollService);
-
     afterNextRender(() => {
       if (this.motion.reducedMotion()) {
         this.revealed.emit();
         return;
       }
 
-      this.zone.runOutsideAngular(() => this.animate());
+      this.zone.runOutsideAngular(() => this.prepare());
     });
 
     // If reduced motion turns on before the element was revealed, show it right away.
     effect(() => {
       if (this.motion.reducedMotion()) {
-        untracked(() => {
-          this.stopFocusListener?.();
-          this.context?.revert();
-        });
+        untracked(() => this.cleanUp());
       }
     });
 
-    inject(DestroyRef).onDestroy(() => {
-      this.stopFocusListener?.();
-      this.context?.revert();
-    });
+    inject(DestroyRef).onDestroy(() => this.cleanUp());
   }
 
-  private animate(): void {
+  /** Hides the targets in their "from" state and waits for the host to scroll into view. */
+  private prepare(): void {
+    const variant = VARIANTS[this.reveal()];
+    const targets = this.stagger() > 0 ? Array.from(this.host.children) : this.host;
+
+    this.context = gsap.context(() => gsap.set(targets, variant.from), this.host);
+
+    // Keyboard focus can land here before the entrance played: show it at once.
+    const showNow = () => this.play(true);
+    this.host.addEventListener('focusin', showNow, { once: true });
+    this.stopFocusListener = () => this.host.removeEventListener('focusin', showNow);
+
+    if (typeof IntersectionObserver === 'undefined') {
+      this.play(true);
+      return;
+    }
+
+    this.observer = new IntersectionObserver(
+      ([entry]) => {
+        const above = entry.boundingClientRect.bottom < 0;
+
+        if (entry.isIntersecting || above) {
+          this.play(above);
+        }
+      },
+      { rootMargin: REVEAL_ROOT_MARGIN },
+    );
+    this.observer.observe(this.host);
+  }
+
+  /** Runs the entrance once; `instantly` jumps to the end (already scrolled past, or focused). */
+  private play(instantly: boolean): void {
+    if (!this.context || this.played) {
+      return;
+    }
+
+    this.played = true;
+    this.observer?.disconnect();
+    this.stopFocusListener?.();
+
     const variant = VARIANTS[this.reveal()];
     const stagger = Math.max(this.stagger(), 0) / 1000;
     const targets = stagger > 0 ? Array.from(this.host.children) : this.host;
 
-    this.context = gsap.context(() => {
-      const tween = gsap.fromTo(targets, variant.from, {
+    this.context.add(() => {
+      const tween = gsap.to(targets, {
         ...variant.to,
         delay: Math.max(this.delay(), 0) / 1000,
         stagger,
-        scrollTrigger: { trigger: this.host, start: 'top 85%', once: true },
         onStart: () => this.zone.run(() => this.revealed.emit()),
       });
 
-      // Keyboard focus can land here before the entrance played: finish it at once.
-      const showNow = () => tween.progress(1);
-      this.host.addEventListener('focusin', showNow, { once: true });
-      this.stopFocusListener = () => this.host.removeEventListener('focusin', showNow);
-    }, this.host);
+      if (instantly) {
+        tween.progress(1);
+      }
+    });
+  }
+
+  private cleanUp(): void {
+    this.observer?.disconnect();
+    this.stopFocusListener?.();
+    this.context?.revert();
+    this.context = undefined;
   }
 }

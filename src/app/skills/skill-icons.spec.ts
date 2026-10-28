@@ -1,4 +1,4 @@
-import { BAG_ICON, SKILL_ICON_SIZE, SKILL_ICONS } from './skill-icons';
+import { SKILL_ICON_SIZE, SKILL_ICONS } from './skill-icons';
 import { SKILLS } from './skills.data';
 
 describe('skill icons', () => {
@@ -19,9 +19,8 @@ describe('skill icons', () => {
     }
   });
 
-  it('draws the bag with equal-length rows', () => {
-    const widths = new Set(BAG_ICON.rows.map((row) => row.length));
-
-    expect(widths.size).toBe(1);
+  it('fills the 5-column roster without gaps', () => {
+    expect(SKILLS.length % 5).toBe(0);
+    expect(new Set(SKILLS.map((skill) => skill.id)).size).toBe(SKILLS.length);
   });
 });

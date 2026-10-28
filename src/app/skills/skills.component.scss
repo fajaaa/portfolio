@@ -9,13 +9,15 @@
 }
 
 .skills__header,
-.skills__inventory {
+.skills__cabinet {
   width: min(100%, 72rem);
   margin-inline: auto;
 }
 
 // Short text on the world art: ink outline instead of a panel.
 .skills__header {
+  display: grid;
+  gap: var(--space-3);
   margin-bottom: var(--space-8);
   text-shadow: var(--text-outline);
 }
@@ -26,62 +28,51 @@
   line-height: 1.5;
 }
 
-.skills__inventory {
-  --panel-padding: var(--space-5);
-  --slot-bg: #1c1c28;
-  --slot-bg-selected: #30304a;
+.skills__intro {
+  max-width: 40rem;
+  color: var(--paper);
+  font-size: var(--font-size-md);
 }
 
-// Elements stacked in one grid cell: the tallest sets the height, `.skills__sizer` ones are invisible.
-.skills__stack {
+.skills__cabinet {
+  --panel-padding: var(--space-6);
+}
+
+// Stage on the left, roster on the right (the roster comes first in the DOM and the tab order).
+.skills__screen {
   display: grid;
-
-  > * {
-    grid-area: 1 / 1;
-    min-width: 0;
-  }
+  grid-template-columns: minmax(0, 26rem) minmax(0, 1fr);
+  grid-template-areas: 'stage roster';
+  align-items: start;
+  gap: var(--space-8);
 }
 
-.skills__sizer {
-  visibility: hidden;
+.skills__stage {
+  grid-area: stage;
 }
 
-/* ---------- Bag contents ---------- */
-
-.skills__bag-caption {
-  display: grid;
-  gap: var(--space-2);
-  align-content: start;
+.skills__roster {
+  grid-area: roster;
 }
 
-.skills__bag-title {
-  margin: 0;
-  color: var(--coin);
+/* ---------- Roster ---------- */
+
+.skills__roster-title {
+  margin-bottom: var(--space-2);
+  color: var(--paper);
+  font-family: var(--font-display);
   font-size: var(--font-size-h4);
   line-height: 1.5;
 }
 
-.skills__bag-summary {
-  color: var(--paper);
-}
-
-.skills__body {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
-  align-items: start;
-  gap: var(--space-6);
-  margin-top: var(--space-4);
-}
-
 .skills__grid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  // Equal rows, so a row of empty slots is as tall as a row of items.
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   grid-auto-rows: 1fr;
   gap: var(--space-2);
   margin: 0;
-  // Room for the selection brackets, drawn outside the slot.
-  padding: var(--space-2);
+  // Room for the cursor frame, drawn outside the tile, and its P1 tag above the top row.
+  padding: var(--space-6) var(--space-2) var(--space-2);
   list-style: none;
 }
 
@@ -90,7 +81,7 @@
   min-width: 0;
 }
 
-.skills__slot {
+.skills__tile {
   position: relative;
   flex: 1;
   min-width: 0;
@@ -100,39 +91,34 @@
   gap: var(--space-2);
   padding: var(--space-3) var(--px) var(--space-2);
   border: 0;
-  background: var(--slot-bg);
+  background: #10264d;
   color: var(--paper);
   font: inherit;
-  // Rarity strip along the bottom, inner shadow top-left (a sunken slot).
+  // Rarity strip along the bottom, inner shadow top-left (a sunken tile).
   box-shadow:
     inset 0 calc(var(--px) * -1) 0 0 var(--rarity, transparent),
-    inset var(--px) var(--px) 0 0 rgba(0, 0, 0, 0.5);
+    inset var(--px) var(--px) 0 0 rgba(0, 0, 0, 0.45);
   cursor: pointer;
 
-  // The brackets show the selection; this ring shows keyboard focus.
+  // The cursor shows the selection; this ring shows keyboard focus.
   &:focus-visible {
     outline: var(--px) solid var(--paper);
     outline-offset: calc(var(--px) * -2);
   }
 }
 
-.skills__slot--selected {
-  background: var(--slot-bg-selected);
-}
-
-.skills__slot--empty {
-  cursor: default;
-  opacity: 0.5;
+.skills__tile--selected {
+  background: #1d4384;
 }
 
 // 16x16 icon at 3x.
-.skills__slot-icon {
+.skills__tile-icon {
   width: 48px;
   height: 48px;
 }
 
-.skills__slot-label {
-  // Two lines reserved, so every slot is the same height.
+.skills__tile-label {
+  // Two lines reserved, so every tile is the same height.
   min-height: 2em;
   font-family: var(--font-mono);
   font-size: calc(var(--px) * 5);
@@ -142,72 +128,104 @@
   overflow-wrap: anywhere;
 }
 
-// Four pixel corner brackets around the selected slot: a border masked down to its corners.
-.skills__brackets {
-  --bracket-length: calc(var(--px) * 4);
-
+// P1 cursor: a two-pixel red frame (one step outside the tile, one inside) with a tag on top.
+// A white copy (::after) flashes over it with opacity, which runs on the compositor.
+.skills__cursor,
+.skills__cursor::after {
   position: absolute;
-  inset: calc(var(--px) * -2);
-  border: var(--px) solid var(--coin);
-  mask: conic-gradient(at var(--bracket-length) var(--bracket-length), #0000 75%, #000 0) 0 0 /
-    calc(100% - var(--bracket-length)) calc(100% - var(--bracket-length));
+  inset: calc(var(--px) * -1);
+  box-shadow:
+    pixel-border(var(--hp)),
+    inset 0 0 0 var(--px) var(--hp);
   pointer-events: none;
 }
 
-/* ---------- ITEM INFO ---------- */
-
-.skills__info {
-  --panel-padding: var(--space-4);
+.skills__cursor::after {
+  content: '';
+  inset: 0;
+  box-shadow:
+    pixel-border(var(--paper)),
+    inset 0 0 0 var(--px) var(--paper);
+  opacity: 0;
 }
 
-.skills__info-title {
-  margin: 0 0 var(--space-3);
-  font-size: var(--font-size-label);
-  line-height: 1.5;
+.skills__cursor-tag {
+  position: absolute;
+  bottom: calc(100% + var(--px));
+  left: calc(var(--px) * -1);
+  padding: var(--px) calc(var(--px) * 1.5);
+  background: var(--hp);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 0.5rem;
+  line-height: 1;
+}
+
+/* ---------- Legend + RANDOM ---------- */
+
+.skills__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.skills__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin: 0;
+  padding: 0;
+  color: var(--paper-muted);
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  list-style: none;
+}
+
+.skills__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.skills__swatch {
+  width: calc(var(--px) * 3);
+  height: calc(var(--px) * 3);
+  background: var(--rarity);
 }
 
 /* ---------- Motion ---------- */
 
 @media (prefers-reduced-motion: no-preference) {
-  .skills__brackets {
-    animation: skills-blink 1s steps(1, end) infinite;
+  // The cursor snaps onto a new tile, then flashes red/white; it stays red while RANDOM spins.
+  .skills__cursor {
+    animation: skills-snap 120ms steps(2, end);
   }
 
-  .skills__slot--selected .skills__slot-icon {
-    animation: skills-bounce 360ms steps(1, start);
+  .skills__cursor::after {
+    animation: skills-flash 1s steps(1, end) 120ms infinite;
+  }
+
+  .skills__cursor--spinning,
+  .skills__cursor--spinning::after {
+    animation: none;
   }
 }
 
-@keyframes skills-blink {
-  50% {
-    opacity: 0;
-  }
-}
-
-@keyframes skills-bounce {
-  0% {
-    transform: translateY(0);
-  }
-
-  33% {
-    transform: translateY(calc(var(--px) * -2));
-  }
-
-  66% {
-    transform: translateY(calc(var(--px) * -1));
-  }
-
-  100% {
-    transform: translateY(0);
-  }
-}
+// Keyframes for the animations above: src/app/ui/_shared-keyframes.scss (global, see why there).
 
 /* ---------- Layout ---------- */
 
-// Info panel moves below the grid.
+// One column: roster on top, the stage right below it (scene and card side by side).
 @media (max-width: 960px) {
-  .skills__body {
+  .skills__screen {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'roster'
+      'stage';
+    gap: var(--space-6);
   }
 }
 
@@ -216,16 +234,36 @@
     margin-bottom: var(--space-6);
   }
 
-  .skills__inventory {
+  .skills__cabinet {
     --panel-padding: var(--space-3);
   }
 
   .skills__grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-1);
     padding-inline: var(--space-1);
   }
 
-  .skills__slot-label {
-    font-size: 0.875rem;
+  .skills__tile {
+    padding: var(--space-2) 0;
+  }
+
+  // Icons only: the stage below shows the name. The label stays for screen readers.
+  .skills__tile-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  // 16x16 icon at 2x.
+  .skills__tile-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .skills__controls {
+    justify-content: center;
   }
 }

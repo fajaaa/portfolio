@@ -3,15 +3,12 @@ import {
   Component,
   ElementRef,
   NgZone,
-  afterRenderEffect,
   computed,
   inject,
   signal,
-  untracked,
   viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { I18nService } from '../core/i18n.service';
 import { MotionService } from '../core/motion.service';
@@ -59,15 +56,6 @@ export class ProjectsComponent {
     const projects = this.projects();
     return projects ? this.i18n.plural('projects.count', projects.length) : '';
   });
-
-  constructor() {
-    // The cartridges change the page height: re-measure the scroll triggers of later sections.
-    afterRenderEffect(() => {
-      if (this.projects()) {
-        untracked(() => this.zone.runOutsideAngular(() => ScrollTrigger.refresh()));
-      }
-    });
-  }
 
   protected async play(project: Project, cartridge: CartridgeComponent): Promise<void> {
     if (this.inserting || this.playing()) {

@@ -21,6 +21,7 @@ describe('project covers', () => {
 
   it('finds hand-made covers case-insensitively', () => {
     expect(coverFor('AquaControl')).toBe(COVERS['aquacontrol']);
+    expect(coverFor('AquaFlow')).toBe(COVERS['aquaflow']);
     expect(coverFor('IOT-project-smart-safe')).toBe(COVERS['iot-project-smart-safe']);
   });
 

@@ -34,7 +34,6 @@ export const bs: Dictionary = {
     world: 'WORLD {world}',
     level: 'LV {level}/{total}',
     xpLabel: 'Napredak kroz stranicu',
-    levelUp: 'LEVEL UP!',
     pause: {
       title: 'PAUZA',
       close: 'Zatvori meni',
@@ -97,10 +96,12 @@ export const bs: Dictionary = {
     empty: 'Polica sa kasetama je prazna: nije pronađen nijedan javni GitHub repozitorij.',
     defaultDescription: 'Javni GitHub repozitorij sa profila fajaaa.',
     descriptions: {
+      aquaFlow:
+        'Platforma za upravljanje vodovodom: ASP.NET Core Web API i tri Flutter aplikacije (admin desktop, inkasant i korisnik na mobitelu) za očitanja vodomjera, fakturisanje po tarifama, online plaćanje, prijave kvarova, podršku i push notifikacije.',
       aquaControl:
-        'Desktop aplikacija za evidenciju potrošnje vode i naplate, sa upravljanjem potrošačima, unosom mjesečne potrošnje, automatskim obračunom računa, uplatama, dugovanjima i izvještajima.',
+        'WinForms desktop aplikacija za evidenciju potrošnje i naplate vode: korisnici, mjesta i inkasanti, unos mjesečne potrošnje, automatski obračun računa po tarifi, uplate, dugovanja i izvještaji, sve u lokalnoj SQLite bazi.',
       smartSafe:
-        'IoT simulacija pametnog sefa sa daljinskim upravljanjem, generisanjem sigurnosnog koda i praćenjem stanja uređaja u stvarnom vremenu.',
+        'Fakultetski IoT projekat: simulacija pametnog sefa na NodeMCU pločici s tastaturom i servo bravom, povezana preko Firebase Realtime Database s web stranicom za daljinsko otvaranje, pristupne kodove i praćenje stanja uživo.',
     },
     cartridge: {
       insert: 'Ubaci kasetu:',
@@ -120,13 +121,14 @@ export const bs: Dictionary = {
     },
   },
   skills: {
-    heading: 'INVENTAR',
-    bagsLabel: 'Torbe s vještinama',
-    slotsLabel: '{bag}: predmeti',
-    slotsHint: 'Strelicama se krećeš između predmeta.',
-    itemInfo: 'INFO O PREDMETU',
-    type: 'TIP',
-    rarity: 'RIJETKOST',
+    heading: 'IZABERI TEHNOLOGIJU',
+    intro: 'Sve tehnologije s kojima radim, na jednom mjestu. Izaberi jednu ili prepusti sreći.',
+    rosterTitle: 'ODABIR IGRAČA',
+    rosterLabel: 'Tehnologije',
+    rosterHint: 'Strelicama se krećeš između tehnologija.',
+    random: 'NASUMIČNO',
+    level: 'LV',
+    legendLabel: 'Rijetkost',
     usedIn: 'Korišteno u:',
     usedInNone: 'Još nema projekta na listi',
     types: {
@@ -134,29 +136,14 @@ export const bs: Dictionary = {
       framework: 'Framework',
       database: 'Baza podataka',
       tool: 'Alat',
+      architecture: 'Arhitektura',
+      hardware: 'Hardver',
     },
     rarities: {
       common: 'Običan',
       rare: 'Rijedak',
       epic: 'Epski',
       legendary: 'Legendarni',
-    },
-    categories: {
-      programming: {
-        bag: 'KOD',
-        title: 'Programiranje i frontend',
-        summary: 'Jezici i frontend tehnologije za razvoj web, desktop i mobilnih aplikacija.',
-      },
-      databases: {
-        bag: 'PODACI',
-        title: 'Baze podataka',
-        summary: 'Baze podataka i backend platforme za podatke koje koristim u projektima.',
-      },
-      tools: {
-        bag: 'ALATI',
-        title: 'Razvojni alati',
-        summary: 'Alati za verzionisanje koda, kontejnere i svakodnevni rad.',
-      },
     },
     items: {
       cpp: 'Brz jezik niskog nivoa. Odličan za algoritme, strukture podataka i izvlačenje maksimalnih performansi.',
@@ -171,70 +158,43 @@ export const bs: Dictionary = {
         'Kompletan framework za web aplikacije: komponente, signali, rutiranje i dependency injection.',
       dart: 'Googleov jezik optimizovan za klijentske aplikacije, pokretač Fluttera.',
       flutter: 'Jedan kod za Android, iOS, web i desktop aplikacije, uz brzi hot reload.',
+      sql: 'Jezik relacionih podataka: upiti, spajanja, indeksi i transakcije.',
+      aspnet: 'Microsoftov framework za brze web API-je i backend u C#-u.',
+      efcore: 'ORM za .NET: C# klase postaju tabele u bazi, a LINQ postaje SQL.',
+      restapi: 'Čisti HTTP API-ji: resursi, metode, statusni kodovi i JSON.',
       mysql: 'Relaciona baza podataka: tabele, relacije i SQL upiti.',
+      sqlserver: 'Microsoftova relaciona baza, prirodan par za .NET aplikacije.',
+      sqlite: 'Cijela SQL baza u jednom fajlu. Savršena za lokalne i mobilne aplikacije.',
       firebase: 'Googleova backend platforma: baza u realnom vremenu, autentifikacija i hosting.',
+      redis: 'Key-value skladište u memoriji za keširanje, sesije i brze brojače.',
       git: 'Kontrola verzija: grane, commitovi i sigurna historija svake promjene.',
+      github: 'Mjesto gdje živi moj kod: repozitoriji, pull requestovi, issues i code review.',
       docker: 'Pakuje aplikaciju i njene zavisnosti u kontejnere koji svugdje rade isto.',
       visualstudio: 'Microsoftov kompletan IDE za C# i C++, s moćnim debuggerom.',
       vscode: 'Lagan i proširiv editor koda, napravljen za web razvoj.',
       webstorm: 'JetBrainsov IDE za JavaScript i TypeScript, s pametnim refaktorisanjem.',
+      esp32: 'Mikrokontroler s Wi-Fi i Bluetooth vezom koji hardverske projekte spaja na internet.',
     },
   },
   contact: {
     heading: 'Javi mi se',
-    npc: {
-      greeting:
-        'Hej, putniče! Imaš projekat, posao ili ideju na umu? Pošalji mi poruku i javit ću ti se uskoro.',
-      name: 'Prvo najvažnije: kako da te zovem?',
-      email: 'Drago mi je, {name}! Gdje da ti pošaljem odgovor? Upiši svoj e-mail.',
-      subject: 'Važi. O čemu je riječ u ovoj misiji? Daj joj kratak naslov.',
-      message: 'Sad ono glavno: ispričaj mi sve!',
-      summary:
-        'Evo šta sam zapisao. Ispravi šta treba preko „izmijeni“ ili pritisni POŠALJI kad sve bude u redu.',
-      sent: 'Hvala, {name}! Trebala bi ti se otvoriti aplikacija za e-mail sa svime popunjenim, samo tamo pritisni pošalji. Ništa se nije otvorilo? Može i preko e-maila u FAST TRAVEL meniju.',
-    },
-    errors: {
-      nameRequired: 'Hmm, nisam uhvatio tvoje ime. Možeš li ga upisati?',
-      emailRequired: 'Bez e-maila ti ne mogu odgovoriti. Možeš li ga upisati?',
-      emailInvalid: 'Hmm, ovaj e-mail mi izgleda ukleto. Pokušaj ponovo?',
-      subjectRequired: 'Svaka misija treba naslov. Kako ćemo nazvati ovu?',
-      messageRequired: 'Svitak je prazan! Napiši mi bar par riječi?',
-    },
-    fields: {
-      name: 'Ime',
-      email: 'E-mail',
-      subject: 'Naslov',
-      message: 'Poruka',
-    },
-    hints: {
-      message: 'Enter: dalje · Shift+Enter: novi red',
-    },
-    step: 'KORAK {current}/{total}',
-    stepDone: 'SVE SPREMNO',
-    controls: {
-      back: 'Nazad',
-      next: 'Dalje',
-      send: 'Pošalji',
-      restart: 'Nova poruka',
-      edit: 'izmijeni',
-    },
-    quest: {
-      title: 'QUEST COMPLETE',
-      detail: '+100 XP',
-    },
-    fastTravel: {
-      title: 'FAST TRAVEL',
-      hint: 'Preskoči razgovor i idi pravo na cilj.',
+    npc: 'Stigao si do kraja, putniče! Spreman sam za posao, praksu ili freelance projekat. Izaberi bilo koji kanal na SAVE POINT-u i javi se.',
+    savePoint: {
+      title: 'SAVE POINT',
+      status: 'DOSTUPAN',
+      readyFor: 'Spreman za:',
+      roles: ['Posao', 'Praksa', 'Freelance'],
+      copy: 'Kopiraj',
+      copied: 'Kopirano!',
+      copyLabel: 'Kopiraj e-mail adresu',
+      copyFailed: 'Kopiranje nije uspjelo. Označi adresu ručno.',
+      write: 'Piši',
     },
     links: {
       email: 'E-mail',
       linkedin: 'LinkedIn',
       github: 'GitHub',
       cv: 'Preuzmi CV',
-    },
-    mailBody: {
-      name: 'Ime: {name}',
-      email: 'E-mail: {email}',
     },
   },
   intro: {
@@ -256,8 +216,7 @@ export const bs: Dictionary = {
   notFound: {
     title: 'GAME OVER: stranica nije pronađena',
     heading: 'GAME OVER',
-    message:
-      'Stranica koju tražiš ne postoji. Možda je link pokvaren ili je nivo premješten.',
+    message: 'Stranica koju tražiš ne postoji. Možda je link pokvaren ili je nivo premješten.',
     continue: 'CONTINUE?',
     yes: 'DA',
     no: 'NE',

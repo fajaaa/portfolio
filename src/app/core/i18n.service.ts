@@ -14,6 +14,7 @@ import {
 } from '../i18n/i18n.types';
 
 const STORAGE_KEY = 'kf.lang';
+const DEFAULT_LANG: Lang = 'bs';
 const DICTIONARIES: Record<Lang, Dictionary> = { en, bs };
 
 /**
@@ -75,6 +76,7 @@ export class I18nService {
     return value === undefined ? resolve(en, key) : value;
   }
 
+  /** The visitor's saved choice, otherwise Bosnian (whatever the browser language). */
   private initialLang(): Lang {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
@@ -83,12 +85,10 @@ export class I18nService {
         return stored as Lang;
       }
     } catch {
-      // Fall through to the browser language.
+      // Fall through to the default.
     }
 
-    const browserLang = typeof navigator === 'undefined' ? '' : navigator.language.toLowerCase();
-
-    return /^(bs|hr|sr)\b/.test(browserLang) ? 'bs' : 'en';
+    return DEFAULT_LANG;
   }
 }
 

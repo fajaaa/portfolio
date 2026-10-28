@@ -1,36 +1,47 @@
 import { Injectable, NgZone, computed, inject, signal } from '@angular/core';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-import { I18nService } from './i18n.service';
 import { HUD_OFFSET, SmoothScrollService } from './smooth-scroll.service';
 import { SoundService } from './sound.service';
-import { ToastService } from './toast.service';
 import { WORLDS } from './worlds';
 
 /** Inputs that mean the user is scrolling by hand (as opposed to deep links or restores). */
 const USER_SCROLL_EVENTS = ['wheel', 'touchmove', 'keydown', 'pointerdown'] as const;
 
-/** No toasts this long after the worlds appear (page load, anchor jump from another route). */
+/** No level-up cue this long after the worlds appear (page load, anchor jump from another route). */
 const QUIET_AFTER_LOAD_MS = 1500;
+
+/** Section positions in page coordinates, measured only when the layout changes. */
+interface Geometry {
+  readonly tops: readonly number[];
+  readonly bottom: number;
+  readonly maxScroll: number;
+  readonly viewport: number;
+}
 
 /**
  * Tracks which world (section) is active and how far through the page the player is.
  *
  * A probe line moves from the top of the viewport (page top) to its bottom (page end); the
  * world under it is active and `progress` is (worlds passed + fraction of the current one) / 5,
- * so the 5 XP bar segments line up with the worlds. Shows "LEVEL UP!" when a new world is
- * reached by scrolling down, but not on load, deep links or nav link jumps.
+ * so the 5 XP bar segments line up with the worlds. `levelUps` counts new worlds reached by
+ * scrolling down (not on load, deep links or nav link jumps); the HUD flashes on it.
+ *
+ * Scrolling only does arithmetic: the section positions are measured once and re-measured when
+ * a section resizes, the window resizes or the fonts arrive, so no scroll frame forces
+ * a layout.
  */
 @Injectable({ providedIn: 'root' })
 export class WorldProgressService {
   private readonly zone = inject(NgZone);
   private readonly smoothScroll = inject(SmoothScrollService);
-  private readonly toast = inject(ToastService);
-  private readonly i18n = inject(I18nService);
   private readonly sound = inject(SoundService);
   private readonly index = signal(0);
   private readonly ratio = signal(0);
   private readonly found = signal(false);
+  private readonly ups = signal(0);
+  private geometry: Geometry | null = null;
+  private observed: readonly HTMLElement[] = [];
+  private resizeObserver: ResizeObserver | undefined;
   private userScrolled = false;
   private quietUntil = 0;
   private frame: number | undefined;
@@ -41,6 +52,8 @@ export class WorldProgressService {
   readonly progress = this.ratio.asReadonly();
   /** False on pages without the worlds (e.g. 404). */
   readonly hasWorlds = this.found.asReadonly();
+  /** Goes up by one each time the player scrolls into a new world. */
+  readonly levelUps = this.ups.asReadonly();
 
   private readonly markUserScroll = () => {
     this.userScrolled = true;
@@ -49,22 +62,28 @@ export class WorldProgressService {
 
   /** Starts tracking; call from `afterNextRender`. Returns a function that stops it. */
   connect(): () => void {
-    const update = () => this.update(window.scrollY);
+    const remeasure = () => this.refresh();
 
     return this.zone.runOutsideAngular(() => {
       const stopScroll = this.smoothScroll.onScroll(({ y }) => this.update(y));
       USER_SCROLL_EVENTS.forEach((type) =>
         window.addEventListener(type, this.markUserScroll, { passive: true }),
       );
-      ScrollTrigger.addEventListener('refresh', update);
-      window.addEventListener('resize', update);
+      window.addEventListener('resize', remeasure);
+      // The pixel fonts change text metrics (and so section positions) once they arrive.
+      document.fonts?.ready.then(remeasure);
+      this.resizeObserver =
+        typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(remeasure);
       this.refresh();
 
       return () => {
         stopScroll();
         this.markUserScroll();
-        ScrollTrigger.removeEventListener('refresh', update);
-        window.removeEventListener('resize', update);
+        window.removeEventListener('resize', remeasure);
+        this.resizeObserver?.disconnect();
+        this.resizeObserver = undefined;
+        this.observed = [];
+        this.geometry = null;
         cancelAnimationFrame(this.frame ?? 0);
       };
     });
@@ -75,27 +94,70 @@ export class WorldProgressService {
     cancelAnimationFrame(this.frame ?? 0);
     this.zone.runOutsideAngular(() => {
       this.frame = requestAnimationFrame(() => {
-        this.frame = requestAnimationFrame(() => this.update(window.scrollY));
+        this.frame = requestAnimationFrame(() => {
+          this.measure();
+          this.update(window.scrollY);
+        });
       });
     });
   }
 
-  private update(y: number): void {
+  private measure(): void {
     const sections = WORLDS.map(({ section }) => document.getElementById(section));
 
     if (sections.some((section) => !section)) {
+      this.geometry = null;
+      this.observe([]);
+      return;
+    }
+
+    const elements = sections as HTMLElement[];
+    const y = window.scrollY;
+    const rects = elements.map((section) => section.getBoundingClientRect());
+    const viewport = window.innerHeight;
+
+    this.geometry = {
+      tops: rects.map((rect) => rect.top + y),
+      bottom: rects[rects.length - 1].bottom + y,
+      maxScroll: Math.max(document.documentElement.scrollHeight - viewport, 1),
+      viewport,
+    };
+    this.observe(elements);
+  }
+
+  /** Watches the sections' sizes (content loading in, fonts, images) to re-measure. */
+  private observe(sections: readonly HTMLElement[]): void {
+    const same =
+      sections.length === this.observed.length &&
+      sections.every((section, i) => section === this.observed[i]);
+
+    if (same || !this.resizeObserver) {
+      return;
+    }
+
+    this.resizeObserver.disconnect();
+    sections.forEach((section) => this.resizeObserver!.observe(section));
+    this.observed = sections;
+  }
+
+  private update(y: number): void {
+    if (!this.geometry) {
+      this.measure();
+    }
+
+    const geometry = this.geometry;
+
+    if (!geometry) {
       this.found.set(false);
       return;
     }
 
-    const viewport = window.innerHeight;
-    const maxScroll = Math.max(document.documentElement.scrollHeight - viewport, 1);
+    const { tops, bottom, maxScroll, viewport } = geometry;
     const pageRatio = clamp(y / maxScroll);
     // Starts at 0 on the page top, then stays clear of the HUD.
     const hud = HUD_OFFSET * clamp(y / HUD_OFFSET);
     const probe = y + hud + (viewport - hud) * pageRatio;
-    const tops = sections.map((section) => section!.getBoundingClientRect().top + y);
-    const last = sections.length - 1;
+    const last = tops.length - 1;
 
     let index = 0;
     tops.forEach((top, i) => {
@@ -104,7 +166,7 @@ export class WorldProgressService {
       }
     });
 
-    const end = index < last ? tops[index + 1] : tops[last] + sections[last]!.offsetHeight;
+    const end = index < last ? tops[index + 1] : bottom;
     const fraction = clamp((probe - tops[index]) / Math.max(end - tops[index], 1));
     const previous = this.index();
 
@@ -120,19 +182,9 @@ export class WorldProgressService {
     const quiet = performance.now() < this.quietUntil || this.smoothScroll.isAutoScrolling;
 
     if (index > previous && this.userScrolled && !quiet) {
-      this.announceLevelUp();
+      this.sound.play('coin');
+      this.ups.update((count) => count + 1);
     }
-  }
-
-  private announceLevelUp(): void {
-    const world = this.world();
-
-    this.sound.play('coin');
-    this.toast.show({
-      key: 'level-up',
-      title: this.i18n.t('hud.levelUp'),
-      detail: `${this.i18n.t('hud.world', { world: world.id })} · ${this.i18n.t(world.labelKey)}`,
-    });
   }
 }
 

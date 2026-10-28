@@ -1,0 +1,28 @@
+<h3 class="card__name">{{ skill().label }}</h3>
+
+<div class="card__meta">
+  <span class="card__tag">{{ typeKey() | t }}</span>
+  <span class="card__tag card__tag--rarity" [attr.data-rarity]="skill().rarity">{{
+    rarityKey() | t
+  }}</span>
+  <!-- Same information as the rarity tag, so screen readers skip it. -->
+  <span class="card__level" [attr.data-rarity]="skill().rarity" aria-hidden="true">
+    <span class="card__level-label">{{ 'skills.level' | t }}</span>
+    @for (segment of segments; track segment) {
+      <span class="card__segment" [class.card__segment--on]="segment < level()"></span>
+    }
+  </span>
+</div>
+
+<p class="card__description">{{ skill().descriptionKey | t }}</p>
+
+<p class="card__label">{{ 'skills.usedIn' | t }}</p>
+@if (skill().usedIn.length > 0) {
+  <ul class="card__used-in">
+    @for (project of skill().usedIn; track project) {
+      <li class="card__project">{{ project }}</li>
+    }
+  </ul>
+} @else {
+  <p class="card__none">{{ 'skills.usedInNone' | t }}</p>
+}

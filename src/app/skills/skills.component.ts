@@ -3,121 +3,90 @@ import {
   Component,
   DestroyRef,
   ElementRef,
-  Injector,
-  NgZone,
-  afterNextRender,
   computed,
   inject,
   signal,
   viewChild,
   viewChildren,
 } from '@angular/core';
-import { gsap } from 'gsap';
 
 import { MotionService } from '../core/motion.service';
 import { SoundService } from '../core/sound.service';
 import { SoundName } from '../core/sounds';
+import { I18nKey } from '../i18n/i18n.types';
 import { TranslatePipe } from '../i18n/translate.pipe';
 import { RevealDirective } from '../shared/reveal.directive';
 import { PixelArtComponent } from '../ui/pixel-art/pixel-art.component';
+import { PixelButtonComponent } from '../ui/pixel-button/pixel-button.component';
 import { PixelPanelComponent } from '../ui/pixel-panel/pixel-panel.component';
-import { BagTabsComponent, bagTabId } from './bag-tabs/bag-tabs.component';
-import { ItemInfoComponent } from './item-info/item-info.component';
+import { SkillStageComponent } from './skill-stage/skill-stage.component';
 import { SKILL_ICONS } from './skill-icons';
-import { SKILLS, SKILL_CATEGORIES, Skill, SkillCategoryId, SkillId } from './skills.data';
+import { SKILLS, Skill, SkillId, SkillRarity } from './skills.data';
 
-/** Every bag has the same capacity (2 rows of 6, or 3 rows of 4), so switching bags never resizes the grid. */
-const BAG_CAPACITY = 12;
-
-/** Slot labels may break between camel-case parts: "Java-/Script". */
-const SLOT_LABELS = Object.fromEntries(
-  SKILLS.map((skill) => [skill.id, skill.label.replace(/([a-z])([A-Z])/g, '$1\u00AD$2')]),
+/** Tile labels may break between camel-case parts: "Java-/Script". */
+const TILE_LABELS = Object.fromEntries(
+  SKILLS.map((skill) => [skill.id, skill.label.replace(/([a-z])([A-Z])/g, '$1­$2')]),
 ) as Record<SkillId, string>;
 
-const itemsIn = (bag: SkillCategoryId) => SKILLS.filter((skill) => skill.category === bag);
+const RARITY_LEGEND: readonly { rarity: SkillRarity; key: I18nKey }[] = [
+  { rarity: 'common', key: 'skills.rarities.common' },
+  { rarity: 'rare', key: 'skills.rarities.rare' },
+  { rarity: 'epic', key: 'skills.rarities.epic' },
+  { rarity: 'legendary', key: 'skills.rarities.legendary' },
+];
+
+/** Gaps between the RANDOM roulette's cursor hops (ms): fast at first, then slowing to a stop. */
+const ROULETTE_STEPS = [45, 45, 50, 55, 60, 70, 80, 95, 110, 130, 155, 185, 220];
 
 /**
- * WORLD 1-4: skills as an RPG inventory. Bags (tabs) per category, a slot grid per bag and an
- * ITEM INFO panel for the selected item. Selection follows focus, clicks/taps and mouse hover;
- * arrow keys move through the tabs and the slots (roving tabindex).
+ * WORLD 1-4: skills as a fighting-game PLAYER SELECT screen. A 5x5 roster of tiles with a P1
+ * cursor and, beside it, the stage with the selected skill. Selection follows focus, clicks/taps
+ * and mouse hover; arrow keys move through the roster (roving tabindex). RANDOM spins the cursor
+ * through the roster like a roulette and lands on a random skill.
  */
 @Component({
   selector: 'app-skills',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    BagTabsComponent,
-    ItemInfoComponent,
     PixelArtComponent,
+    PixelButtonComponent,
     PixelPanelComponent,
     RevealDirective,
+    SkillStageComponent,
     TranslatePipe,
   ],
   templateUrl: './skills.component.html',
   styleUrl: './skills.component.scss',
 })
 export class SkillsComponent {
-  private readonly injector = inject(Injector);
-  private readonly zone = inject(NgZone);
   private readonly motion = inject(MotionService);
   private readonly sound = inject(SoundService);
   private readonly grid = viewChild.required<ElementRef<HTMLElement>>('grid');
-  private readonly slotButtons = viewChildren<ElementRef<HTMLButtonElement>>('slot');
-  private revealed = false;
-  private restaggerTween: gsap.core.Tween | undefined;
+  private readonly tiles = viewChildren<ElementRef<HTMLButtonElement>>('tile');
+  private rouletteTimer: ReturnType<typeof setTimeout> | undefined;
 
-  protected readonly bags = SKILL_CATEGORIES;
   protected readonly skills = SKILLS;
   protected readonly icons = SKILL_ICONS;
-  protected readonly tabId = bagTabId;
-  protected readonly slotLabels = SLOT_LABELS;
-  protected readonly bagSizes = Object.fromEntries(
-    SKILL_CATEGORIES.map((bag) => [bag.id, itemsIn(bag.id).length]),
-  ) as Record<SkillCategoryId, number>;
+  protected readonly tileLabels = TILE_LABELS;
+  protected readonly legend = RARITY_LEGEND;
 
-  protected readonly activeBag = signal<SkillCategoryId>(SKILL_CATEGORIES[0].id);
-  protected readonly activeCategory = computed(
-    () => SKILL_CATEGORIES.find((bag) => bag.id === this.activeBag()) ?? SKILL_CATEGORIES[0],
-  );
-  protected readonly items = computed(() => itemsIn(this.activeBag()));
-  protected readonly capacity = Math.max(
-    BAG_CAPACITY,
-    ...SKILL_CATEGORIES.map(
-      (bag) => Math.ceil(itemsIn(bag.id).length / BAG_CAPACITY) * BAG_CAPACITY,
-    ),
-  );
-
-  /** The bag's items followed by empty slots up to the capacity. */
-  protected readonly slots = computed(() => {
-    const items = this.items();
-
-    return Array.from({ length: this.capacity }, (_, index): Skill | null => items[index] ?? null);
-  });
-
-  private readonly selectedId = signal<SkillId>(itemsIn(SKILL_CATEGORIES[0].id)[0].id);
+  private readonly selectedId = signal<SkillId>(SKILLS[0].id);
   protected readonly selected = computed(
-    () => this.items().find((skill) => skill.id === this.selectedId()) ?? this.items()[0],
+    () => SKILLS.find((skill) => skill.id === this.selectedId()) ?? SKILLS[0],
   );
+  protected readonly spinning = signal(false);
 
-  /** Last item picked by focus or click, for the screen reader announcement. */
+  /** Last skill picked by focus, click or RANDOM, for the screen reader announcement. */
   protected readonly announced = signal<Skill | null>(null);
 
   constructor() {
-    inject(DestroyRef).onDestroy(() => this.restaggerTween?.kill());
+    inject(DestroyRef).onDestroy(() => clearTimeout(this.rouletteTimer));
   }
 
-  protected selectBag(bag: SkillCategoryId): void {
-    if (bag === this.activeBag()) {
-      return;
-    }
-
-    this.sound.play('select');
-    this.activeBag.set(bag);
-    this.selectedId.set(itemsIn(bag)[0].id);
-    afterNextRender(() => this.restagger(), { injector: this.injector });
-  }
-
-  /** Selects `skill`, with a sound when the selection actually changes. */
+  /** Selects `skill`, with a sound when the selection actually changes. Stops a running roulette. */
   protected select(skill: Skill, sound: SoundName = 'select'): void {
+    this.stopRoulette();
+
     if (skill.id !== this.selectedId()) {
       this.sound.play(sound);
     }
@@ -129,20 +98,16 @@ export class SkillsComponent {
     }
   }
 
-  /** Hover selects too, but only with a mouse (touch already selects on tap). */
-  protected onSlotPointerEnter(event: PointerEvent, skill: Skill): void {
-    if (event.pointerType === 'mouse') {
+  /** Hover selects too, but only with a mouse (touch already selects on tap) and not mid-spin. */
+  protected onTilePointerEnter(event: PointerEvent, skill: Skill): void {
+    if (event.pointerType === 'mouse' && !this.spinning()) {
       this.select(skill, 'hover');
     }
   }
 
-  protected onRevealed(): void {
-    this.revealed = true;
-  }
-
-  /** Slots: arrows move through the grid (column count read from the live layout), Home/End jump. */
-  protected onSlotKeydown(event: KeyboardEvent, index: number): void {
-    const target = this.slotTarget(event.key, index);
+  /** Tiles: arrows move through the grid (column count read from the live layout), Home/End jump. */
+  protected onTileKeydown(event: KeyboardEvent, index: number): void {
+    const target = this.tileTarget(event.key, index);
 
     if (target === null) {
       return;
@@ -151,16 +116,62 @@ export class SkillsComponent {
     event.preventDefault();
 
     if (target !== index) {
-      this.select(this.items()[target]);
-      this.slotButtons()[target]?.nativeElement.focus();
+      this.select(SKILLS[target]);
+      this.tiles()[target]?.nativeElement.focus();
     }
   }
 
-  private slotTarget(key: string, index: number): number | null {
-    const last = this.items().length - 1;
+  /** RANDOM: hop the cursor through the roster, slowing down, and land on a random skill. */
+  protected spin(): void {
+    if (this.spinning()) {
+      return;
+    }
+
+    if (this.motion.reducedMotion()) {
+      this.land(this.randomOther(this.selectedId()));
+      return;
+    }
+
+    this.spinning.set(true);
+    let step = 0;
+
+    const hop = () => {
+      const next = this.randomOther(this.selectedId());
+
+      if (step === ROULETTE_STEPS.length) {
+        this.spinning.set(false);
+        this.land(next);
+        return;
+      }
+
+      this.selectedId.set(next.id);
+      this.sound.play('tick');
+      this.rouletteTimer = setTimeout(hop, ROULETTE_STEPS[step++]);
+    };
+
+    hop();
+  }
+
+  private land(skill: Skill): void {
+    this.selectedId.set(skill.id);
+    this.sound.play('powerUp');
+    this.announced.set(skill);
+  }
+
+  private stopRoulette(): void {
+    clearTimeout(this.rouletteTimer);
+    this.spinning.set(false);
+  }
+
+  private randomOther(current: SkillId): Skill {
+    const others = SKILLS.filter((skill) => skill.id !== current);
+
+    return others[Math.floor(Math.random() * others.length)];
+  }
+
+  private tileTarget(key: string, index: number): number | null {
+    const last = SKILLS.length - 1;
     const columns = this.columns();
-    const lastRow = Math.floor(last / columns);
-    const row = Math.floor(index / columns);
 
     switch (key) {
       case 'ArrowLeft':
@@ -170,8 +181,7 @@ export class SkillsComponent {
       case 'ArrowUp':
         return index - columns >= 0 ? index - columns : index;
       case 'ArrowDown':
-        // Into a shorter last row: land on its last item.
-        return row < lastRow ? Math.min(index + columns, last) : index;
+        return index + columns <= last ? index + columns : index;
       case 'Home':
         return 0;
       case 'End':
@@ -185,29 +195,5 @@ export class SkillsComponent {
     const template = getComputedStyle(this.grid().nativeElement).gridTemplateColumns;
 
     return Math.max(template.split(' ').filter(Boolean).length, 1);
-  }
-
-  /** Quick stepped pop of the slots after switching bags (once the entrance has played). */
-  private restagger(): void {
-    if (!this.revealed || this.motion.reducedMotion()) {
-      return;
-    }
-
-    this.zone.runOutsideAngular(() => {
-      this.restaggerTween?.kill();
-      this.restaggerTween = gsap.fromTo(
-        this.grid().nativeElement.children,
-        { opacity: 0, scale: 0.6 },
-        {
-          opacity: 1,
-          scale: 1,
-          duration: 0.2,
-          ease: 'steps(4)',
-          stagger: 0.025,
-          overwrite: true,
-          clearProps: 'transform,opacity',
-        },
-      );
-    });
   }
 }

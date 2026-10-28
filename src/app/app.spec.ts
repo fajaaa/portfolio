@@ -7,6 +7,9 @@ import { I18nService } from './core/i18n.service';
 import { PageMetaService } from './core/page-meta.service';
 
 describe('App', () => {
+  // The expectations use the English copy (the site itself defaults to Bosnian).
+  beforeEach(() => localStorage.setItem('kf.lang', 'en'));
+
   afterEach(() => {
     localStorage.removeItem('kf.introSeen');
     localStorage.removeItem('kf.lang');

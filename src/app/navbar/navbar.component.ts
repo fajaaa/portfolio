@@ -141,7 +141,7 @@ export class NavbarComponent {
   protected navigateTo(fragment: SectionId, event: Event): void {
     event.preventDefault();
     this.sound.play('select');
-    // Scrolling must be unlocked before scrollTo, or Lenis ignores it.
+    // Scrolling must be unlocked before scrollTo, or the locked page ignores it.
     this.closeMenu(false);
     this.isHidden.set(false);
 

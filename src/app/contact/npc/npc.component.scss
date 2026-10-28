@@ -19,18 +19,22 @@
   }
 }
 
+// Frames are swapped with opacity (not visibility) so the loops run on the compositor
+// instead of restyling the page every frame.
 .npc__frame {
   grid-area: 1 / 1;
   width: 100%;
   height: 100%;
-  visibility: hidden;
+  opacity: 0;
 }
 
 .npc__frame--idle {
-  visibility: visible;
+  opacity: 1;
 }
 
 // Idle: stand / bob. Talking: mouth closed / open.
+// All three loops start together and never restart, so their steps stay in phase (one frame
+// shown at a time): talking only speeds up the first loop and swaps which second frame shows.
 @media (prefers-reduced-motion: no-preference) {
   .npc__frame--idle {
     animation: npc-first 1.2s steps(1, end) infinite;
@@ -40,29 +44,24 @@
     animation: npc-second 1.2s steps(1, end) infinite;
   }
 
+  .npc__frame--talk {
+    visibility: hidden;
+    animation: npc-second 0.3s steps(1, end) infinite;
+  }
+
   :host(.npc--talking) {
     .npc__frame--idle {
       animation-duration: 0.3s;
     }
 
     .npc__frame--bob {
-      animation: none;
+      visibility: hidden;
     }
 
     .npc__frame--talk {
-      animation: npc-second 0.3s steps(1, end) infinite;
+      visibility: visible;
     }
   }
 }
 
-@keyframes npc-first {
-  50% {
-    visibility: hidden;
-  }
-}
-
-@keyframes npc-second {
-  50% {
-    visibility: visible;
-  }
-}
+// Keyframes for the animations above: src/app/ui/_shared-keyframes.scss (global, see why there).

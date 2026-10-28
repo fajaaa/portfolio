@@ -110,6 +110,28 @@
   height: 100%;
 }
 
+// While the page scrolls its first screen, the island drifts up and shrinks a little.
+// A CSS scroll-driven animation: runs on the compositor, no JavaScript per scroll frame.
+// No fill mode: browsers without scroll timelines see a 0s animation and keep it still.
+// Declared at the top level, where Angular scopes the keyframe name (not inside @media).
+.hero__drift {
+  animation: hero-drift linear;
+  animation-timeline: scroll(root block);
+  animation-range: 0 100svh;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__drift {
+    animation: none;
+  }
+}
+
+@keyframes hero-drift {
+  to {
+    transform: translateY(-12%) scale(0.9);
+  }
+}
+
 .hero__scroll {
   justify-self: center;
   padding: var(--space-1) var(--space-2);
@@ -182,26 +204,4 @@
   }
 }
 
-@keyframes hero-blink {
-  50% {
-    opacity: 0;
-  }
-}
-
-@keyframes hero-drop {
-  from {
-    opacity: 0;
-    transform: translateY(-1.5em);
-  }
-
-  20% {
-    opacity: 1;
-  }
-}
-
-@keyframes hero-rise {
-  from {
-    opacity: 0;
-    transform: translateY(var(--space-4));
-  }
-}
+// Keyframes for the animations above: src/app/ui/_shared-keyframes.scss (global, see why there).

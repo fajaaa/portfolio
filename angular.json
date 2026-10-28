@@ -30,7 +30,6 @@
               }
             ],
             "styles": [
-              "node_modules/lenis/dist/lenis.css",
               "src/styles.scss"
             ]
           },
@@ -89,7 +88,6 @@
               }
             ],
             "styles": [
-              "node_modules/lenis/dist/lenis.css",
               "src/styles.scss"
             ]
           }

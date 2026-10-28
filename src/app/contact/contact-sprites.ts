@@ -122,3 +122,46 @@ export const GITHUB_SPRITE: PixelSprite = {
   ],
   palette: { X: 'currentColor' },
 };
+
+/** Two overlapping pages: copy to clipboard. */
+export const COPY_SPRITE: PixelSprite = {
+  rows: [
+    'XXXXXXX...',
+    'X.....X...',
+    'X..XXXXXXX',
+    'X..X.....X',
+    'X..X.....X',
+    'X..X.....X',
+    'X..X.....X',
+    'XXXX.....X',
+    '...X.....X',
+    '...X.....X',
+    '...XXXXXXX',
+  ],
+  palette: { X: 'currentColor' },
+};
+
+/** The floating save crystal of the SAVE POINT card. */
+export const SAVE_CRYSTAL_SPRITE: PixelSprite = {
+  rows: [
+    '.....LL.....',
+    '....LWLC....',
+    '...LWLLCC...',
+    '..LWLLLCCC..',
+    '.LWLLLLCCCD.',
+    'LWLLLLLCCCDD',
+    'LLLLLLLCCCDD',
+    'LLLLLLCCCDDD',
+    '.LLLLLCCCDD.',
+    '..LLLLCCDD..',
+    '...LLLCCD...',
+    '....LLCD....',
+    '.....LD.....',
+  ],
+  palette: {
+    W: 'var(--paper)',
+    L: 'var(--w13-crystal-cyan)',
+    C: '#26a7c9',
+    D: '#14668a',
+  },
+};

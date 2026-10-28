@@ -11,107 +11,13 @@
         class="contact__dialog"
         speaker="KENAN"
         typewriter
-        live
-        [startWhenVisible]="step() === 'greeting'"
+        startWhenVisible
         [speed]="25"
         [text]="npcLine()"
-        (done)="onLineDone()"
-      >
-        @if (field(); as current) {
-          <!-- Rendered (and focused) while the question types, but only shown once it is done. -->
-          <div class="contact__field" [class.contact__field--hidden]="!revealed()">
-            <span id="contact-question" hidden>{{ question() }}</span>
-            @if (dialogue.error(); as error) {
-              <span id="contact-error" hidden>{{ error | t }}</span>
-            }
-
-            <div class="contact__control">
-              @if (current === 'message') {
-                <textarea
-                  #fieldInput
-                  class="contact__input contact__input--message"
-                  rows="5"
-                  placeholder=" "
-                  enterkeyhint="enter"
-                  aria-labelledby="contact-question"
-                  [attr.aria-describedby]="dialogue.error() ? 'contact-error contact-hint' : 'contact-hint'"
-                  [attr.aria-invalid]="dialogue.error() ? 'true' : null"
-                  [value]="dialogue.values().message"
-                  (input)="onInput($event)"
-                  (keydown)="onKeydown($event)"
-                ></textarea>
-              } @else {
-                <!-- One input for name, email and subject, so focus stays in it between steps. -->
-                <input
-                  #fieldInput
-                  class="contact__input"
-                  type="text"
-                  placeholder=" "
-                  enterkeyhint="next"
-                  aria-labelledby="contact-question"
-                  [attr.aria-describedby]="dialogue.error() ? 'contact-error' : null"
-                  [attr.aria-invalid]="dialogue.error() ? 'true' : null"
-                  [attr.autocomplete]="current === 'subject' ? 'off' : current"
-                  [attr.inputmode]="current === 'email' ? 'email' : null"
-                  [attr.autocapitalize]="current === 'email' ? 'off' : null"
-                  [attr.spellcheck]="current === 'email' ? 'false' : null"
-                  [value]="dialogue.values()[current]"
-                  (input)="onInput($event)"
-                  (keydown)="onKeydown($event)"
-                />
-              }
-              <span
-                class="contact__caret"
-                [class.contact__caret--top]="current === 'message'"
-                aria-hidden="true"
-              ></span>
-            </div>
-
-            @if (current === 'message') {
-              <p id="contact-hint" class="contact__hint">{{ 'contact.hints.message' | t }}</p>
-            }
-          </div>
-        }
-
-        @if (step() === 'summary' && revealed()) {
-          <app-contact-summary [values]="dialogue.values()" (edit)="edit($event)" />
-        }
-
-        <div class="contact__controls">
-          @if (progress(); as filled) {
-            <p class="contact__progress">
-              <span class="contact__segments" aria-hidden="true">
-                @for (item of fields; track item; let i = $index) {
-                  <span class="contact__segment" [class.contact__segment--filled]="i < filled"></span>
-                }
-              </span>
-              @if (step() === 'summary') {
-                {{ 'contact.stepDone' | t }}
-              } @else {
-                {{ 'contact.step' | t: { current: filled, total: fields.length } }}
-              }
-            </p>
-          }
-
-          <div class="contact__buttons">
-            @if (step() !== 'greeting' && step() !== 'sent') {
-              <button pixelButton="secondary" sound="back" type="button" (click)="back()">
-                <app-pixel-art class="contact__arrow" [sprite]="icons.back" />
-                {{ 'contact.controls.back' | t }}
-              </button>
-            }
-
-            <button #primaryButton pixelButton type="button" (click)="primary()">
-              {{ primaryKey() | t }}
-              @if (step() !== 'sent') {
-                <app-pixel-art class="contact__arrow" [sprite]="icons.next" />
-              }
-            </button>
-          </div>
-        </div>
-      </app-dialog-box>
+        (done)="talking.set(false)"
+      />
     </div>
 
-    <app-fast-travel />
+    <app-save-point />
   </div>
 </section>

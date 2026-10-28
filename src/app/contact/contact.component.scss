@@ -1,5 +1,3 @@
-@use '../ui/pixel' as *;
-
 :host {
   display: block;
 }
@@ -26,11 +24,11 @@
   line-height: 1.5;
 }
 
-// Desktop: NPC + dialogue on the left, FAST TRAVEL on the right. Narrower: stacked.
+// Desktop: NPC + dialogue on the left, SAVE POINT on the right. Narrower: stacked.
 .contact__layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(16rem, 21rem);
-  align-items: start;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 30rem);
+  align-items: center;
   gap: var(--space-8);
 }
 
@@ -44,151 +42,6 @@
 .contact__npc {
   // Room for its floor shadow.
   margin-bottom: calc(var(--px) * 3);
-}
-
-/* ---------- Answer input ---------- */
-
-.contact__field {
-  margin-top: var(--space-4);
-}
-
-// Keeps its space (and focus) while the question types, so the box does not jump.
-.contact__field--hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.contact__control {
-  position: relative;
-  // Room for the pixel border, drawn outside the input.
-  padding: var(--px);
-}
-
-.contact__input {
-  display: block;
-  width: 100%;
-  min-height: 44px;
-  padding: var(--space-1) var(--space-3);
-  border: 0;
-  background: #ffffff;
-  color: var(--ink);
-  font-family: var(--font-mono);
-  font-size: 1.5rem;
-  line-height: 1.25;
-  caret-color: var(--ink);
-  caret-shape: block;
-  --input-border: var(--ink);
-  --input-extra: inset var(--px) var(--px) 0 0 rgba(var(--ink-rgb), 0.15);
-  box-shadow: pixel-border(var(--input-border)), var(--input-extra);
-
-  &:focus {
-    outline: none;
-  }
-
-  // Focus ring just outside the pixel border.
-  &:focus-visible {
-    --input-extra: 0 0 0 calc(var(--px) * 2) var(--focus-ring);
-  }
-
-  // Empty: the custom blinking block below stands in for the caret.
-  &:placeholder-shown {
-    caret-color: transparent;
-  }
-
-  &[aria-invalid='true'] {
-    --input-border: var(--hp);
-  }
-}
-
-.contact__input--message {
-  min-height: 8rem;
-  resize: vertical;
-}
-
-.contact__caret {
-  position: absolute;
-  top: 50%;
-  left: calc(var(--px) + var(--space-3));
-  display: none;
-  width: 1ch;
-  height: 1em;
-  background: var(--ink);
-  font-family: var(--font-mono);
-  font-size: 1.5rem;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-
-.contact__caret--top {
-  top: calc(var(--px) + var(--space-1) + 0.125em);
-  transform: none;
-}
-
-.contact__input:focus:placeholder-shown + .contact__caret {
-  display: block;
-}
-
-.contact__hint {
-  margin-top: var(--space-2);
-  color: #4a4a5c;
-  font-family: var(--font-mono);
-  font-size: 1.125rem;
-  line-height: 1.2;
-}
-
-@media (pointer: coarse) {
-  .contact__hint {
-    display: none;
-  }
-}
-
-/* ---------- Controls ---------- */
-
-.contact__controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  margin-top: var(--space-5);
-}
-
-.contact__progress {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-family: var(--font-display);
-  font-size: 0.625rem;
-  line-height: 1.6;
-  text-transform: uppercase;
-}
-
-.contact__segments {
-  display: flex;
-  gap: var(--px);
-  padding: var(--px);
-}
-
-.contact__segment {
-  width: calc(var(--px) * 3);
-  height: calc(var(--px) * 3);
-  box-shadow: pixel-border(var(--ink));
-}
-
-.contact__segment--filled {
-  background: var(--xp);
-}
-
-.contact__buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-left: auto;
-}
-
-.contact__arrow {
-  width: calc(var(--px) * 2);
-  height: calc(var(--px) * 3.5);
 }
 
 @media (max-width: 900px) {
@@ -206,32 +59,5 @@
 
   .contact__npc {
     margin-left: var(--space-4);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .contact__field:not(.contact__field--hidden) .contact__control {
-    animation: contact-field-in 240ms steps(4, end);
-  }
-
-  .contact__input:focus:placeholder-shown + .contact__caret {
-    animation: contact-caret-blink 1s steps(1, end) infinite;
-  }
-}
-
-// Stepped left-to-right wipe.
-@keyframes contact-field-in {
-  from {
-    clip-path: inset(0 100% 0 0);
-  }
-
-  to {
-    clip-path: inset(0 0 0 0);
-  }
-}
-
-@keyframes contact-caret-blink {
-  50% {
-    visibility: hidden;
   }
 }

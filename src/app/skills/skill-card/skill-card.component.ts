@@ -2,15 +2,15 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 
 import { I18nKey } from '../../i18n/i18n.types';
 import { TranslatePipe } from '../../i18n/translate.pipe';
-import { PixelArtComponent } from '../../ui/pixel-art/pixel-art.component';
-import { SKILL_ICONS } from '../skill-icons';
-import { Skill, SkillRarity, SkillType } from '../skills.data';
+import { MAX_LEVEL, RARITY_LEVEL, Skill, SkillRarity, SkillType } from '../skills.data';
 
 const TYPE_KEYS: Record<SkillType, I18nKey> = {
   language: 'skills.types.language',
   framework: 'skills.types.framework',
   database: 'skills.types.database',
   tool: 'skills.types.tool',
+  architecture: 'skills.types.architecture',
+  hardware: 'skills.types.hardware',
 };
 
 const RARITY_KEYS: Record<SkillRarity, I18nKey> = {
@@ -20,18 +20,20 @@ const RARITY_KEYS: Record<SkillRarity, I18nKey> = {
   legendary: 'skills.rarities.legendary',
 };
 
-/** ITEM INFO card for one skill: big icon, name, type, rarity, description and "Used in". */
+/** Fighter card for one skill: name, type, rarity, LV meter, description and "Used in". */
 @Component({
-  selector: 'app-item-info',
+  selector: 'app-skill-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PixelArtComponent, TranslatePipe],
-  templateUrl: './item-info.component.html',
-  styleUrl: './item-info.component.scss',
+  imports: [TranslatePipe],
+  templateUrl: './skill-card.component.html',
+  styleUrl: './skill-card.component.scss',
 })
-export class ItemInfoComponent {
+export class SkillCardComponent {
   readonly skill = input.required<Skill>();
 
-  protected readonly icon = computed(() => SKILL_ICONS[this.skill().id]);
+  protected readonly segments = Array.from({ length: MAX_LEVEL }, (_, index) => index);
+
   protected readonly typeKey = computed(() => TYPE_KEYS[this.skill().type]);
   protected readonly rarityKey = computed(() => RARITY_KEYS[this.skill().rarity]);
+  protected readonly level = computed(() => RARITY_LEVEL[this.skill().rarity]);
 }

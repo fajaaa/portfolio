@@ -10,9 +10,7 @@ import {
   inject,
   signal,
   untracked,
-  viewChild,
 } from '@angular/core';
-import { gsap } from 'gsap';
 
 import { I18nService } from '../core/i18n.service';
 import { IntroService } from '../core/intro.service';
@@ -30,7 +28,9 @@ const NAME = 'Kenan Fajic';
 /**
  * WORLD 1-1: name, typing subtitle, intro and CTAs next to the voxel island. The entrance
  * (letters dropping in, then the rest) waits for `IntroService.introDone`. While the hero
- * scrolls away, the island drifts up and shrinks a little.
+ * scrolls away, the island drifts up and shrinks a little (a CSS scroll-driven animation).
+ * The subtitle only types while the hero is on screen: every typed letter is a change
+ * detection pass, which would otherwise keep running for the whole visit.
  */
 @Component({
   selector: 'app-hero',
@@ -45,7 +45,6 @@ export class HeroComponent {
   private readonly smoothScroll = inject(SmoothScrollService);
   private readonly i18n = inject(I18nService);
   private readonly motion = inject(MotionService);
-  private readonly stage = viewChild.required<ElementRef<HTMLElement>>('stage');
   private readonly subtitles = computed(() => this.i18n.list('hero.subtitles'));
   private readonly typingSpeed = 70;
   private readonly deletingSpeed = 38;
@@ -54,7 +53,8 @@ export class HeroComponent {
   private readonly subtitleIndex = signal(0);
   private readonly characterIndex = signal(0);
   private isDeleting = false;
-  private scrollContext: gsap.Context | undefined;
+  /** True while the hero is (nearly) on screen. */
+  private readonly onScreen = signal(true);
 
   protected readonly introDone = inject(IntroService).introDone;
   protected readonly name = NAME;
@@ -79,56 +79,46 @@ export class HeroComponent {
   protected readonly subtitleSummary = computed(() => this.subtitles().join(', '));
 
   constructor() {
-    const rendered = signal(false);
-    afterNextRender(() => rendered.set(true));
+    const destroyRef = inject(DestroyRef);
 
-    effect(() => {
-      if (this.introDone()) {
-        untracked(() => {
-          if (!this.typingTimer) {
-            this.typeNextCharacter();
-          }
-        });
-      }
-    });
-
-    effect(() => {
-      if (!rendered()) {
+    afterNextRender(() => {
+      if (typeof IntersectionObserver === 'undefined') {
         return;
       }
 
-      const reduced = this.motion.reducedMotion();
-      untracked(() => {
-        this.scrollContext?.revert();
-        this.scrollContext = undefined;
+      const observer = this.zone.runOutsideAngular(
+        () =>
+          new IntersectionObserver(([entry]) => this.onScreen.set(entry.isIntersecting), {
+            rootMargin: '120px 0px',
+          }),
+      );
+      observer.observe(this.host);
+      destroyRef.onDestroy(() => observer.disconnect());
+    });
 
-        if (!reduced) {
-          this.zone.runOutsideAngular(() => this.driftOnScroll());
+    // Types while the intro is done and the hero is visible; pauses (keeping its place) otherwise.
+    effect(() => {
+      const run = this.introDone() && this.onScreen();
+
+      untracked(() => {
+        if (run && !this.typingTimer) {
+          this.typeNextCharacter();
+        } else if (!run) {
+          this.stopTyping();
         }
       });
     });
 
-    inject(DestroyRef).onDestroy(() => {
-      clearTimeout(this.typingTimer);
-      this.scrollContext?.revert();
-    });
+    destroyRef.onDestroy(() => this.stopTyping());
   }
 
   protected scrollToProjects(): void {
     this.smoothScroll.scrollTo('#projects', { offset: -HUD_OFFSET });
   }
 
-  private driftOnScroll(): void {
-    const stage = this.stage().nativeElement;
-
-    this.scrollContext = gsap.context(() => {
-      gsap.to(stage, {
-        yPercent: -12,
-        scale: 0.9,
-        ease: 'none',
-        scrollTrigger: { trigger: this.host, start: 0, end: 'bottom top', scrub: true },
-      });
-    }, this.host);
+  private stopTyping(): void {
+    clearTimeout(this.typingTimer);
+    this.typingTimer = undefined;
   }
 
   private typeNextCharacter(): void {

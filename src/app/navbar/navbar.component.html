@@ -50,13 +50,16 @@
 
 @if (worlds.hasWorlds()) {
   <div class="hud__xp">
-    <p class="hud__level">
-      <span class="hud__level-number">{{
-        'hud.level' | t: { level: worlds.level(), total: totalLevels }
-      }}</span>
-      <span aria-hidden="true">·</span>
-      <span class="hud__level-name">{{ worlds.world().labelKey | t }}</span>
-    </p>
+    <!-- Re-created on every level-up, so the flash animation starts over each time. -->
+    @for (up of [worlds.levelUps()]; track up) {
+      <p class="hud__level" [class.hud__level--up]="up > 0">
+        <span class="hud__level-number">{{
+          'hud.level' | t: { level: worlds.level(), total: totalLevels }
+        }}</span>
+        <span aria-hidden="true">·</span>
+        <span class="hud__level-name">{{ worlds.world().labelKey | t }}</span>
+      </p>
+    }
     <app-pixel-progress
       class="hud__xp-bar"
       [value]="worlds.progress()"

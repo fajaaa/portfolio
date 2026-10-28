@@ -32,7 +32,6 @@ export const en = {
     world: 'WORLD {world}',
     level: 'LV {level}/{total}',
     xpLabel: 'Page progress',
-    levelUp: 'LEVEL UP!',
     pause: {
       title: 'PAUSE MENU',
       close: 'Close menu',
@@ -96,10 +95,12 @@ export const en = {
     empty: 'The cartridge shelf is empty: no public GitHub repositories found.',
     defaultDescription: 'Public GitHub repository from the fajaaa profile.',
     descriptions: {
+      aquaFlow:
+        'A management platform for a water utility: an ASP.NET Core Web API and three Flutter apps (admin desktop, collector and customer mobile) for meter readings, tariff-based invoicing, online payments, fault reports, support tickets and push notifications.',
       aquaControl:
-        'A desktop application for water consumption and billing records, including customer management, monthly usage entry, automatic bill calculation, payments, debts, and reports.',
+        'A WinForms desktop app for water consumption and billing: customers, places and meter readers, monthly usage entry, automatic tariff-based bills, payments, debts and reports, all stored in a local SQLite database.',
       smartSafe:
-        'An IoT smart safe simulation with remote control, security code generation, and real-time device status monitoring.',
+        'A university IoT project: a smart safe simulation on a NodeMCU board with a keypad and a servo lock, synced through Firebase Realtime Database with a web page for remote opening, access codes and live status.',
     },
     cartridge: {
       insert: 'Insert cartridge:',
@@ -119,13 +120,14 @@ export const en = {
     },
   },
   skills: {
-    heading: 'INVENTORY',
-    bagsLabel: 'Skill bags',
-    slotsLabel: '{bag}: items',
-    slotsHint: 'Use the arrow keys to move between items.',
-    itemInfo: 'ITEM INFO',
-    type: 'TYPE',
-    rarity: 'RARITY',
+    heading: 'SELECT YOUR TECH',
+    intro: 'Every technology I work with, in one roster. Pick one, or leave it to luck.',
+    rosterTitle: 'PLAYER SELECT',
+    rosterLabel: 'Technologies',
+    rosterHint: 'Use the arrow keys to move between technologies.',
+    random: 'RANDOM',
+    level: 'LV',
+    legendLabel: 'Rarity',
     usedIn: 'Used in:',
     usedInNone: 'No listed project yet',
     types: {
@@ -133,29 +135,14 @@ export const en = {
       framework: 'Framework',
       database: 'Database',
       tool: 'Tool',
+      architecture: 'Architecture',
+      hardware: 'Hardware',
     },
     rarities: {
       common: 'Common',
       rare: 'Rare',
       epic: 'Epic',
       legendary: 'Legendary',
-    },
-    categories: {
-      programming: {
-        bag: 'CODE',
-        title: 'Programming & Frontend',
-        summary: 'Languages and frontend technologies for web, desktop, and mobile development.',
-      },
-      databases: {
-        bag: 'DATA',
-        title: 'Databases',
-        summary: 'Database and backend data platforms used in projects.',
-      },
-      tools: {
-        bag: 'TOOLS',
-        title: 'Development Tools',
-        summary: 'Tools for source control, containers, and daily development.',
-      },
     },
     items: {
       cpp: 'A fast, low-level language. Great for algorithms, data structures and squeezing out performance.',
@@ -170,70 +157,44 @@ export const en = {
         'A complete framework for web apps: components, signals, routing and dependency injection.',
       dart: "Google's client-optimized language and the engine behind Flutter.",
       flutter: 'One codebase for Android, iOS, web and desktop apps, with a fast hot reload.',
+      sql: 'The language of relational data: queries, joins, indexes and transactions.',
+      aspnet: "Microsoft's framework for fast web APIs and backends in C#.",
+      efcore: 'An ORM for .NET: C# classes become database tables and LINQ becomes SQL.',
+      restapi: 'Clean HTTP APIs: resources, methods, status codes and JSON.',
       mysql: 'A relational database: tables, relations and SQL queries.',
+      sqlserver: "Microsoft's relational database, a natural partner for .NET apps.",
+      sqlite: 'A whole SQL database in a single file. Perfect for local and mobile apps.',
       firebase: "Google's backend platform: realtime database, authentication and hosting.",
+      redis: 'An in-memory key-value store for caching, sessions and fast counters.',
       git: 'Version control: branches, commits and a safe history of every change.',
+      github: 'Where my code lives: repositories, pull requests, issues and reviews.',
       docker: 'Packs an app and its dependencies into containers that run the same everywhere.',
       visualstudio: "Microsoft's full IDE for C# and C++, with a powerful debugger.",
       vscode: 'A light, extensible code editor, made for web development.',
       webstorm: "JetBrains' IDE for JavaScript and TypeScript, with smart refactoring.",
+      esp32: 'A Wi-Fi and Bluetooth microcontroller that brings hardware projects online.',
     },
   },
   contact: {
     heading: 'Get In Touch',
-    // What the NPC says on each step of the dialogue.
-    npc: {
-      greeting:
-        'Hey, traveler! Have a project, role, or idea in mind? Send me a note and I will get back to you soon.',
-      name: 'First things first: what should I call you?',
-      email: 'Nice to meet you, {name}! Where should I send my reply? Type your email.',
-      subject: "Got it. So what's this quest about? Give it a short title.",
-      message: 'Now the main part: tell me everything!',
-      summary: 'Here is what I wrote down. Fix anything with "edit", or hit SEND when it looks right.',
-      sent: 'Thanks, {name}! Your email app should open with everything filled in. Just hit send there. Nothing opened? The FAST TRAVEL email works too.',
-    },
-    errors: {
-      nameRequired: "Hmm, I didn't catch your name. Mind typing it in?",
-      emailRequired: "I can't reply without an email. Mind typing it in?",
-      emailInvalid: 'Hmm, that email looks cursed. Try again?',
-      subjectRequired: 'Every quest needs a title. What should we call this one?',
-      messageRequired: 'The scroll is empty! Write me a few words?',
-    },
-    fields: {
-      name: 'Name',
-      email: 'Email',
-      subject: 'Subject',
-      message: 'Message',
-    },
-    hints: {
-      message: 'Enter: next · Shift+Enter: new line',
-    },
-    step: 'STEP {current}/{total}',
-    stepDone: 'ALL SET',
-    controls: {
-      back: 'Back',
-      next: 'Next',
-      send: 'Send',
-      restart: 'New message',
-      edit: 'edit',
-    },
-    quest: {
-      title: 'QUEST COMPLETE',
-      detail: '+100 XP',
-    },
-    fastTravel: {
-      title: 'FAST TRAVEL',
-      hint: 'Skip the chat and go straight there.',
+    // What the NPC says next to the SAVE POINT.
+    npc: 'You made it to the end, traveler! I am ready for a job, an internship or a freelance project. Pick any channel at the SAVE POINT and say hi.',
+    savePoint: {
+      title: 'SAVE POINT',
+      status: 'AVAILABLE',
+      readyFor: 'Ready for:',
+      roles: ['Job', 'Internship', 'Freelance'],
+      copy: 'Copy',
+      copied: 'Copied!',
+      copyLabel: 'Copy email address',
+      copyFailed: 'Could not copy. Select the address by hand.',
+      write: 'Write',
     },
     links: {
       email: 'Email',
       linkedin: 'LinkedIn',
       github: 'GitHub',
       cv: 'Download CV',
-    },
-    mailBody: {
-      name: 'Name: {name}',
-      email: 'Email: {email}',
     },
   },
   intro: {

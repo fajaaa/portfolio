@@ -174,6 +174,19 @@
   }
 }
 
+// New world reached: level and world name swap colors a few times.
+@media (prefers-reduced-motion: no-preference) {
+  .hud__level--up {
+    animation: hud-level-up 240ms steps(1, end) 5;
+  }
+
+  .hud__level--up .hud__level-number {
+    animation: hud-level-up-number 240ms steps(1, end) 5;
+  }
+}
+
+// Keyframes for the animations above: src/app/ui/_shared-keyframes.scss (global, see why there).
+
 // Short name and condensed menu between tablet and desktop.
 @media (max-width: 1080px) {
   .hud__name {

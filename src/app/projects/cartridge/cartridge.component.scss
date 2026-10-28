@@ -149,11 +149,7 @@
   }
 }
 
-@keyframes cart-shine {
-  to {
-    transform: translateX(100%);
-  }
-}
+// Keyframes for the animations above: src/app/ui/_shared-keyframes.scss (global, see why there).
 
 @media (prefers-reduced-motion: reduce) {
   .cart {

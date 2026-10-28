@@ -1,0 +1,30 @@
+<div class="stage__scene" aria-hidden="true">
+  <span class="stage__beam"></span>
+  <span class="stage__bubbles">
+    <i></i>
+    <i></i>
+    <i></i>
+    <i></i>
+    <i></i>
+  </span>
+
+  <span class="stage__number">#{{ number() }}</span>
+  <span class="stage__player">P1</span>
+
+  <span class="stage__floor"></span>
+  <span class="stage__shadow"></span>
+  <div #fighter class="stage__fighter">
+    <app-pixel-art class="stage__icon" [sprite]="icon()" />
+  </div>
+
+  <span #flash class="stage__flash"></span>
+</div>
+
+<!-- The card and an invisible copy for every skill share one cell: the stage keeps the height of
+     the longest card, so changing the selection never moves the layout. -->
+<div class="stage__stack">
+  <app-skill-card [skill]="skill()" />
+  @for (other of skills; track other.id) {
+    <app-skill-card class="stage__sizer" aria-hidden="true" [skill]="other" />
+  }
+</div>

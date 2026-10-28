@@ -26,6 +26,50 @@ interface GitHubRepository {
   fork: boolean;
 }
 
+/** Hand-written details for known repositories, keyed by repository name. */
+interface ProjectDetails {
+  /** Translated description that replaces the GitHub one. */
+  descriptionKey: I18nKey;
+  /** Curated stack, most important first; replaces the GitHub language and topics. */
+  techStack: string[];
+}
+
+const PROJECT_DETAILS: Readonly<Record<string, ProjectDetails>> = {
+  AquaFlow: {
+    descriptionKey: 'projects.descriptions.aquaFlow',
+    techStack: [
+      'ASP.NET Core',
+      'Flutter',
+      'SQL Server',
+      'EF Core',
+      'RabbitMQ',
+      'Docker',
+      'Firebase',
+      'Stripe',
+    ],
+  },
+  AquaControl: {
+    descriptionKey: 'projects.descriptions.aquaControl',
+    techStack: ['C#', 'WinForms', 'EF Core', 'SQLite'],
+  },
+  'IOT-project-smart-safe': {
+    descriptionKey: 'projects.descriptions.smartSafe',
+    techStack: ['NodeMCU', 'Arduino', 'Firebase', 'JavaScript'],
+  },
+};
+
+/** Display names for GitHub topics that title case gets wrong ("aspnet-core" -> "ASP.NET Core"). */
+const TOPIC_LABELS: Readonly<Record<string, string>> = {
+  'aspnet-core': 'ASP.NET Core',
+  'sql-server': 'SQL Server',
+  rabbitmq: 'RabbitMQ',
+  iot: 'IoT',
+  'internet-of-things': 'IoT',
+  'nodemcu-esp32': 'ESP32',
+  javascript: 'JavaScript',
+  typescript: 'TypeScript',
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -33,51 +77,44 @@ export class ProjectsService {
   private readonly http = inject(HttpClient);
   private readonly githubReposUrl = 'https://api.github.com/users/fajaaa/repos';
   private readonly excludedRepositoryNames = new Set(['portfolio']);
-  private readonly projectDescriptionOverrides = new Map<string, I18nKey>([
-    ['AquaControl', 'projects.descriptions.aquaControl'],
-    ['IOT-project-smart-safe', 'projects.descriptions.smartSafe'],
-  ]);
+  /** Shown when the GitHub API fails (offline, rate limit): the known projects, newest first. */
   private readonly fallbackProjects: Project[] = [
-    {
-      title: 'AquaControl',
-      descriptionKey: 'projects.descriptions.aquaControl',
-      description: '',
-      techStack: ['C#'],
-      githubUrl: 'https://github.com/fajaaa/AquaControl',
-      demoUrl: 'https://github.com/fajaaa/AquaControl',
-      imageUrl: '',
-    },
-    {
-      title: 'IOT-project-smart-safe',
-      descriptionKey: 'projects.descriptions.smartSafe',
-      description: '',
-      techStack: ['JavaScript'],
-      githubUrl: 'https://github.com/fajaaa/IOT-project-smart-safe',
-      demoUrl: 'https://github.com/fajaaa/IOT-project-smart-safe',
-      imageUrl: '',
-    },
-  ];
+    'AquaFlow',
+    'AquaControl',
+    'IOT-project-smart-safe',
+  ].map((name) => {
+    const url = `https://github.com/fajaaa/${name}`;
 
-  private readonly projects$ = this.getRepositoryPage()
-    .pipe(
-      expand((response) => {
-        const nextPage = this.getNextPage(response.headers.get('Link'));
+    return {
+      title: name,
+      descriptionKey: PROJECT_DETAILS[name].descriptionKey,
+      description: '',
+      techStack: PROJECT_DETAILS[name].techStack,
+      githubUrl: url,
+      demoUrl: url,
+      imageUrl: '',
+    };
+  });
 
-        return nextPage ? this.getRepositoryPage(nextPage) : EMPTY;
-      }),
-      map((response) => response.body ?? []),
-      reduce(
-        (repositories, pageRepositories) => [...repositories, ...pageRepositories],
-        [] as GitHubRepository[],
-      ),
-      map((repositories) =>
-        repositories
-          .filter((repository) => this.shouldShowRepository(repository))
-          .map((repository) => this.toProject(repository)),
-      ),
-      catchError(() => of(this.fallbackProjects)),
-      shareReplay({ bufferSize: 1, refCount: true }),
-    );
+  private readonly projects$ = this.getRepositoryPage().pipe(
+    expand((response) => {
+      const nextPage = this.getNextPage(response.headers.get('Link'));
+
+      return nextPage ? this.getRepositoryPage(nextPage) : EMPTY;
+    }),
+    map((response) => response.body ?? []),
+    reduce(
+      (repositories, pageRepositories) => [...repositories, ...pageRepositories],
+      [] as GitHubRepository[],
+    ),
+    map((repositories) =>
+      repositories
+        .filter((repository) => this.shouldShowRepository(repository))
+        .map((repository) => this.toProject(repository)),
+    ),
+    catchError(() => of(this.fallbackProjects)),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
   getProjects(): Observable<Project[]> {
     return this.projects$;
@@ -121,7 +158,7 @@ export class ProjectsService {
 
     return {
       title: repository.name,
-      descriptionKey: this.projectDescriptionOverrides.get(repository.name),
+      descriptionKey: PROJECT_DETAILS[repository.name]?.descriptionKey,
       description: repository.description?.trim() ?? '',
       techStack: this.toTechStack(repository),
       githubUrl: repository.html_url,
@@ -131,6 +168,12 @@ export class ProjectsService {
   }
 
   private toTechStack(repository: GitHubRepository): string[] {
+    const curated = PROJECT_DETAILS[repository.name]?.techStack;
+
+    if (curated) {
+      return curated;
+    }
+
     const techStack = new Set<string>();
 
     if (repository.language) {
@@ -149,10 +192,13 @@ export class ProjectsService {
   }
 
   private formatTopic(topic: string): string {
-    return topic
-      .split(/[-_]/)
-      .filter(Boolean)
-      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-      .join(' ');
+    return (
+      TOPIC_LABELS[topic] ??
+      topic
+        .split(/[-_]/)
+        .filter(Boolean)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ')
+    );
   }
 }

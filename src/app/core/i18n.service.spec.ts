@@ -11,46 +11,47 @@ import { I18nService } from './i18n.service';
 class EmptyComponent {}
 
 describe('I18nService', () => {
-  let languageSpy: jasmine.Spy;
-
   beforeEach(() => {
     localStorage.removeItem('kf.lang');
-    languageSpy = spyOnProperty(navigator, 'language').and.returnValue('en-US');
+    // An English browser: the site must still start in Bosnian.
+    spyOnProperty(navigator, 'language').and.returnValue('en-US');
   });
 
   afterEach(() => localStorage.removeItem('kf.lang'));
 
-  it('picks Bosnian for bs/hr/sr browsers and English otherwise', () => {
-    languageSpy.and.returnValue('hr-HR');
+  it('defaults to Bosnian, whatever the browser language', () => {
     expect(TestBed.inject(I18nService).lang()).toBe('bs');
+    expect(document.documentElement.lang).toBe('bs');
   });
 
-  it('prefers the stored language over the browser language', () => {
-    localStorage.setItem('kf.lang', 'bs');
-    expect(TestBed.inject(I18nService).lang()).toBe('bs');
+  it('prefers the stored language over the default', () => {
+    localStorage.setItem('kf.lang', 'en');
+    expect(TestBed.inject(I18nService).lang()).toBe('en');
   });
 
   it('switches, persists and updates <html lang>', () => {
     const i18n = TestBed.inject(I18nService);
-    expect(i18n.t('nav.links.about')).toBe('About');
-
-    i18n.setLang('bs');
-
     expect(i18n.t('nav.links.about')).toBe('O meni');
+
+    i18n.setLang('en');
+
+    expect(i18n.t('nav.links.about')).toBe('About');
     expect(i18n.list('hero.subtitles').length).toBeGreaterThan(0);
-    expect(localStorage.getItem('kf.lang')).toBe('bs');
-    expect(document.documentElement.lang).toBe('bs');
+    expect(localStorage.getItem('kf.lang')).toBe('en');
+    expect(document.documentElement.lang).toBe('en');
   });
 
   it('interpolates params', () => {
     const i18n = TestBed.inject(I18nService);
     expect(i18n.t('projects.screen.codeLabel', { title: 'AquaControl' })).toBe(
-      'View code of AquaControl on GitHub',
+      'Pogledaj kod projekta AquaControl na GitHubu',
     );
   });
 
   it('picks plural forms per language', () => {
     const i18n = TestBed.inject(I18nService);
+    i18n.setLang('en');
+
     expect(i18n.plural('projects.count', 1)).toBe('1 GAME FOUND');
     expect(i18n.plural('projects.count', 21)).toBe('21 GAMES FOUND');
 
@@ -73,12 +74,15 @@ describe('I18nService', () => {
       host.querySelectorAll<HTMLButtonElement>('.lang-toggle__button'),
     );
 
-    bsButton.click();
-    fixture.detectChanges();
-
     expect(host.querySelector('.hud__link')?.textContent?.trim()).toBe('Početna');
     expect(bsButton.getAttribute('aria-pressed')).toBe('true');
-    expect(enButton.getAttribute('aria-pressed')).toBe('false');
+
+    enButton.click();
+    fixture.detectChanges();
+
+    expect(host.querySelector('.hud__link')?.textContent?.trim()).toBe('Home');
+    expect(enButton.getAttribute('aria-pressed')).toBe('true');
+    expect(bsButton.getAttribute('aria-pressed')).toBe('false');
   });
 
   it('translates route titles and re-translates them on language change', async () => {
@@ -91,11 +95,11 @@ describe('I18nService', () => {
     await TestBed.inject(Router).navigateByUrl('/');
     TestBed.tick();
     const title = TestBed.inject(Title);
-    expect(title.getTitle()).toBe('Page not found');
+    expect(title.getTitle()).toBe('Stranica nije pronađena');
 
-    TestBed.inject(I18nService).setLang('bs');
+    TestBed.inject(I18nService).setLang('en');
     TestBed.tick();
 
-    expect(title.getTitle()).toBe('Stranica nije pronađena');
+    expect(title.getTitle()).toBe('Page not found');
   });
 });

@@ -1,7 +1,4 @@
-import { Injectable, NgZone, effect, inject, untracked } from '@angular/core';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Lenis from 'lenis';
+import { Injectable, NgZone, inject } from '@angular/core';
 
 import { MotionService } from './motion.service';
 
@@ -36,17 +33,17 @@ export interface ScrollToOptions {
 }
 
 /**
- * Owns page scrolling: Lenis smooth scroll driven by the GSAP ticker, with ScrollTrigger
- * kept in sync. Falls back to native scrolling while reduced motion is on.
+ * Owns page scrolling on top of the browser's native scrolling, which runs on the compositor
+ * thread and so stays smooth even while the main thread is busy. Adds scroll listeners
+ * (outside the Angular zone), smooth `scrollTo()` with an "auto scrolling" flag, scroll locking
+ * for modals, and keeps deep-linked sections in place while the page above them loads.
  */
 @Injectable({ providedIn: 'root' })
 export class SmoothScrollService {
   private readonly zone = inject(NgZone);
   private readonly motion = inject(MotionService);
-  private lenis: Lenis | null = null;
   private initialized = false;
   private resizeObserver: ResizeObserver | undefined;
-  private refreshTimer: ReturnType<typeof setTimeout> | undefined;
   private autoScrollTimer: ReturnType<typeof setTimeout> | undefined;
   private autoScrolling = false;
   private lastY = 0;
@@ -58,38 +55,9 @@ export class SmoothScrollService {
     USER_SCROLL_INPUTS.forEach((type) => window.removeEventListener(type, this.releaseAnchor));
   };
 
-  private readonly onTick = (time: number) => this.lenis?.raf(time * 1000);
-  private readonly onLenisScroll = (lenis: Lenis) => this.emit(lenis.scroll);
-  // Native scroll events only drive listeners while Lenis is off (reduced motion).
-  private readonly onNativeScroll = () => {
-    if (!this.lenis) {
-      this.emit(window.scrollY);
-    }
-  };
+  private readonly onNativeScroll = () => this.emit(window.scrollY);
 
-  constructor() {
-    // Registering starts ScrollTrigger's own rAF loop, scroll / wheel listeners and a timer.
-    // Inside the Angular zone each of those would run change detection on every frame.
-    this.zone.runOutsideAngular(() => gsap.registerPlugin(ScrollTrigger));
-
-    effect(() => {
-      const reduced = this.motion.reducedMotion();
-
-      untracked(() => {
-        if (!this.initialized) {
-          return;
-        }
-
-        if (reduced) {
-          this.destroyLenis();
-        } else {
-          this.createLenis();
-        }
-      });
-    });
-  }
-
-  /** Starts smooth scrolling. Safe to call more than once; call it from `afterNextRender`. */
+  /** Starts listening. Safe to call more than once; call it from `afterNextRender`. */
   init(): void {
     if (this.initialized) {
       return;
@@ -98,31 +66,20 @@ export class SmoothScrollService {
     this.initialized = true;
     this.lastY = window.scrollY;
 
-    if (!this.motion.reducedMotion()) {
-      this.createLenis();
-    }
-
     this.zone.runOutsideAngular(() => {
       window.addEventListener('scroll', this.onNativeScroll, { passive: true });
 
       this.holdAnchor();
 
-      // Async content (e.g. GitHub projects) changes the page height; keep trigger positions fresh.
-      this.resizeObserver = new ResizeObserver(() => {
-        this.restoreAnchor();
-        clearTimeout(this.refreshTimer);
-        this.refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 200);
-      });
+      // Async content (e.g. GitHub projects) changes the page height: keep a deep link in place.
+      this.resizeObserver = new ResizeObserver(() => this.restoreAnchor());
       this.resizeObserver.observe(document.body);
-
-      // The pixel fonts change text metrics (and so trigger positions) once they arrive.
-      document.fonts?.ready.then(() => ScrollTrigger.refresh());
     });
   }
 
   /**
-   * Calls `listener` on every scroll frame (Lenis scroll events, or native ones under reduced
-   * motion), outside the Angular zone. Returns a function that removes the listener.
+   * Calls `listener` on every scroll event (about once per frame while scrolling), outside the
+   * Angular zone. Returns a function that removes the listener.
    */
   onScroll(listener: ScrollListener): () => void {
     this.listeners.add(listener);
@@ -135,33 +92,25 @@ export class SmoothScrollService {
   }
 
   scrollTo(target: ScrollTarget, { offset = 0, immediate = false }: ScrollToOptions = {}): void {
-    this.autoScrolling = true;
-    this.armAutoScrollTimer();
+    const top = this.resolveTop(target);
 
-    if (this.lenis) {
-      this.lenis.scrollTo(target, { offset, immediate });
+    if (top === null) {
       return;
     }
 
-    const top = this.resolveTop(target);
+    this.autoScrolling = true;
+    this.armAutoScrollTimer();
 
-    if (top !== null) {
-      const smooth = !immediate && !this.motion.reducedMotion();
-      window.scrollTo({ top: top + offset, behavior: smooth ? 'smooth' : 'instant' });
-    }
+    const smooth = !immediate && !this.motion.reducedMotion();
+    window.scrollTo({ top: top + offset, behavior: smooth ? 'smooth' : 'instant' });
   }
 
   /** Locks page scrolling (e.g. while a modal is open). */
   stop(): void {
-    if (this.lenis) {
-      this.lenis.stop();
-    } else {
-      document.documentElement.style.overflow = 'hidden';
-    }
+    document.documentElement.style.overflow = 'hidden';
   }
 
   start(): void {
-    this.lenis?.start();
     document.documentElement.style.removeProperty('overflow');
   }
 
@@ -188,42 +137,15 @@ export class SmoothScrollService {
     const target = this.heldAnchor ? document.getElementById(this.heldAnchor) : null;
 
     if (target) {
-      // Lenis measures the page lazily; with its old (shorter) limit it would clamp the jump.
-      this.lenis?.resize();
       this.scrollTo(target, { offset: -HUD_OFFSET, immediate: true });
     }
-  }
-
-  private createLenis(): void {
-    if (this.lenis) {
-      return;
-    }
-
-    this.zone.runOutsideAngular(() => {
-      this.lenis = new Lenis({ autoRaf: false });
-      this.lenis.on('scroll', ScrollTrigger.update);
-      this.lenis.on('scroll', this.onLenisScroll);
-      gsap.ticker.add(this.onTick);
-      gsap.ticker.lagSmoothing(0);
-    });
-  }
-
-  private destroyLenis(): void {
-    if (!this.lenis) {
-      return;
-    }
-
-    gsap.ticker.remove(this.onTick);
-    gsap.ticker.lagSmoothing(500, 33);
-    this.lenis.destroy();
-    this.lenis = null;
   }
 
   private emit(y: number): void {
     const direction = y > this.lastY ? 1 : y < this.lastY ? -1 : 0;
     this.lastY = y;
 
-    // Each frame of a running scrollTo() pushes its end further out.
+    // Each scroll event of a running scrollTo() pushes its end further out.
     if (this.autoScrolling) {
       this.armAutoScrollTimer();
     }

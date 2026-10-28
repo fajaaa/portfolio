@@ -1,0 +1,101 @@
+@use '../../ui/pixel' as *;
+
+// Sits on the dark cabinet panel: paper text.
+:host {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+}
+
+.card__name {
+  margin: 0;
+  color: var(--coin);
+  font-size: var(--font-size-h3);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.card__tag {
+  // Room for the border, drawn outside.
+  margin: var(--px);
+  padding: 0 var(--space-2);
+  background: #26324a;
+  color: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  line-height: 1.3;
+  box-shadow: pixel-border(var(--paper-muted));
+}
+
+.card__tag--rarity {
+  background: var(--rarity);
+  color: var(--ink);
+  text-transform: uppercase;
+  box-shadow: pixel-border(var(--rarity));
+}
+
+.card__level {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--px);
+}
+
+.card__level-label {
+  margin-right: var(--space-1);
+  color: var(--paper-muted);
+  font-family: var(--font-display);
+  font-size: var(--font-size-label);
+}
+
+.card__segment {
+  width: calc(var(--px) * 4);
+  height: calc(var(--px) * 3);
+  background: rgba(255, 248, 231, 0.15);
+}
+
+.card__segment--on {
+  background: var(--rarity);
+}
+
+.card__description {
+  line-height: 1.5;
+}
+
+.card__label {
+  color: var(--paper-muted);
+  font-family: var(--font-display);
+  font-size: var(--font-size-label);
+  line-height: 1.5;
+}
+
+.card__used-in {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--px);
+  list-style: none;
+}
+
+.card__project {
+  padding: 0 var(--space-2);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  line-height: 1.3;
+  box-shadow: pixel-border(var(--paper));
+  overflow-wrap: anywhere;
+}
+
+.card__none {
+  color: var(--paper-muted);
+  font-style: italic;
+}

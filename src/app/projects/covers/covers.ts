@@ -1,5 +1,6 @@
 import type { PixelSprite } from '../../ui/pixel-art/pixel-art.component';
 import { AQUA_CONTROL_COVER } from './aqua-control.cover';
+import { AQUA_FLOW_COVER } from './aqua-flow.cover';
 import { genericCover } from './generic-cover';
 import { SMART_SAFE_COVER } from './smart-safe.cover';
 
@@ -17,6 +18,7 @@ import { SMART_SAFE_COVER } from './smart-safe.cover';
  */
 export const COVERS: Readonly<Record<string, PixelSprite>> = {
   aquacontrol: AQUA_CONTROL_COVER,
+  aquaflow: AQUA_FLOW_COVER,
   'iot-project-smart-safe': SMART_SAFE_COVER,
 };
 
