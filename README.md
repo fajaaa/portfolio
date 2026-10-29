@@ -1,4 +1,4 @@
-# Kenan Fajic: The Game
+# Kenan Fajic
 
 My personal portfolio, built as a retro pixel-art game with Angular.
 
